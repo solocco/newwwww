@@ -1,0 +1,29 @@
+info: config.c:1305: loading configuration from /home/cid/.config/fnott/fnott.ini
+warn: config.c:873: /home/cid/.config/fnott/fnott.ini:48: 'progress-bar-color' is deprecated, use 'progress-color' instead
+info: wayland.c:1094: eDP-1: 1920x1080+0x0@60Hz 0x0521 13.92" scale=1 PPI=160x180 (physical) PPI=160x180 (logical), DPI=158.26
+[2025-09-27 01:06:36] swaybg run: mode=fill img=/home/cid/pictures/walls/everforest/dark/everforest.png
+2025-09-27 01:06:36 - [main.c:282] Found config * for output eDP-1 (LG Display 0x0521)
+info: fcft.c:356: fcft: 3.3.2 +graphemes +runs +svg(nanosvg) -assertions
+info: fcft.c:395: fontconfig: 2.16.0, freetype: 2.13.3, harfbuzz: 11.3.3, utf8proc: 2.11.0 (Unicode 17.0.0)
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=14.00pt/18.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=14.00pt/18.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=14.00pt/18.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=14.00pt/18.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=12.00pt/16.00px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=12.00pt/16.00px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=12.00pt/16.00px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=12.00pt/16.00px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Bold.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /home/cid/.local/share/fonts/nerd-fonts/IosevkaNerdFont-Italic.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSans-Regular.ttf: size=8.00pt/10.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSans-Bold.ttf: size=8.00pt/10.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSans-Italic.ttf: size=8.00pt/10.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSans-BoldItalic.ttf: size=8.00pt/10.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSans-Bold.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto-emoji/NotoColorEmoji.ttf: size=81.75pt/109.00px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSansSymbols-Bold.ttf: size=11.00pt/14.67px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto-emoji/NotoColorEmoji.ttf: size=81.75pt/109.00px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSansDuployan-Bold.ttf: size=12.00pt/16.00px, dpi=96.00
+info: fcft.c:889: /usr/share/fonts/noto/NotoSansSymbols2-Regular.ttf: size=11.00pt/14.67px, dpi=96.00

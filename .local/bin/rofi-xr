@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+# rofi-xr — Void Linux (Rofi UI) — foot + rofi-askpass fallback
+set -euo pipefail
+
+# ===== Config =====
+THEME=${ROFI_XR_THEME:-$HOME/.config/rofi/xr.rasi}
+PROMPT=${ROFI_XR_PROMPT:-"XR"}
+LINES=${ROFI_XR_LINES:-12}
+WIDTH=${ROFI_XR_WIDTH:-60}
+
+ICON_SEARCH=""; ICON_INFO=""; ICON_INST=""; ICON_REM=""
+ICON_UPD=""; ICON_LIST=""; ICON_OK=""; ICON_WARN=""; ICON_ERR=""; ICON_EXIT=""
+ICON_UPDALL=""
+
+BAT=$(command -v bat || true)
+UH=$(command -v xbps-uhelper || true)
+
+need(){ command -v "$1" >/dev/null 2>&1 || { echo "Missing dep: $1"; exit 1; }; }
+need rofi; need xbps-query; need xbps-install
+
+NOTIFY(){ command -v notify-send >/dev/null 2>&1 && notify-send -a "XR" "$1" "${2:-}"; }
+
+# ===== Terminal runner (prefer foot) =====
+XR_TERM_TITLE=${XR_TERM_TITLE:-"XR Tasks"}
+
+find_term() {
+  for t in foot kitty alacritty xterm; do
+    command -v "$t" >/dev/null 2>&1 && { echo "$t"; return; }
+  done
+  echo ""
+}
+
+open_term_run() {
+  # $1 = perintah ROOT tanpa 'sudo'
+  local raw="$1" term askpass theme inner
+  term="$(find_term)"
+
+  # pakai askpass milikmu (sudah ada)
+  askpass="${SUDO_ASKPASS:-$HOME/.local/bin/rofi-askpass}"
+  theme="${ROFI_ASKPASS_THEME:-$HOME/.config/rofi/askpass.rasi}"
+
+  # IMPORTANT: matikan -e di dalam terminal command → fallback -A pasti jalan
+  # Quoting aman untuk path askpass & theme
+  inner='set +e; sudo -n '"$raw"' || (export SUDO_ASKPASS='"'"$askpass"'"'; export ROFI_ASKPASS_THEME='"'"$theme"'"'; sudo -A '"$raw"'); rc=$?; echo; echo "[exit $rc] Press any key"; read -n1'
+
+  case "$term" in
+    foot)      setsid -f foot      -T "$XR_TERM_TITLE" bash -lc "$inner" >/dev/null 2>&1 || true ;;
+    kitty)     setsid -f kitty     --title "$XR_TERM_TITLE" --class XR --hold bash -lc "$inner" >/dev/null 2>&1 || true ;;
+    alacritty) setsid -f alacritty --title "$XR_TERM_TITLE" -e bash -lc "$inner" >/dev/null 2>&1 || true ;;
+    xterm|"")  setsid -f xterm     -T "$XR_TERM_TITLE" -geom 100x28 -e bash -lc "$inner" >/dev/null 2>&1 || true ;;
+  esac
+}
+
+# ===== Rofi helpers =====
+rofi_menu(){ rofi -dmenu -p "$1" -i -matching normal -sort -levenshtein-sort -theme "$THEME" -lines "$LINES" -width "$WIDTH"; }
+rofi_view(){ rofi -dmenu -p "$1" -theme "$THEME" -lines "$LINES" -width 120; }
+
+# ===== Utils =====
+strip_tag(){ sed -E 's/^\[[^]]*\][[:space:]]+//'; }
+to_pkgname(){
+  local s="$1" out
+  if [[ -n "${UH:-}" ]]; then out="$("$UH" getpkgname "$s" 2>/dev/null || true)"; fi
+  [[ -z "${out:-}" ]] && { out=$s; out="${out%-[0-9]*_[0-9]*}"; }
+  printf '%s' "$out"
+}
+
+# ===== Data providers =====
+search_packages(){
+  xbps-query -Rs "$1" | strip_tag | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    pkgver="${line%% *}"
+    rest="${line#"$pkgver"}"
+    rest="${rest#  - }"; rest="${rest# - }"; rest="${rest#  }"; rest="${rest# }"
+    pkg="$(to_pkgname "$pkgver")"
+    printf '%s | %s\n' "$pkg" "$rest"
+  done
+}
+pkg_info(){
+  local p="$1"
+  {
+    echo "Package: $p"
+    echo
+    xbps-query -RS "$p" || true
+    echo
+    echo "Reverse depends:"
+    xbps-query -x "$p" 2>/dev/null || echo "(none)"
+  } | { if [[ -n "${BAT:-}" ]]; then bat --paging=never --plain; else cat; fi; }
+}
+pkg_files(){ xbps-query -f "$1" | { if [[ -n "${BAT:-}" ]]; then bat --paging=never --plain; else cat; fi; }; }
+list_updates(){
+  xbps-install -nuM | strip_tag | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    pkgver="${line%% *}"; pkg="$(to_pkgname "$pkgver")"
+    printf '%s | %s\n' "$pkg" "$line"
+  done
+}
+count_updates(){ xbps-install -nuM | strip_tag | awk 'NF{n++} END{print n+0}'; }
+list_installed(){
+  xbps-query -l | sed -E 's/^[a-z*?]{2}[[:space:]]+//' \
+  | while IFS= read -r line; do
+      [[ -z "$line" ]] && continue
+      pkgver="${line%% *}"
+      rest="${line#"$pkgver"}"; rest="${rest#" "}"
+      ver="${rest%% *}"
+      pkg="$(to_pkgname "$pkgver")"
+      printf '%s | %s\n' "$pkg" "$ver"
+    done
+}
+
+# ===== Actions =====
+do_install(){  local p="$1"; open_term_run "xbps-install -S '$p'"; NOTIFY "🖥️ Installing…" "$p"; }
+do_remove(){   local p="$1"; open_term_run "xbps-remove -R '$p'";   NOTIFY "🖥️ Removing…" "$p"; }
+do_update_all(){
+  local n; n=$(count_updates || echo 0)
+  if (( n == 0 )); then NOTIFY "$ICON_OK Up to date" "No updates available"; return 0; fi
+  open_term_run "xbps-install -Su"
+  NOTIFY "🖥️ Updating…" "$n package(s)"
+}
+
+# ===== UI flows =====
+show_pkg_actions(){
+  local pkg="$1" c
+  while true; do
+    c=$(printf '%s\n%s\n%s\n%s\n%s\n' \
+      "$ICON_INST  Install/Update" "$ICON_REM  Remove" "$ICON_INFO  Info" "  Files" "$ICON_EXIT  Back" \
+      | rofi_menu "$pkg") || return 0
+    case "$c" in
+      "$ICON_INST  Install/Update") do_install "$pkg" ;;
+      "$ICON_REM  Remove")          do_remove "$pkg" ;;
+      "$ICON_INFO  Info")           pkg_info "$pkg" | rofi_view "Info: $pkg" ;;
+      "  Files")                   pkg_files "$pkg" | rofi_view "Files: $pkg" ;;
+      *) break ;;
+    esac
+  done
+}
+flow_search(){
+  local q s pkg
+  q=$(printf "" | rofi -dmenu -p "$ICON_SEARCH  Search" -theme "$THEME" -lines 1 -width 40) || return 0
+  [[ -z "$q" ]] && return 0
+  while true; do
+    s=$(search_packages "$q" | rofi_menu "$ICON_SEARCH  $q") || return 0
+    pkg=${s%% | *}; [[ -z "$pkg" ]] && return 0
+    show_pkg_actions "$pkg"
+  done
+}
+flow_updates(){
+  local n s pkg
+  n=$(count_updates || echo 0)
+  if (( n == 0 )); then
+    rofi_menu "$ICON_UPD  Updates" <<<"__NONE__ | No updates available" >/dev/null || true
+    return 0
+  fi
+  s=$( ( printf '%s | %s (%s)\n' "__UPDATE_ALL__" "Update all" "$n" ; list_updates ) \
+       | rofi_menu "$ICON_UPD  Updates") || return 0
+  pkg=${s%% | *}
+  [[ -z "$pkg" ]] && return 0
+  if [[ "$pkg" == "__UPDATE_ALL__" ]]; then
+    do_update_all
+  else
+    show_pkg_actions "$pkg"
+  fi
+}
+flow_installed(){
+  local s pkg
+  while true; do
+    s=$(list_installed | rofi_menu "$ICON_LIST  Installed (Enter = actions)") || return 0
+    pkg=${s%% | *}; [[ -z "$pkg" ]] && return 0
+    show_pkg_actions "$pkg"
+  done
+}
+
+# ===== Main =====
+while true; do
+  choice=$(printf '%s\n%s\n%s\n%s\n' \
+    "$ICON_SEARCH  Search" "$ICON_UPD  Updates" "$ICON_LIST  Installed" "$ICON_EXIT  Exit" \
+    | rofi_menu "$PROMPT") || exit 0
+  case "$choice" in
+    "$ICON_SEARCH  Search")  flow_search ;;
+    "$ICON_UPD  Updates")    flow_updates ;;
+    "$ICON_LIST  Installed") flow_installed ;;
+    *) exit 0 ;;
+  esac
+done

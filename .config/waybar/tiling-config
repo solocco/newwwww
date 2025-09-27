@@ -1,0 +1,217 @@
+{
+  "name": "main-bar-sway",
+  "id": "main-bar-sway",
+  "layer": "top",
+  "mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "bottom",
+  "height": 32,
+  "spacing": 0,
+  "margin": "8 60 8 60",
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  // ==== Layout: pakai gaya stacking ====
+  "modules-left": [
+    "custom/menu",
+    "sway/workspaces",
+    "sway/window"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "custom/updates",
+    "custom/updates#2",
+    "cpu", "cpu#2",
+    "memory", "memory#2",
+    "disk", "disk#2",
+    "backlight", "backlight#2",
+    "battery", "battery#2",
+    "network",
+    "clock",
+    "custom/qs",
+    "custom/power",
+    "tray"
+  ],
+
+  /* ---- Taskbar (dari stacking) ---- */
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "icon-theme": "breeze-dark",
+    "tooltip": true,
+    "tooltip-format": "{title}",
+    "on-click": "minimize-raise",
+    "on-click-middle": "close",
+    "sort-by-app-id": true,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "^(.{8}).+$": "$1…"
+    },
+    "app_ids-mapping": { "imv": "img" }
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 4,
+    "padding": "0 2px 0 2px",
+    "border-radius": 8
+  },
+
+  /* ---- Menu & util (dari stacking) ---- */
+  "custom/menu": {
+    "format": " ",
+    "on-click": "rofi_launcher",
+    "tooltip": false
+  },
+  "custom/flavours": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Theme selector",
+    "on-click": "rofi_flavours"
+  },
+  "custom/qs": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Quick Settings",
+    "on-click": "rofi_quicksettings"
+  },
+  "custom/power": {
+    "format": " ",
+    "on-click": "powermenu.sh",
+    "tooltip": false
+  },
+
+  /* ---- Updates (ikon + teks, dari stacking) ---- */
+  "custom/updates": {
+    "format": "<span size='large'>{icon}</span>",
+    "format-icons": ["󰏗","󱧖","󰋙","󱧙","󰏖"],
+    "return-type": "json",
+    "exec-if": "[ -d /tmp/upd ]",
+    "exec": "python ~/.local/bin/updbar.py",
+    "on-click": "rofi-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "tooltip": true
+  },
+  "custom/updates#2": {
+    "format": "{0}",
+    "return-type": "json",
+    "exec-if": "[ -d /tmp/upd ]",
+    "exec": "python ~/.local/bin/updbar.py",
+    "on-click": "rofi-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "tooltip": true
+  },
+
+  /* ---- Clock (dari stacking) ---- */
+  "clock": {
+    "format": "{:L%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%a %d %b}"
+  },
+  "clock#2": { "format": "{:L%d}", "tooltip": false },
+
+  /* ---- Audio: pakai pulseaudio model stacking (PipeWire kompatibel via pipewire-pulse) ---- */
+  "pulseaudio": {
+    "format": "",
+    "format-muted": "",
+    "on-click": "pavucontrol",
+    "max-volume": 150,
+    "scroll-step": 0.2,
+    "tooltip": true,
+    "tooltip-format": "{volume}%"
+  },
+  "pulseaudio#2": { "format": "{volume}%", "tooltip": false },
+
+  /* ---- Networking (dari stacking; klik buka net-menu) ---- */
+  "network": {
+    "format-wifi": " ",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "tooltip": true,
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "net-menu.sh bottom-right"
+  },
+  "network#2": { "format": "{signalStrength}%", "tooltip": false },
+
+  /* ---- Bluetooth (opsional; tetap disediakan) ---- */
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "",
+    "format-connected": "",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "rofi_bluetooth"
+  },
+  "bluetooth#2": { "format": "{status}", "tooltip": false },
+
+  /* ---- Battery & Backlight (gabung kebiasaan stacking + kebutuhan laptop) ---- */
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon}",
+    "format-charging": "{icon}",
+    "format-plugged": "{icon}",
+    "tooltip": true,
+    "tooltip-format": "{capacity}%",
+    "format-icons": ["","","","",""]
+  },
+  "battery#2": { "format": "{capacity}%", "tooltip": false },
+
+  "backlight": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "{percent}%"
+  },
+  "backlight#2": { "format": "{percent}%", "tooltip": false },
+
+  /* ---- Stats (dari stacking) ---- */
+  "cpu": { "format": " ", "tooltip": true, "tooltip-format": "{usage}%" },
+  "cpu#2": { "format": "{usage}%", "tooltip": false },
+
+  "memory": { "format": " ", "tooltip": true, "tooltip-format": "{percentage}%" },
+  "memory#2": { "format": "{percentage}%", "tooltip": false },
+
+  "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
+  "disk#2": { "format": "{free}", "tooltip": false },
+
+  /* ---- Khusus SWAY (dari config pertama) ---- */
+  "sway/workspaces": {
+    "disable-scroll": false,
+    "all-outputs": true,
+    "warp-on-scroll": false,
+    "format": "{name}",
+    "persistent-workspaces": { "1": [], "2": [], "3": [], "4": [], "5": [] }
+  },
+  "sway/window": {
+    "format": "{title}",
+    "icon": true,
+    "icon-size": 14,
+    "max-length": 50,
+    "tooltip": false,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "": "Desktop"
+    }
+  },
+  "sway/language": {
+    "format": "",
+    "on-click": "dash ~/.config/waybar/scripts/sway-keyboard-toggle.sh",
+    "tooltip": true,
+    "tooltip-format": "fr/us"
+  },
+
+  /* ---- Night light: pakai toggle wlsunset dari config pertama ---- */
+  "custom/wlsunset": {
+    "format": "",
+    "on-click": "dash ~/.config/waybar/scripts/flavours-toggle",
+    "on-click-right": "dash ~/.config/waybar/scripts/sun-toggle",
+    "tooltip": true,
+    "tooltip-format": "Night light"
+  }
+}

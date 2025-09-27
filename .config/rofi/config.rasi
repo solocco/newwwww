@@ -1,0 +1,13 @@
+configuration {
+  show-icons: true;
+  icon-theme: "Breeze-Dark";
+
+  /* prompt ganti jadi ">" */
+  prompt: ">";
+
+  /* jangan pakai sidebar mode */
+  sidebar-mode: false;
+
+  /* biar nama aplikasi pakai ikon + nama saja */
+  drun-display-format: "{icon} {name}";
+}

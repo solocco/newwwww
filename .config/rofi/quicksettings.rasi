@@ -1,0 +1,114 @@
+/***** Quick Settings — header pill on the right (southeast, borderless, real transparency) *****/
+configuration {
+  show-icons:                 false;
+  drun-display-format:        "{name}";
+}
+
+@import "colors.rasi"
+@import "fonts.rasi"
+
+/* Window kanan–bawah */
+window {
+  transparency:               "real";
+  location:                   southeast;
+  anchor:                     southeast;
+  fullscreen:                 false;
+  width:                      420px;               /* sesuaikan */
+  x-offset:                   0px;
+  y-offset:                   0px;
+
+  margin:                     0px;
+  padding:                    0px;
+  border:                     0px;                 /* tanpa border */
+  border-radius:              30px 0px 0px 0px;    /* TL TR BR BL */
+  border-color:               @border;             /* tak terpakai krn border:0 */
+  background-color:           @bg;                 /* gunakan @bg semi/transparan */
+}
+
+/* Layout utama */
+mainbox {
+  padding:                    20px;
+  spacing:                    10px;
+  background-color:           transparent;
+  children:                   [ "inputbar", "listview" ];
+}
+
+/* Header: icon bulat kiri + spacer + pill prompt kanan */
+inputbar {
+  spacing:                    10px;
+  background-color:           transparent;
+  text-color:                 @fg;
+  children:                   [ "textbox-prompt-colon", "textbox", "prompt" ];
+}
+
+/* ikon bulat kiri */
+textbox-prompt-colon {
+  str:                        " ";
+  padding:                    8px 10px;
+  border-radius:              100%;
+  background-color:           @sel;
+  text-color:                 @bg;
+  expand:                     false;
+  vertical-align:             0.5;
+}
+
+/* spacer transparan untuk mendorong prompt ke kanan */
+textbox {
+  expand:                     true;
+  background-color:           transparent;
+  text-color:                 transparent;
+  str:                        "";
+}
+
+/* pill “Quick Settings” (isi dari -p di skrip rofi) */
+prompt {
+  expand:                     false;              /* penting: jangan melebar */
+  padding:                    8px 12px;
+  border-radius:              9999px;
+  background-color:           @sel;
+  text-color:                 @bg;
+  vertical-align:             0.5;
+}
+
+/* tidak pakai entry/case */
+entry { enabled: false; }
+case-indicator { enabled: false; }
+
+/* List */
+listview {
+  columns:                    1;
+  lines:                      10;                 /* samakan dengan preferensi */
+  layout:                     vertical;
+  fixed-columns:              true;
+  fixed-height:               true;
+  spacing:                    6px;
+  background-color:           transparent;
+  scrollbar:                  false;
+  text-color:                 @fg;
+}
+
+element {
+  padding:                    8px 10px;
+  border-radius:              10px;
+  background-color:           transparent;
+  text-color:                 @fg;
+}
+
+element selected {
+  background-color:           @sel;
+  text-color:                 @bg;
+}
+
+element-text {
+  background-color:           transparent;
+  text-color:                 inherit;
+  highlight:                  inherit;
+  horizontal-align:           0.0;
+  vertical-align:             0.5;
+}
+
+/* Pesan/teks (kalau ada) */
+message, textbox, error-message {
+  background-color:           transparent;
+  text-color:                 @fg;
+}

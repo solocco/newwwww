@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# Quick Settings — smooth (status only Wi-Fi & Bluetooth)
+# Instan: baca cache atau fast path cepat; refresh detail berjalan di background.
+# Deps: rofi; optional: nmcli, bluetoothctl, nm-connection-editor, blueman/blueberry, foot, coreutils(timeout,stat)
+
+set -euo pipefail
+
+THEME="${ROFI_QS_THEME:-$HOME/.config/rofi/quicksettings.rasi}"
+PROMPT="${ROFI_QS_PROMPT:-Quick Settings}"
+LINES="${ROFI_QS_LINES:-9}"
+ROFI_ARGS=(-dmenu -p "$PROMPT" -l "$LINES" -i -no-fixed-num-lines -sort false)
+[ -f "$THEME" ] && ROFI_ARGS+=(-theme "$THEME")
+
+has(){ command -v "$1" >/dev/null 2>&1; }
+
+# --- Smooth knobs ---
+CACHE_TTL="${ROFI_QS_CACHE_TTL:-8}"             # detik; 8–15 enak
+TIMEOUT_FAST="${ROFI_QS_TIMEOUT_FAST:-0.5}"     # batas cepat
+WIFI_CACHE="/tmp/qs_wifi.status"
+BT_CACHE="/tmp/qs_bt.status"
+
+now(){ date +%s; }
+fresh(){ [ -f "$1" ] || return 1; local m; m="$(stat -c %Y "$1" 2>/dev/null || echo 0)"; [ $(( $(now) - m )) -lt "$2" ]; }
+
+# --- FAST PATH (cepat, tanpa scan) ---
+wifi_fast(){
+  has nmcli || { echo "—"; return; }
+  local wifi; wifi="$(nmcli -t -f WIFI g 2>/dev/null || true)"
+  [ "$wifi" = "disabled" ] && { echo "Off"; return; }
+  # hanya ambil SSID koneksi aktif (tanpa SIGNAL, super cepat)
+  local ssid
+  ssid="$(timeout "$TIMEOUT_FAST" nmcli -t -f NAME,TYPE,STATE connection show --active 2>/dev/null \
+          | awk -F: '$2=="wifi"{print $1; exit}')"
+  [ -n "${ssid:-}" ] && echo "On: ${ssid}" || echo "On: not connected"
+}
+
+bt_fast(){
+  has bluetoothctl || { echo "—"; return; }
+  local powered; powered="$(bluetoothctl show 2>/dev/null | awk '/Powered:/ {print $2; exit}')"
+  [ "$powered" != "yes" ] && { echo "Off"; return; }
+  # langsung ambil yang connected (tanpa loop info)
+  local lines names
+  lines="$(bluetoothctl devices Connected 2>/dev/null || true)"
+  names="$(printf '%s\n' "$lines" | sed 's/^Device [^ ]\+ //' | paste -sd ', ' -)"
+  [ -n "$names" ] && echo "On: $names" || echo "On: no device"
+}
+
+# --- BACKGROUND REFRESH (lebih detail; cache untuk next open) ---
+wifi_refresh_bg(){
+  has nmcli || exit 0
+  (
+    # lock sederhana
+    exec 9>"/tmp/.qs_wifi.lock" || exit 0
+    flock -n 9 || exit 0
+    local wifi row ssid signal
+    wifi="$(nmcli -t -f WIFI g 2>/dev/null || true)"
+    if [ "$wifi" = "disabled" ]; then
+      echo "Off" >"$WIFI_CACHE"; exit 0
+    fi
+    # tanpa rescan biar cepat tapi bisa dapat SIGNAL kalau tersedia
+    row="$(timeout 1.2 nmcli -t -f IN-USE,SSID,SIGNAL dev wifi list --rescan no 2>/dev/null \
+          | awk -F: '$1=="*"{print $2 "|" $3; exit}')"
+    if [ -n "${row:-}" ]; then
+      ssid="${row%%|*}"; signal="${row##*|}"
+      [ -z "$ssid" ] && ssid="(hidden)"
+      echo "On: ${ssid} (${signal:-?}%)" >"$WIFI_CACHE"
+    else
+      ssid="$(timeout 1.0 nmcli -t -f NAME,TYPE,STATE connection show --active 2>/dev/null \
+            | awk -F: '$2=="wifi"{print $1; exit}')"
+      [ -n "${ssid:-}" ] && echo "On: ${ssid}" >"$WIFI_CACHE" || echo "On: not connected" >"$WIFI_CACHE"
+    fi
+  ) >/dev/null 2>&1 &
+}
+
+bt_refresh_bg(){
+  has bluetoothctl || exit 0
+  (
+    exec 9>"/tmp/.qs_bt.lock" || exit 0
+    flock -n 9 || exit 0
+    local powered lines names
+    powered="$(bluetoothctl show 2>/dev/null | awk '/Powered:/ {print $2; exit}')"
+    if [ "$powered" != "yes" ]; then echo "Off" >"$BT_CACHE"; exit 0; fi
+    lines="$(timeout 1.0 bluetoothctl devices Connected 2>/dev/null || true)"
+    names="$(printf '%s\n' "$lines" | sed 's/^Device [^ ]\+ //' | paste -sd ', ' -)"
+    if [ -n "$names" ]; then
+      echo "On: $names" >"$BT_CACHE"
+    else
+      # fallback lama (cek per device) untuk BlueZ jadul
+      names=""
+      while read -r mac; do
+        [ -z "$mac" ] && continue
+        if timeout 1.0 bluetoothctl info "$mac" 2>/dev/null \
+            | awk -F': ' '/^Connected:/ {ok=($2=="yes")} END{exit !ok}'; then
+          n="$(timeout 1.0 bluetoothctl info "$mac" 2>/dev/null | sed -n 's/^Name:[[:space:]]*//p' | head -n1)"
+          names="${names:+$names, }${n:-$mac}"
+        fi
+      done < <(bluetoothctl devices 2>/dev/null | awk '{print $2}')
+      echo "On: ${names:-no device}" >"$BT_CACHE"
+    fi
+  ) >/dev/null 2>&1 &
+}
+
+# --- Tiles (Label|Icon|Command) — urutan tetap ---
+SCRIPTS=(
+  "Wi-Fi||$HOME/.local/bin/rofi_wifi.sh || nm-connection-editor || foot -e nmtui"
+  "Bluetooth||$HOME/.local/bin/rofi_bluetooth || blueman-manager || blueberry"
+  "Nightlight||$HOME/.local/bin/rofi_nightlight"
+  "Audio||$HOME/.local/bin/rofi_audio || pavucontrol"
+  "Theme||$HOME/.local/bin/rofi_flavours || true"
+  "Wallpaper||$HOME/.local/bin/rofi_wallpaper.sh || true"
+  "VPN||$HOME/.local/bin/rofi_vpn.sh || nm-connection-editor"
+  "Clipboard||$HOME/.local/bin/rofi_clipmenu"
+  "Power menu||$HOME/.local/bin/rofi_power.sh || wlogout || true"
+)
+
+# --- Build menu (Wi-Fi & BT ada STATUS; lain tidak) ---
+wifi_status(){
+  if fresh "$WIFI_CACHE" "$CACHE_TTL"; then cat "$WIFI_CACHE"
+  else
+    wifi_refresh_bg
+    wifi_fast
+  fi
+}
+bt_status(){
+  if fresh "$BT_CACHE" "$CACHE_TTL"; then cat "$BT_CACHE"
+  else
+    bt_refresh_bg
+    bt_fast
+  fi
+}
+
+build_menu(){
+  for ent in "${SCRIPTS[@]}"; do
+    IFS='|' read -r LABEL ICON CMD <<<"$ent"
+    case "$LABEL" in
+      Wi*Fi|Wi-Fi|WiFi)   printf '%s  | %s | %s\n' "$ICON" "$LABEL" "$(wifi_status)";;
+      Bluetooth)          printf '%s  | %s | %s\n' "$ICON" "$LABEL" "$(bt_status)";;
+      *)                  printf '%s  | %s\n' "$ICON" "$LABEL";;
+    esac
+  done
+}
+
+MENU="$(build_menu)"
+CHOICE="$(printf '%s\n' "$MENU" | rofi "${ROFI_ARGS[@]}")" || exit 0
+[ -z "${CHOICE:-}" ] && exit 0
+
+# Ambil LABEL (kolom ke-2)
+LABEL_CHOSEN="$(printf '%s' "$CHOICE" | awk -F '|' '{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2}')"
+
+# Eksekusi sesuai LABEL
+for ent in "${SCRIPTS[@]}"; do
+  IFS='|' read -r LABEL ICON CMD <<<"$ent"
+  if [ "$LABEL" = "$LABEL_CHOSEN" ]; then
+    setsid bash -lc "$CMD" >/dev/null 2>&1 &
+    exit 0
+  fi
+done
+
+exit 0

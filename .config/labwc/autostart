@@ -1,0 +1,8 @@
+# Autostart
+$HOME/.local/bin/autostart.sh >/dev/null 2>&1 &
+
+# wlsunset
+#wlsunset -T 6500 -t 5500 -l -6.2 -L 106.8 -d 3 &
+
+# Start Waybar
+waybar -c $HOME/.config/waybar/stacking-config -s $HOME/.config/waybar/style.css >/dev/null 2>&1 &

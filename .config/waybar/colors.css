@@ -1,0 +1,25 @@
+/*
+*
+* Base16 Everforest Dark Medium
+* Author: sainnhe
+*
+*/
+
+@define-color base00 #2d353b;
+@define-color base01 #343f44;
+@define-color base02 #3d484d;
+@define-color base03 #475258;
+@define-color base04 #9da9a0;
+@define-color base05 #d3c6aa;
+@define-color base06 #e4e1cd;
+@define-color base07 #fdf6e3;
+@define-color base08 #e67e80;
+@define-color base09 #e69875;
+@define-color base0A #dbbc7f;
+@define-color base0B #a7c080;
+@define-color base0C #83c092;
+@define-color base0D #7fbbb3;
+@define-color base0E #d699b6;
+@define-color base0F #d3c6aa;
+@define-color bg rgba(45, 53, 59, 0.90);
+@define-color accentDim rgba(131, 192, 146, 0.35);

@@ -1,0 +1,550 @@
+!! Start flavours
+!! Start flavours
+
+!! Window colors
+window.active.title.bg.color:   #2d353b
+window.inactive.title.bg.color: #2d353b
+window.active.label.text.color: #d3c6aa
+window.inactive.label.text.color:#9da9a0
+window.active.border.color:     #343f44
+window.inactive.border.color:   #343f44
+
+!! Buttons (glyphs follow flavours)
+# Minimize / Iconify = base0A
+window.active.button.iconify.unpressed.image.color:          #dbbc7f
+window.active.button.iconify.pressed.image.color:            #dbbc7f
+window.active.button.iconify.hover.image.color:              #dbbc7f
+window.active.button.iconify.toggled.unpressed.image.color:  #dbbc7f
+window.active.button.iconify.toggled.pressed.image.color:    #dbbc7f
+window.active.button.iconify.toggled.hover.image.color:      #dbbc7f
+window.inactive.button.iconify.unpressed.image.color:        #dbbc7f
+window.inactive.button.iconify.pressed.image.color:          #dbbc7f
+window.inactive.button.iconify.hover.image.color:            #dbbc7f
+window.inactive.button.iconify.toggled.unpressed.image.color:#dbbc7f
+window.inactive.button.iconify.toggled.pressed.image.color:  #dbbc7f
+window.inactive.button.iconify.toggled.hover.image.color:    #dbbc7f
+window.active.button.iconify.disabled.image.color:           #475258
+window.inactive.button.iconify.disabled.image.color:         #475258
+
+# Maximize = base0B
+window.active.button.max.unpressed.image.color:              #a7c080
+window.active.button.max.pressed.image.color:                #a7c080
+window.active.button.max.hover.image.color:                  #a7c080
+window.active.button.max.toggled.unpressed.image.color:      #a7c080
+window.active.button.max.toggled.pressed.image.color:        #a7c080
+window.active.button.max.toggled.hover.image.color:          #a7c080
+window.inactive.button.max.unpressed.image.color:            #a7c080
+window.inactive.button.max.pressed.image.color:              #a7c080
+window.inactive.button.max.hover.image.color:                #a7c080
+window.inactive.button.max.toggled.unpressed.image.color:    #a7c080
+window.inactive.button.max.toggled.pressed.image.color:      #a7c080
+window.inactive.button.max.toggled.hover.image.color:        #a7c080
+window.active.button.max.disabled.image.color:               #475258
+window.inactive.button.max.disabled.image.color:             #475258
+
+# Close = base08
+window.active.button.close.unpressed.image.color:            #e67e80
+window.active.button.close.pressed.image.color:              #e67e80
+window.active.button.close.hover.image.color:                #e67e80
+window.active.button.close.toggled.unpressed.image.color:    #e67e80
+window.active.button.close.toggled.pressed.image.color:      #e67e80
+window.active.button.close.toggled.hover.image.color:        #e67e80
+window.inactive.button.close.unpressed.image.color:          #e67e80
+window.inactive.button.close.pressed.image.color:            #e67e80
+window.inactive.button.close.hover.image.color:              #e67e80
+window.inactive.button.close.toggled.unpressed.image.color:  #e67e80
+window.inactive.button.close.toggled.pressed.image.color:    #e67e80
+window.inactive.button.close.toggled.hover.image.color:      #e67e80
+window.active.button.close.disabled.image.color:             #475258
+window.inactive.button.close.disabled.image.color:           #475258
+
+# (opsional) menu button netral
+window.active.button.menu.unpressed.image.color:             #d3c6aa
+window.active.button.menu.pressed.image.color:               #d3c6aa
+window.active.button.menu.hover.image.color:                 #d3c6aa
+window.inactive.button.menu.unpressed.image.color:           #475258
+window.inactive.button.menu.pressed.image.color:             #475258
+window.inactive.button.menu.hover.image.color:               #475258
+window.active.button.menu.disabled.image.color:              #475258
+window.inactive.button.menu.disabled.image.color:            #475258
+
+!! Menu colors
+menu.items.bg.color:            #2d353b
+menu.items.text.color:          #d3c6aa
+menu.items.disabled.text.color: #475258
+menu.items.active.bg.color:     #3d484d
+menu.items.active.text.color:   #d3c6aa
+menu.separator.color:           #343f44
+menu.border.color:              #343f44
+menu.title.bg.color:            #2d353b
+menu.title.text.color:          #d3c6aa
+
+!! OSD colors
+osd.border.color:               #343f44
+osd.label.text.color:           #d3c6aa
+osd.bg.color:                   #2d353b
+
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+!! End flavours
+

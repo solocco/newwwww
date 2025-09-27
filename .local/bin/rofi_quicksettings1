@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Quick Settings (Rofi list) — no numbering, fixed order, no sort
+
+set -euo pipefail
+
+THEME="${ROFI_QS_THEME:-$HOME/.config/rofi/quicksettings.rasi}"
+PROMPT="${ROFI_QS_PROMPT:-Quick Settings}"
+LINES="${ROFI_QS_LINES:-9}"
+ROFI_ARGS=(-dmenu -p "$PROMPT" -l "$LINES" -i -no-fixed-num-lines -sort false)
+[ -f "$THEME" ] && ROFI_ARGS+=(-theme "$THEME")
+
+# ===== Tiles (Label|Icon|Command) — URUTAN FIX SESUAI MAUMU =====
+SCRIPTS=(
+  "Wi-Fi||$HOME/.local/bin/rofi_wifi.sh || nm-connection-editor || foot -e nmtui"
+  "Bluetooth||$HOME/.local/bin/rofi_bluetooth || blueman-manager || blueberry"
+  "Nightlight||$HOME/.local/bin/rofi_nightlight"
+  "Audio||$HOME/.local/bin/rofi_audio || pavucontrol"
+  "Theme||$HOME/.local/bin/rofi_flavours || true"
+  "Wallpaper||$HOME/.local/bin/rofi_wallpaper.sh || true"
+  "VPN||$HOME/.local/bin/rofi_vpn.sh || nm-connection-editor"
+  "Clipboard||$HOME/.local/bin/rofi_clipmenu"
+  "Power menu||$HOME/.local/bin/rofi_power.sh || wlogout || true"
+)
+
+# ===== Status (opsional) =====
+state_for() {
+  case "$1" in
+    Nightlight) pgrep -f wlsunset >/dev/null 2>&1 && echo "  [On]" || echo "  [Off]" ;;
+    "Wi-Fi"|"WiFi") nmcli -t -f WIFI g 2>/dev/null | sed -n 's/^enabled/  [On]/p; s/^disabled/  [Off]/p' || true ;;
+    Bluetooth) bluetoothctl show 2>/dev/null | awk '/Powered:/ {print ($2=="yes"?"  [On]":"  [Off]"); exit}' || true ;;
+    VPN) nmcli -t -f TYPE,STATE c show --active 2>/dev/null | grep -q '^vpn:activated' && echo "  [On]" || echo "  [Off]" ;;
+    Audio)
+      if command -v pamixer >/dev/null 2>&1; then
+        if pamixer --get-mute 2>/dev/null | grep -q true; then echo "  [Mute]"
+        else echo "  [$(pamixer --get-volume 2>/dev/null)%]"; fi
+      fi ;;
+    *) ;;
+  esac
+}
+
+# ===== Build menu (ICON␠␠LABEL␠␠[STATE]) =====
+build_menu() {
+  for ent in "${SCRIPTS[@]}"; do
+    IFS='|' read -r LABEL ICON CMD <<<"$ent"
+    ST="$(state_for "$LABEL")"
+    printf '%s  %s%s\n' "$ICON" "$LABEL" "$ST"
+  done
+}
+
+MENU="$(build_menu)"
+CHOICE="$(printf '%s\n' "$MENU" | rofi "${ROFI_ARGS[@]}")" || exit 0
+[ -z "${CHOICE:-}" ] && exit 0
+
+# ===== Ambil LABEL dari pilihan (tanpa nomor) =====
+# Hapus ICON + 2 spasi di depan, lalu buang "  [..]" di akhir jika ada.
+LABEL_CHOSEN="$(printf '%s' "$CHOICE" \
+  | sed -E 's/^[[:space:]]*[^[:space:]]+[[:space:]]{2}//' \
+  | sed -E 's/[[:space:]]{2}\[[^]]*\]$//')"
+
+# ===== Cari command berdasarkan LABEL dan jalankan =====
+for ent in "${SCRIPTS[@]}"; do
+  IFS='|' read -r LABEL ICON CMD <<<"$ent"
+  if [ "$LABEL" = "$LABEL_CHOSEN" ]; then
+    setsid bash -lc "$CMD" >/dev/null 2>&1 &
+    exit 0
+  fi
+done
+
+exit 0

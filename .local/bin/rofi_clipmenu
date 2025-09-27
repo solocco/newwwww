@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+# Rofi clip menu (cliphist) — Pinned di ATAS + New pin (paste) + Manage (append/replace/delete/rename)
+# Dep: cliphist, rofi, wl-clipboard (wl-copy), optional: notify-send
+# Env optional:
+#   ROFI_CLIP_THEME  (default: ~/.config/rofi/cliphist.rasi)
+#   ROFI_CLIP_LINES  (default: 7)
+#   ROFI_CLIP_PROMPT (default: Clipboard)
+#   PIN_DIR          (default: $XDG_DATA_HOME/clip-pins atau ~/.local/share/clip-pins)
+#   PIN_LIMIT        (default: 100)
+# Jalankan:
+#   clipmenu-rofi.sh         # Copy mode
+#   clipmenu-rofi.sh delete  # langsung Delete mode
+
+set -euo pipefail
+
+THEME="${ROFI_CLIP_THEME:-$HOME/.config/rofi/cliphist.rasi}"
+LINES="${ROFI_CLIP_LINES:-7}"
+PROMPT="${ROFI_CLIP_PROMPT:-Clipboard}"
+MODE="${1:-copy}"   # copy | delete
+PIN_DIR="${PIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/clip-pins}"
+PIN_LIMIT="${PIN_LIMIT:-100}"
+
+need(){ command -v "$1" >/dev/null 2>&1 || { echo "Missing: $1" >&2; exit 1; }; }
+need cliphist; need rofi; need wl-copy
+mkdir -p "$PIN_DIR"
+
+notify(){ command -v notify-send >/dev/null 2>&1 && notify-send "Clipboard" "$1" || true; }
+
+ROFI_ARGS=(-dmenu -p "$PROMPT" -l "$LINES" -i -no-fixed-num-lines)
+[ -f "$THEME" ] && ROFI_ARGS+=(-theme "$THEME")
+
+SEP="──────────────"
+
+# ---------- utils ----------
+escape_pango(){ sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+
+# FIX INPUT: paksa tampilkan entry walau tema tidak memuat entry di inputbar
+ask_text(){
+  local prompt="${1:-Input}" init="${2-}" out
+  if [ -f "$THEME" ]; then
+    out="$(
+      printf '\n' | rofi -dmenu -p "$prompt" ${init:+-filter "$init"} \
+        -theme "$THEME" \
+        -theme-str 'inputbar { children: [ "textbox-prompt-colon", "entry" ]; }' \
+        -theme-str 'prompt { enabled: false; }' \
+        -theme-str 'entry { enabled: true; expand: true; padding: 8px 10px; border-radius: 12px; background-color: @sel; text-color: @bg; }'
+    )" || out=""
+  else
+    out="$(printf '\n' | rofi -dmenu -p "$prompt" ${init:+-filter "$init"})" || out=""
+  fi
+  printf '%s' "$out"
+}
+
+confirm_rofi(){
+  local msg="${1:-Are you sure?}" ans
+  if [ -f "$THEME" ]; then
+    ans="$(printf '%s\n' 'No' 'Yes' | rofi -dmenu -p 'Confirm' -l 2 -mesg "$msg" -theme "$THEME")" || return 1
+  else
+    ans="$(printf '%s\n' 'No' 'Yes' | rofi -dmenu -p 'Confirm' -l 2 -mesg "$msg")" || return 1
+  fi
+  [ "$ans" = "Yes" ]
+}
+
+# ---------- pinned list ----------
+list_pins(){
+  # Output: "PIN:<fullpath>\t📌 <name> — <preview>"
+  mapfile -t _names < <(ls -1At -- "$PIN_DIR" 2>/dev/null || true)
+  local shown=0
+  for name in "${_names[@]}"; do
+    [ "$shown" -ge "$PIN_LIMIT" ] && break
+    local path="$PIN_DIR/$name"
+    [ -f "$path" ] || continue
+    local preview
+    preview="$(head -c 200 -- "$path" 2>/dev/null | tr '\n' ' ' | sed 's/\t/    /g')"
+    printf 'PIN:%s\t📌 %s — %s\n' "$path" "$name" "$preview"
+    shown=$((shown+1))
+  done
+}
+
+copy_pinned(){
+  local path="$1" mime=""
+  case "${path##*.}" in
+    png|PNG) mime="image/png" ;;
+    jpg|JPG|jpeg|JPEG) mime="image/jpeg" ;;
+    webp|WEBP) mime="image/webp" ;;
+    gif|GIF) mime="image/gif" ;;
+    *) mime="" ;;
+  esac
+  if [ -n "$mime" ]; then wl-copy -t "$mime" < "$path"; else wl-copy < "$path"; fi
+}
+
+# ---------- create pins ----------
+new_pin_text(){
+  local txt name
+  txt="$(ask_text 'New pin (paste/ketik teks)')"
+  [ -z "$txt" ] && return 0
+  name="$(ask_text 'Filename (enter=auto)')"
+  [ -z "$name" ] && name="$(date +%Y%m%d-%H%M%S).txt"
+  printf '%s' "$txt" > "$PIN_DIR/$name"
+  notify "Pinned as $name"
+}
+
+pin_from_clipboard(){
+  local types mime ext name txt
+  types="$(wl-paste -l 2>/dev/null || true)"
+  if printf '%s\n' "$types" | grep -qE 'image/(png|jpeg|webp|gif)'; then
+    for t in image/png image/jpeg image/webp image/gif; do
+      if printf '%s\n' "$types" | grep -q "$t"; then mime="$t"; break; fi
+    done
+    ext="${mime##*/}"; [ "$ext" = "jpeg" ] && ext="jpg"
+    name="$(ask_text 'Filename (enter=auto)')"
+    [ -z "$name" ] && name="$(date +%Y%m%d-%H%M%S).${ext}"
+    wl-paste -t "$mime" > "$PIN_DIR/$name"
+    notify "Pinned image: $name"
+    return
+  fi
+  txt="$(wl-paste 2>/dev/null || true)"
+  [ -z "$txt" ] && { notify "Clipboard kosong"; return; }
+  name="$(ask_text 'Filename (enter=auto)')"
+  [ -z "$name" ] && name="$(date +%Y%m%d-%H%M%S).txt"
+  printf '%s' "$txt" > "$PIN_DIR/$name"
+  notify "Pinned text: $name"
+}
+
+# ---------- manage pins ----------
+append_to_pin(){
+  local path="$1" add
+  add="$(ask_text 'Append text')"
+  [ -z "$add" ] && return 0
+  printf '\n%s\n' "$add" >> "$path"
+  notify "Appended"
+}
+
+_escape_sed(){
+  local s="$1"
+  s="${s//\\/\\\\}"; s="${s//\//\\/}"; s="${s//&/\\&}"
+  printf '%s' "$s"
+}
+
+replace_word_in_pin(){
+  local path="$1" find repl
+  find="$(ask_text 'Find (word/raw)')"
+  [ -z "$find" ] && return 0
+  repl="$(ask_text 'Replace with (empty=delete)')"
+  sed -i "s/$(_escape_sed "$find")/$(_escape_sed "$repl")/g" -- "$path"
+  notify "Replaced"
+}
+
+delete_word_in_pin(){
+  local path="$1" word
+  word="$(ask_text 'Delete word')"
+  [ -z "$word" ] && return 0
+  sed -i "s/$(_escape_sed "$word")//g" -- "$path"
+  sed -i 's/  \+/ /g' -- "$path"
+  notify "Deleted"
+}
+
+rename_pin(){
+  local path="$1" base new
+  base="$(basename -- "$path")"
+  new="$(ask_text 'New filename' "$base")"
+  [ -z "$new" ] && return 0
+  mv -f -- "$path" "$PIN_DIR/$new"
+  notify "Renamed"
+}
+
+manage_pinned(){
+  local pins sel id path name choice msg preview_esc
+  pins="$(list_pins)"; [ -z "$pins" ] && { notify "No pinned items"; return 0; }
+  sel="$(printf '%s\n' "$pins" | rofi "${ROFI_ARGS[@]}")" || return 0
+  [ -z "$sel" ] && return 0
+  id="$(printf '%s' "$sel" | awk -F '\t' 'NF{print $1}')"
+  path="${id#PIN:}"; name="$(basename -- "$path" | escape_pango)"
+  msg="<b>Pinned:</b> <small>${name}</small>"
+  choice="$(
+    printf '%s\n' "Copy" "Append text…" "Replace word…" "Delete word…" "Rename…" "Delete file…" "Back" \
+      | rofi -dmenu -p "Pinned actions" -l 7 -mesg "$msg" ${THEME:+-theme "$THEME"}
+  )" || return 0
+  case "$choice" in
+    "Copy")          copy_pinned "$path"; notify "Pinned copied" ;;
+    "Append text…")  append_to_pin "$path" ;;
+    "Replace word…") replace_word_in_pin "$path" ;;
+    "Delete word…")  delete_word_in_pin "$path" ;;
+    "Rename…")       rename_pin "$path" ;;
+    "Delete file…")
+      preview_esc="$(head -c 200 "$path" 2>/dev/null | tr '\n' ' ' | escape_pango)"
+      if confirm_rofi "<b>Hapus pinned file?</b>\n<small>${name}</small>\n<small>${preview_esc}</small>"; then
+        rm -f -- "$path"; notify "Pinned deleted"
+      fi ;;
+    *) ;;
+  esac
+}
+
+# ---------- menu ----------
+build_menu(){
+  if [ "$MODE" = "copy" ]; then printf 'Mode: Copy\n'; else printf 'Mode: Delete\n'; fi
+  printf '📌  Pinned\n'
+  printf '➕  New pin (paste)…\n'
+  printf '📋  Pin from clipboard…\n'
+  printf '🛠️  Manage pinned…\n'
+  local pins; pins="$(list_pins)"
+  if [ -n "$pins" ]; then printf '%s\n' "$pins"; else printf '—  (no pinned items)\n'; fi
+  printf '%s\n' "$SEP"
+  if [ "$MODE" = "copy" ]; then
+    printf '🧹  Wipe all (history)…\n'
+    printf '⇄  Switch to Delete mode\n'
+  else
+    printf '🧹  Wipe all (history)…\n'
+    printf '↩  Back to Copy mode\n'
+  fi
+  printf '%s\n' "$SEP"
+  cliphist list
+}
+
+# ---------- main ----------
+sel="$(build_menu | rofi "${ROFI_ARGS[@]}")" || exit 0
+[ -z "${sel:-}" ] && exit 0
+
+case "$sel" in
+  "Mode: Copy"|"Mode: Delete"|"$SEP"|"📌  Pinned"|"—  (no pinned items)") exit 0 ;;
+  "➕  New pin (paste)…") new_pin_text; exec "$0" "$MODE" ;;
+  "📋  Pin from clipboard…") pin_from_clipboard; exec "$0" "$MODE" ;;
+  "🛠️  Manage pinned…") manage_pinned; exec "$0" "$MODE" ;;
+  "↩  Back to Copy mode") exec "$0" copy ;;
+  "⇄  Switch to Delete mode") exec "$0" delete ;;
+  "🧹  Wipe all (history)…")
+    if confirm_rofi "<b>Hapus semua riwayat clipboard?</b>\n<small>(Pinned tidak ikut terhapus)</small>"; then
+      if cliphist wipe 2>/dev/null; then :; else
+        cliphist list | awk -F '\t' 'NF{print $1}' | xargs -r -n1 cliphist delete
+      fi
+      notify "History cleared"
+    fi
+    exec "$0" "$MODE"
+    ;;
+esac
+
+# Klik item pinned langsung
+id="$(printf '%s' "$sel" | awk -F '\t' 'NF{print $1}')"
+if printf '%s' "$id" | grep -q '^PIN:'; then
+  pin_path="${id#PIN:}"
+  if [ "$MODE" = "delete" ]; then
+    name="$(basename "$pin_path" | escape_pango)"
+    preview_esc="$(head -c 200 "$pin_path" 2>/dev/null | tr '\n' ' ' | escape_pango)"
+    if confirm_rofi "<b>Hapus pinned item?</b>\n<small>${name}</small>\n<small>${preview_esc}</small>"; then
+      rm -f -- "$pin_path"; notify "Pinned item deleted"
+    fi
+    exec "$0" delete
+  else
+    copy_pinned "$pin_path"; notify "Pinned copied"; exit 0
+  fi
+fi
+
+# History (cliphist)
+if [ "$MODE" = "delete" ]; then
+  preview_raw="$(printf '%s' "$sel" | cut -f2- | head -c 200)"
+  preview_esc="$(printf '%s' "$preview_raw" | tr '\n' ' ' | escape_pango)"
+  if confirm_rofi "<b>Hapus item ini?</b>\n<small>${preview_esc}</small>"; then
+    cliphist delete "$id"; notify "Deleted 1 item"
+  fi
+  exec "$0" delete
+else
+  printf '%s' "$sel" | cliphist decode | wl-copy
+  notify "Copied"
+  exit 0
+fi

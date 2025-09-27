@@ -1,0 +1,123 @@
+/***** Rofi Audio (minimal, uses your colors/fonts) *****/
+configuration {
+  show-icons: false;
+}
+
+@import "colors.rasi"
+@import "fonts.rasi"
+
+/* Window: southeast, borderless, real transparency */
+window {
+  transparency: "real";
+  location:     southeast;
+  anchor:       southeast;
+  width:        420px;
+  x-offset:     0px;
+  y-offset:     0px;
+
+  margin:       0px;
+  padding:      0px;
+  border:       0px;
+  border-radius:30px 0px 0px 0px;  /* TL TR BR BL */
+  background-color: @bg;           /* pastikan @bg ada alpha di colors.rasi */
+}
+
+/* Layout */
+mainbox {
+  padding:          20px;
+  spacing:          10px;
+  background-color: transparent;
+  children:         [ "inputbar", "message", "listview" ];
+}
+
+/* Header: icon bulat kiri + spacer + pill prompt kanan */
+inputbar {
+  spacing:          10px;
+  background-color: transparent;
+  text-color:       @fg;
+  children:         [ "textbox-prompt-colon", "textbox", "prompt" ];
+}
+
+/* ikon bulat kiri (ikon di-set dari skrip) */
+textbox-prompt-colon {
+  padding:          8px 10px;
+  border-radius:    100%;
+  background-color: @sel;
+  text-color:       @bg;
+  expand:           false;
+  vertical-align:   0.5;
+}
+
+/* spacer untuk mendorong pill ke kanan */
+textbox {
+  expand:           true;
+  background-color: transparent;
+  text-color:       transparent;
+  str:              "";
+}
+
+/* pill prompt (isi dari -p di skrip) */
+prompt {
+  expand:           false;
+  padding:          8px 12px;
+  border-radius:    9999px;
+  background-color: @sel;
+  text-color:       @bg;
+  vertical-align:   0.5;
+}
+
+/* Message bar */
+message {
+  margin:           0px;
+  padding:          8px 12px;
+  border-radius:    12px;
+  background-color: @bg;
+  text-color:       @fg;
+}
+textbox {
+  background-color: transparent;
+  text-color:       inherit;
+  vertical-align:   0.5;
+  horizontal-align: 0.0;
+}
+
+/* List (5 opsi) */
+listview {
+  columns:          1;
+  lines:            5;
+  layout:           vertical;
+  fixed-columns:    true;
+  fixed-height:     true;
+  spacing:          6px;
+  background-color: transparent;
+  scrollbar:        false;
+  text-color:       @fg;
+}
+
+element {
+  padding:          8px 10px;
+  border-radius:    10px;
+  background-color: transparent;
+  text-color:       @fg;
+}
+element selected {
+  background-color: @sel;
+  text-color:       @bg;
+}
+element-text {
+  background-color: transparent;
+  text-color:       inherit;
+  highlight:        inherit;
+  horizontal-align: 0.0;
+  vertical-align:   0.5;
+}
+
+/* kita tidak pakai entry/case di mode dmenu */
+entry { enabled: false; }
+case-indicator { enabled: false; }
+error-message {
+  padding:          16px;
+  background-color: @bg;
+  text-color:       @fg;
+}
+

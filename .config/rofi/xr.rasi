@@ -1,0 +1,173 @@
+/*****----- Configuration -----*****/
+configuration {
+    modi:                       "drun,run,filebrowser";
+    show-icons:                 true;
+    display-drun:               "";
+    display-run:                "";
+    display-filebrowser:        "";
+    drun-display-format:        "{name}";
+}
+
+/*****----- Global Properties -----*****/
+@import "colors.rasi"
+@import "fonts.rasi"
+
+/*****----- Main Window (CENTERED) -----*****/
+window {
+    transparency:               "real";
+    location:                   center;
+    anchor:                     center;
+    fullscreen:                 false;
+    width:                      520px;
+
+    margin:                     0px;
+    padding:                    0px;
+    border:                     0px solid;
+    border-radius:              14px;         /* seragam semua sudut */
+    border-color:               @border;
+    background-color:           @bg;
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    spacing:                    10px;
+    padding:                    20px;
+    background-color:           transparent;
+    children:                   [ "inputbar", "message", "listview" ];
+}
+
+/*****----- Inputbar -----*****/
+inputbar {
+    spacing:                    10px;
+    padding:                    0px;          /* tinggi diatur entry */
+    background-color:           transparent;
+    text-color:                 @fg;
+    children:                   [ "textbox-prompt-colon", "entry", "mode-switcher" ];
+}
+
+textbox-prompt-colon {
+    padding:                    0px 6px 0px 0px;
+    expand:                     false;
+    str:                        "";
+    background-color:           transparent;
+    text-color:                 inherit;
+    vertical-align:             0.5;
+}
+
+entry {
+    padding:                    10px 0px;
+    background-color:           transparent;
+    text-color:                 inherit;
+    cursor:                     text;
+    placeholder:                "Search...";
+    placeholder-color:          @fg;
+    vertical-align:             0.5;
+}
+
+/*****----- Listview -----*****/
+listview {
+    columns:                    1;
+    lines:                      10;
+    cycle:                      true;
+    dynamic:                    true;
+    scrollbar:                  false;
+    layout:                     vertical;
+    reverse:                    false;
+    fixed-height:               true;
+    fixed-columns:              true;
+
+    spacing:                    5px;
+    background-color:           transparent;
+    text-color:                 @fg;
+}
+scrollbar {
+    handle-width:               5px;
+    handle-color:               @sel;
+    border-radius:              10px;
+    background-color:           @bg;
+}
+
+/*****----- Elements -----*****/
+element {
+    spacing:                    10px;
+    padding:                    6px;
+    border-radius:              12px;
+    background-color:           transparent;
+    text-color:                 @fg;
+}
+
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active,
+element normal.urgent,
+element alternate.urgent {
+    background-color:           transparent;
+    text-color:                 @fg;
+}
+
+element selected.normal,
+element selected.active,
+element selected.urgent {
+    background-color:           @sel;
+    text-color:                 @bg;
+}
+
+element-icon {
+    background-color:           transparent;
+    text-color:                 inherit;
+    size:                       24px;
+}
+element-text {
+    background-color:           transparent;
+    text-color:                 inherit;
+    highlight:                  inherit;
+    vertical-align:             0.5;
+    horizontal-align:           0.0;
+}
+
+/*****----- Mode Switcher -----*****/
+mode-switcher {
+    spacing:                    10px;
+    padding:                    0px;
+    background-color:           transparent;
+    text-color:                 @fg;
+}
+button {
+    padding:                    8px 12px;
+    border-radius:              12px;
+    background-color:           @bg;
+    text-color:                 inherit;
+    border:                     1px solid;
+    border-color:               @border;
+}
+button selected {
+    background-color:           @sel;
+    text-color:                 @bg;
+    border:                     1px solid;
+    border-color:               @sel;
+}
+
+/*****----- Message -----*****/
+message {
+    margin:                     0px;
+    padding:                    8px 12px;
+    border-radius:              12px;
+    background-color:           @bg;
+    text-color:                 @fg;
+}
+textbox {
+    background-color:           transparent;
+    text-color:                 @fg;
+    vertical-align:             0.5;
+    horizontal-align:           0.0;
+    highlight:                  none;
+    placeholder-color:          @fg;
+    blink:                      true;
+    markup:                     true;
+}
+error-message {
+    padding:                    30px;
+    background-color:           @bg;
+    text-color:                 @fg;
+}

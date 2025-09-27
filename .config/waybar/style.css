@@ -1,0 +1,380 @@
+/* 
+ * Waybar style (Base16 via Flavours)
+ */
+
+@import "./colors.css";
+
+/** Fonts **/
+* {
+  font-family: "Iosevka Nerd Font";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/** Waybar Window **/
+#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+/** Sway Workspaces — Enhanced & Fixed **/
+#workspaces {
+  margin: 6px;
+  padding: 0;
+  background: transparent;
+}
+
+#workspaces button {
+  background-color: @base01;
+  color: @base05;
+  border-radius: 8px;
+  margin: 0 2px;
+  padding: 2px 8px;
+  
+  /* Border dengan highlight atas sebagai indikator utama */
+  border: 2px solid transparent;
+  border-top-width: 2px;
+  
+  /* Efek visual */
+  box-shadow: none;
+  transition: all 200ms ease-in-out;
+  font-weight: 600;
+  font-size: 12px;
+  min-width: 20px;
+}
+
+/* Hover effect yang konsisten */
+#workspaces button:hover {
+  background-color: @base02;
+  border-top-color: @base0C;
+  color: @base07;
+}
+
+/* 1) FOCUSED: workspace aktif dengan highlight terang */
+#workspaces button.focused,
+#workspaces button.active.focused {
+  background-color: @base02;
+  border-top-color: @base0D;
+  color: @base07;
+}
+
+/* 2) ACTIVE non-focused: workspace dengan aplikasi tapi tidak fokus */
+#workspaces button.active:not(.focused) {
+  background-color: @base01;
+  border-top-color: @base04;
+  color: @base06;
+}
+
+/* 3) VISIBLE: workspace terlihat di output lain */
+#workspaces button.visible:not(.focused):not(.active) {
+  background-color: @base01;
+  border-top-color: @base03;
+  color: @base05;
+  opacity: 0.8;
+}
+
+/* 4) OCCUPIED: workspace dengan aplikasi (tapi tidak terlihat) */
+#workspaces button.occupied:not(.active):not(.focused) {
+  background-color: @base01;
+  color: @base04;
+  border-left: 3px solid @base0A;
+}
+
+/* 5) EMPTY/PERSISTENT: workspace kosong */
+#workspaces button.empty,
+#workspaces button.persistent {
+  background-color: @base00;
+  color: @base03;
+  border-color: transparent;
+  border-top-color: transparent;
+  opacity: 0.6;
+  transition: opacity 200ms ease;
+}
+
+#workspaces button.empty:hover,
+#workspaces button.persistent:hover {
+  opacity: 1;
+  background-color: @base01;
+  color: @base05;
+}
+
+/* 6) SPECIAL: workspace khusus (floating, scratchpad, dll) */
+#workspaces button.special {
+  background-color: @base01;
+  border: 2px solid @base0E;
+  border-top-color: @base0E;
+  color: @base0E;
+}
+
+/* 7) URGENT: workspace yang membutuhkan perhatian */
+@keyframes ws-urgent-pulse {
+  0% { 
+    border-top-color: @base08; 
+    color: @base08;
+  }
+  50% { 
+    border-top-color: @base0A; 
+    color: @base0A;
+  }
+  100% { 
+    border-top-color: @base08; 
+    color: @base08;
+  }
+}
+
+#workspaces button.urgent {
+  background-color: @base02;
+  color: @base08;
+  animation: ws-urgent-pulse 2s ease-in-out infinite;
+  border-top-color: @base08;
+}
+
+/* Responsif untuk layar kecil - menggunakan class selector */
+#workspaces.small button {
+  padding: 2px 6px;
+  margin: 0 1px;
+  font-size: 11px;
+  min-width: 18px;
+}
+
+/* Mode compact untuk workspace banyak */
+#workspaces.compact button {
+  padding: 1px 4px;
+  margin: 0 1px;
+  font-size: 10px;
+  border-radius: 6px;
+  min-width: 16px;
+}
+
+/** Taskbar **/
+#taskbar {
+  font-style: normal;
+  font-weight: 500;
+}
+
+#taskbar button {
+  margin: 2px;
+  padding: 2px 8px;
+  border-radius: 6px;
+
+  background-color: transparent;
+  color: @base07;
+
+  border: 2px solid transparent;
+  box-shadow: none;
+}
+
+#taskbar button:hover {
+  border-color: @base0C;
+  color: @base07;
+}
+
+#taskbar button.minimized {
+  border-color: transparent;
+  color: @base07;
+}
+
+#taskbar button.active {
+  border-color: @base02;
+  color: @base07;
+}
+
+/** Custom Buttons **/
+#custom-menu {
+  background-color: @base01;
+  color: @base0E;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+
+#custom-themes {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+
+#custom-flavours,
+#custom-nightlight,
+#custom-qs,
+#bluetooth,
+#network {
+  background-color: @base01;
+  color: @base0E;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+/** Idle Inhibitor **/
+#idle_inhibitor {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 4px 6px;
+}
+#idle_inhibitor.deactivated {
+  background-color: @base08;
+}
+
+/** Tray **/
+#tray {
+  background-color: @base01;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 4px 6px;
+}
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/** MPD **/
+#mpd { color: @base05; font-size: 12px; }
+#mpd.disconnected,
+#mpd.stopped { color: @base08; }
+#mpd.playing { color: @base0C; }
+#mpd.2, #mpd.3, #mpd.4 {
+  background-color: @base01;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px 2px;
+  padding: 4px 6px;
+}
+
+/** CPU / Memory / Disk **/
+#cpu    { color: @base08; }
+#memory { color: @base0B; }
+#disk   { color: @base0A; }
+
+/** Pulseaudio **/
+#pulseaudio           { color: @base0D; }
+#pulseaudio.bluetooth { color: @base0C; }
+#pulseaudio.muted     { color: @base08; }
+
+/** Backlight **/
+#backlight { color: @base0E; }
+
+/** Battery **/
+#battery { color: @base0C; }
+#battery.critical:not(.charging) {
+  background-color: @base02;
+  color: @base08;
+  animation: blink 0.5s linear infinite alternate;
+}
+@keyframes blink { 
+  0% { color: @base08; }
+  100% { color: @base05; } 
+}
+
+/** Network **/
+#network { color: @base0A; }
+#network.disconnected,
+#network.disabled { color: @base08; }
+
+/** Bluetooth **/
+#bluetooth { color: @base0B; }
+#bluetooth.disabled,
+#bluetooth.off { color: @base08; }
+
+/** Themes **/
+#custom-flavours { color: @base0C; }
+
+/** Nightlight **/
+#custom-nightlight { color: @base0E; }
+
+/** QS **/
+#custom-qs { color: @base07; }
+
+/** Clock **/
+#clock { 
+  color: @base0D;
+  font-size: 16px;
+}
+
+/** Updates **/
+@keyframes new-updates {
+  0% { color: transparent; }
+  100% { color: @base0B; }
+}
+
+@keyframes refreshing {
+  0% { color: @base03; }
+  100% { color: @base0C; }
+}
+
+#custom-updates {
+  background-color: @base02;
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+  color: @base03;
+  font-size: 14px;
+}
+
+#custom-updates.up-to-date { color: @base03; }
+#custom-updates.updates    { color: @base0B; }
+#custom-updates.offline    { color: @base08; }
+
+#custom-updates.new-updates {
+  animation-name: new-updates;
+  animation-duration: 0.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+#custom-updates.refreshing {
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+  color: @base03;
+  animation-name: refreshing;
+  animation-duration: 1.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+/** Common style **/
+#backlight,
+#battery,
+#cpu,
+#disk,
+#memory,
+#custom-updates {
+  background-color: @base01;
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+}
+
+#pulseaudio,
+#backlight.2,
+#battery.2,
+#cpu.2,
+#disk.2,
+#memory.2,
+#pulseaudio.2,
+#network.2,
+#bluetooth.2,
+#custom-updates.2 {
+  background-color: @base01;
+  color: @base05;
+  font-size: 14px;
+  border-radius: 0px 10px 10px 0px;
+  margin: 6px 6px 6px 0px;
+  padding: 5px 6px 4px 6px;
+}

@@ -1,0 +1,85 @@
+#!/bin/sh
+# Niri-only compositor launcher with optional PipeWire support (Void Linux friendly)
+
+# --- Parse Arguments ---
+START_PIPEWIRE=false
+# COMPOSITOR dikunci
+COMPOSITOR="niri"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -p) START_PIPEWIRE=true ;;
+    -*) echo "Unknown option: $1" >&2; exit 1 ;;
+    *) echo "This launcher is fixed for 'niri' (arg '$1' ignored)";;
+  esac
+  shift
+done
+
+# --- Setup Logging ---
+mkdir -p "$HOME/.cache"
+LOGFILE="$HOME/.cache/wsession-errors"
+echo "$COMPOSITOR session started: $(date)" >> "$LOGFILE"
+exec >> "$LOGFILE" 2>&1
+
+# --- Ensure runtime dir exists ---
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  [ -d "$XDG_RUNTIME_DIR" ] || mkdir -p "$XDG_RUNTIME_DIR"
+  chmod 700 "$XDG_RUNTIME_DIR"
+fi
+
+# --- Environment Variables ---
+export QT_QPA_PLATFORM=wayland
+export QT_QPA_PLATFORMTHEME=qt6ct
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export ELM_DISPLAY=wl
+export SDL_VIDEODRIVER=wayland
+export GTK_USE_PORTAL=1
+export MOZ_ENABLE_WAYLAND=1
+export XCURSOR_THEME=Bibata-Modern-Ice
+export XCURSOR_SIZE=24
+export XDG_SESSION_TYPE=wayland
+export XDG_SESSION_DESKTOP="niri"
+export XDG_CURRENT_DESKTOP="niri"
+export XDG_DATA_DIRS="$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share"
+export NO_AT_BRIDGE=1
+export XKB_DEFAULT_LAYOUT=fr,us
+export XKB_DEFAULT_OPTIONS=grp:rctrl_rshift_toggle
+
+# --- D-Bus Session ---
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+  eval "$(/usr/bin/dbus-launch --exit-with-session --sh-syntax)"
+fi
+dbus-update-activation-environment --all &
+
+# --- Clean Previous Session ---
+rm -f "$HOME"/.cache/*.wob
+
+# --- PipeWire Stack ---
+if [ "$START_PIPEWIRE" = true ]; then
+  echo "Launching PipeWire stack..."
+  pgrep -x pipewire      >/dev/null || pipewire &
+  sleep 1
+  pgrep -x wireplumber   >/dev/null || wireplumber &
+  pgrep -x pipewire-pulse>/dev/null || pipewire-pulse &
+fi
+
+# --- Start polkit agent (authorization dialogs) ---
+if command -v lxqt-policykit-agent >/dev/null 2>&1; then
+  lxqt-policykit-agent &
+elif command -v /usr/libexec/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+  /usr/libexec/polkit-gnome-authentication-agent-1 &
+fi
+
+# --- Launch Niri ---
+command -v niri >/dev/null 2>&1 || { echo "Compositor not found: niri" >&2; exit 1; }
+
+# Pakai config kdl kalau ada (opsional)
+if [ -f "$HOME/.config/niri/config.kdl" ]; then
+  echo "Starting: niri --config ~/.config/niri/config.kdl"
+  exec niri --config "$HOME/.config/niri/config.kdl"
+else
+  echo "Starting: niri"
+  exec niri
+fi
+

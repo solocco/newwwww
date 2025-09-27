@@ -1,0 +1,70 @@
+shell = "bash -c '{}'"
+
+# Waybar
+[[items]]
+file = "/home/cid/.config/waybar/colors.css"
+template = "waybar"
+hook = "command -v waybar >/dev/null && pkill -SIGRTMIN+7 waybar || true"
+rewrite = true
+
+# Foot
+[[items]]
+file = "/home/cid/.config/foot/colors.ini"
+template = "foot"
+hook = "pkill -HUP foot 2>/dev/null || true"
+rewrite = true
+
+# Alacritty
+[[items]]
+file = "/home/cid/.config/alacritty/colors.toml"
+template = "alacritty"
+rewrite = true
+
+# Fuzzel
+[[items]]
+file = "/home/cid/.config/fuzzel/colors.ini"
+template = "fuzzel"
+rewrite = true
+
+# Labwc (pakai openbox-3 theme)
+[[items]]
+file = "/home/cid/.local/share/themes/Base16/openbox-3/themerc"
+template = "labwc"
+hook = "command -v labwc >/dev/null && labwc -r || true"
+start = "!! Start flavours"
+end   = "!! End flavours"
+
+# Neovim colours
+[[items]]
+file = "/home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua"
+template = "nvim"
+hook = "[ -S /tmp/nvim-server ] && nvim --server /tmp/nvim-server --remote-send ':source /home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua<CR>:lua require(\"base16-colorscheme\").setup()<CR>' || true"
+start = "-- Start flavours"
+end   = "-- End flavours"
+
+# Neovim hardline
+[[items]]
+file = "/home/cid/.config/nvim/lua/speyll/plugins/nvim-hardline.lua"
+template = "nvim-hardline"
+start = "-- Start flavours"
+end   = "-- End flavours"
+
+[[items]]
+file = "~/.config/fnott/fnott.ini"
+start = "# Start flavours (default)"
+end   = "# End flavours"
+template = "fnott-dark"
+only = ["*dark*","*mocha*","*night*","*noir*"]
+
+[[items]]
+file = "~/.config/fnott/fnott.ini"
+start = "# Start flavours (default)"
+end   = "# End flavours"
+template = "fnott-light"
+only = ["*light*","*latte*","*day*","*dawn*"]
+
+# Rofi
+[[items]]
+file = "/home/cid/.config/rofi/colors.rasi"
+template = "rofi"
+rewrite = true

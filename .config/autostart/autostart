@@ -1,0 +1,176 @@
+#!/bin/sh
+
+LOG="/tmp/autostart.log"
+
+# =========================
+# Config
+# =========================
+AUDIO=true
+MODE="none"                 # swaybg, swaybg-random, none
+THEME_MODE="last"           # last, auto, fixed, none
+THEME_NAME="gruvbox-dark-medium"
+CURSOR="Bibata-Modern-Ice"
+WAYBAR_STYLE="none"         # stacking, tiling, none
+
+# Wallpaper lokal (fallback)
+DWALL="$HOME/pictures/walls/wall.jpg"
+WALL_DIR="$HOME/pictures/walls"
+
+LAST_THEME_FILE="$HOME/.cache/flavours/last_theme"
+LAST_WALL_FILE="$HOME/.cache/last_wallpaper"
+
+# =========================
+# Tunggu Wayland siap (maks 10s)
+# =========================
+timeout=20
+while { [ -z "$WAYLAND_DISPLAY" ] || [ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; } && [ "$timeout" -gt 0 ]; do
+  sleep 0.5
+  timeout=$((timeout - 1))
+done
+
+# =========================
+# Env & Agents
+# =========================
+dbus-update-activation-environment --all >>"$LOG" 2>&1 &
+/usr/libexec/polkit-gnome-authentication-agent-1 >>"$LOG" 2>&1 &
+
+# =========================
+# Monitor layout
+# =========================
+PRIMARY_OUTPUT="$(wlr-randr 2>/dev/null | awk '/^.* connected/ {print $1; exit}')"
+if [ -n "$PRIMARY_OUTPUT" ]; then
+  wlr-randr --output "$PRIMARY_OUTPUT" --on --pos 0,0 --transform normal --adaptive-sync enabled >>"$LOG" 2>&1 &
+  wait
+else
+  echo "No connected outputs detected by wlr-randr" >>"$LOG"
+fi
+
+# =========================
+# Process Management
+# =========================
+for p in flavours mpvpaper swaybg fnott wlsunset cliphist; do
+  pkill -x "$p" >>"$LOG" 2>&1 || :
+done
+
+# =========================
+# Audio (opsional)
+# =========================
+if [ "$AUDIO" = true ]; then
+  for p in pipewire wireplumber pipewire-pulse; do pkill -x "$p" >>"$LOG" 2>&1 || :; done
+  pipewire >>"$LOG" 2>&1 &
+  sleep 1
+  wireplumber >>"$LOG" 2>&1 &
+  pipewire-pulse >>"$LOG" 2>&1 &
+fi
+
+# =========================
+# OpenRGB (opsional)
+# =========================
+if command -v openrgb >/dev/null 2>&1; then
+  openrgb --server -p pureWhite >>"$LOG" 2>&1 &
+else
+  echo "OpenRGB not found" >>"$LOG"
+fi
+
+# =========================
+# Helpers
+# =========================
+apply_swaybg() {
+  img="$1"
+  pkill -x swaybg >>"$LOG" 2>&1 || :
+  swaybg -i "$img" -m fill >>"$LOG" 2>&1 &
+  mkdir -p "$(dirname "$LAST_WALL_FILE")"
+  printf '%s\n' "$img" > "$LAST_WALL_FILE"
+  echo "Saved last wallpaper: $img" >>"$LOG"
+}
+
+# =========================
+# Flavours wrapper (auto-save last theme)
+# =========================
+flavours_apply() {
+  scheme="$1"
+  if command flavours apply "$scheme" >>"$LOG" 2>&1; then
+    mkdir -p "$(dirname "$LAST_THEME_FILE")"
+    printf '%s\n' "$scheme" > "$LAST_THEME_FILE"
+    echo "Saved last theme: $scheme" >>"$LOG"
+  fi
+}
+
+# =========================
+# Main (Wallpaper MODE=none → pakai last_wallpaper)
+# =========================
+case "$MODE" in
+  none)
+    if [ -s "$LAST_WALL_FILE" ]; then
+      SEL="$(head -n1 "$LAST_WALL_FILE" | tr -d '\r\n')"
+      [ -f "$SEL" ] && apply_swaybg "$SEL" || apply_swaybg "$DWALL"
+    else
+      apply_swaybg "$DWALL"
+    fi
+    ;;
+  *)
+    echo "Unknown MODE: $MODE" >>"$LOG"
+    ;;
+esac
+
+# =========================
+# Theme
+# =========================
+configure_theme() {
+  case "$THEME_MODE" in
+    last)
+      if [ -s "$LAST_THEME_FILE" ]; then
+        LAST_SCHEME="$(head -n1 "$LAST_THEME_FILE" | tr -d '\r\n')"
+        flavours_apply "$LAST_SCHEME"
+      else
+        flavours_apply "$THEME_NAME"
+      fi
+      ;;
+    auto)
+      if [ -s "$LAST_WALL_FILE" ]; then
+        WP="$(head -n1 "$LAST_WALL_FILE" | tr -d '\r\n')"
+        [ -f "$WP" ] && {
+          flavours generate dark "$WP" >>"$LOG" 2>&1
+          flavours_apply "generated"
+        }
+      fi
+      ;;
+    fixed)
+      flavours_apply "$THEME_NAME"
+      ;;
+    none) : ;;
+  esac
+}
+configure_theme
+
+# =========================
+# Waybar
+# =========================
+configure_waybar() {
+  case "$WAYBAR_STYLE" in
+    stacking)
+      pkill -x waybar >>"$LOG" 2>&1 || :
+      waybar -c "$HOME/.config/waybar/config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
+      ;;
+    tiling)
+      pkill -x waybar >>"$LOG" 2>&1 || :
+      waybar -c "$HOME/.config/waybar/tiling-config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
+      ;;
+    none) : ;;
+  esac
+}
+configure_waybar
+
+# =========================
+# Cursor
+# =========================
+gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR" >>"$LOG" 2>&1 &
+seat seat0 xcursor_theme "$CURSOR" >>"$LOG" 2>&1 &
+
+# =========================
+# Extras
+# =========================
+fnott >>"$LOG" 2>&1 &
+wlsunset -T 6500 -t 5000 -l -6.2 -L 106.8 >>"$LOG" 2>&1 &
+wl-paste --watch cliphist store -max-items 100 >>"$LOG" 2>&1 &
+xwayland-satellite &

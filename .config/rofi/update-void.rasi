@@ -1,0 +1,90 @@
+@import "colors.rasi"
+
+/* matiin block highlight bawaan supaya gak muncul kotak putih */
+* {
+    highlight: none;
+}
+
+window {
+    location: center;
+    anchor: center;
+    width: 600px;
+    height: 400px;
+    border: 1px solid;              /* kalau bermasalah, ganti ke: border: 1px; */
+    border-color: @border;
+    border-radius: 8px;
+    background-color: @bg;
+    font: "monospace 12";
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ inputbar, listview ];
+    spacing: 0px;
+    padding: 8px;
+}
+
+inputbar {
+    background-color: transparent;
+    text-color: @fg;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 0px 0px 8px 0px;
+}
+
+prompt, entry, case-indicator, textbox {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+entry {
+    placeholder: "Search...";
+    placeholder-color: @fg;
+}
+
+/* pastikan widget bawaan tidak nyisain background putih */
+separator, scrollbar, case-indicator, textbox {
+    background-color: transparent;
+    text-color: @fg;
+    border: 0px;
+}
+
+listview {
+    background-color: transparent;
+    lines: 15;
+    scrollbar: false;
+    spacing: 2px;
+    border: 0px;                    /* cegah garis pinggir bawaan */
+}
+
+element {
+    background-color: transparent;
+    text-color: @fg;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 0px;
+}
+
+/* semua state default transparan (hapus putih-putih alternate/active/urgent) */
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active,
+element normal.urgent,
+element alternate.urgent {
+    background-color: transparent;
+    text-color: @fg;
+    border: 0px;
+}
+
+element selected {
+    background-color: #6FB79033;    /* hijau transparan */
+    text-color: @sel;
+    border: 0px;
+}
+
+element-text, element-icon {
+    background-color: transparent;
+    text-color: inherit;
+    highlight: inherit;
+}

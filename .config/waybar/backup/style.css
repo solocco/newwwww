@@ -1,0 +1,231 @@
+/* 
+ * Waybar style Gruvbox (Base16 via Flavours)
+ */
+
+@import "./colors.css";
+
+/** Fonts **/
+* {
+  font-family: "Iosevka Nerd Font";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/** Waybar Window **/
+#waybar {
+    background-color: @base00;
+    color: @base05;
+    border-radius: 6px;
+    box-shadow: none;
+}
+
+#taskbar {
+    font-style: normal;
+    font-weight: 500;
+}
+
+#taskbar button {
+    margin: 2px;              
+    padding: 2px 8px;         
+    border-radius: 6px;
+
+    background-color: transparent;
+    color: @base07;
+
+    /* selalu ada border, default transparan biar stabil */
+    border: 2px solid transparent;
+    box-shadow: none;
+}
+
+#taskbar button:hover {
+    border-color: @base0C;   /* hover pakai border accent */
+    color: @base07;
+}
+
+#taskbar button.minimized {
+    border-color: transparent; /* minimize polos */
+    color: @base07;
+}
+
+#taskbar button.active {
+    border-color: @base02; /* active pakai border gelap */
+    color: @base07;
+}
+
+ /** Custom **/
+#custom-menu {
+  background-color: @base01;
+  color: @base0E;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+#custom-themes {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+}
+#custom-flavours,
+#custom-nightlight,
+#bluetooth,
+#network {
+  background-color: @base01;
+  color: @base0E;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+/** Idle Inhibitor **/
+#idle_inhibitor {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 4px 6px;
+}
+#idle_inhibitor.deactivated { background-color: @base08; }
+
+/** Tray **/
+#tray {
+  background-color: @base01;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 4px 6px;
+}
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/** MPD **/
+#mpd { color: @base05; font-size: 12px; }
+#mpd.disconnected, #mpd.stopped { color: @base08; }
+#mpd.playing { color: @base0C; }
+#mpd.2, #mpd.3, #mpd.4 {
+  background-color: @base01;
+  font-size: 14px;
+  border-radius: 10px;
+  margin: 6px 2px;
+  padding: 4px 6px;
+}
+
+/** CPU / Memory / Disk **/
+#cpu    { color: @base08; }
+#memory { color: @base0B; }
+#disk   { color: @base0A; }
+
+/** Pulseaudio **/
+#pulseaudio           { color: @base0D; }
+#pulseaudio.bluetooth { color: @base0C; }
+#pulseaudio.muted     { color: @base08; }
+
+/** Backlight **/
+#backlight { color: @base0E; }
+
+/** Battery **/
+#battery { color: @base0C; }
+#battery.critical:not(.charging) {
+  background-color: @base02;
+  color: @base08;
+  animation: blink 0.5s linear infinite alternate;
+}
+@keyframes blink { to { color: @base05; } }
+
+/** Network **/
+#network { color: @base0A; }
+#network.disconnected, #network.disabled { color: @base08; }
+
+/** Bluetooth **/
+#bluetooth { color: @base0B; }
+#bluetooth.disabled, #bluetooth.off { color: @base08; }
+
+/** Themes **/
+#custom-flavours { color: @base0C; }
+
+/** Nightlight **/
+#custom-nightlight { color: @base0E; }
+
+/** Clock **/
+#clock { 
+    color: @base0D;
+    font-size: 16px;
+}
+
+@keyframes new-updates {
+  from {color:transparent;}
+    to {color:#4CDD85;}
+}
+
+@keyframes refreshing {
+  from {color:#555555;}
+    to {color:#6B9980;}
+}
+
+#custom-updates {
+    color: #555555;
+}
+
+#custom-updates.up-to-date {
+    color: #555555;
+}
+
+#custom-updates.updates {
+    color: #00CF52;
+}
+
+#custom-updates.new-updates {
+    animation-name: new-updates;
+    animation-duration: 0.5s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+#custom-updates.refreshing {
+    animation-name: refreshing;
+    animation-duration: 1.5s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+#custom-updates.offline {
+    color: #E2426C;
+}
+
+/** Common style **/
+#backlight,
+#battery,
+#cpu,
+#disk,
+#memory {
+	background-color: @base02;
+	border-radius: 10px 0px 0px 10px;
+	margin: 6px 0px;
+	padding: 4px 6px;
+}
+#pulseaudio,
+#backlight.2,
+#battery.2,
+#cpu.2,
+#disk.2,
+#memory.2,
+#pulseaudio.2,
+#network.2,
+#bluetooth.2 {
+  background-color: @base01;
+  color: @base05;
+  font-size: 14px;
+  border-radius: 0px 10px 10px 0px;
+  margin: 6px 6px 6px 0px;
+  padding: 5px 6px 4px 6px;
+}

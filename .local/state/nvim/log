@@ -1,0 +1,37 @@
+ERR 2025-08-26T10:23:27.937 nvim.29768.0 decor_provider_error:36: Error in decoration provider "line" (ns=nvim.treesitter.highlighter):
+Error executing lua: /usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: Invalid 'end_row': out of range
+stack traceback:
+	[C]: in function 'nvim_buf_set_extmark'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: in function 'fn'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:232: in function 'for_each_highlight_state'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:322: in function 'on_line_impl'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:411: in function </usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:405>
+ERR 2025-08-26T10:23:43.269 nvim.29768.0 decor_provider_error:36: Error in decoration provider "line" (ns=nvim.treesitter.highlighter):
+Error executing lua: /usr/share/nvim/runtime/lua/vim/treesitter.lua:195: Index out of bounds
+stack traceback:
+	[C]: in function 'nvim_buf_get_text'
+	/usr/share/nvim/runtime/lua/vim/treesitter.lua:195: in function 'get_node_text'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:553: in function 'handler'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:884: in function '_match_predicates'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:1013: in function 'iter'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:343: in function 'fn'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:232: in function 'for_each_highlight_state'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:322: in function 'on_line_impl'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:411: in function </usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:405>
+ERR 2025-08-26T22:56:42.640 ui.7435    tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T12:29:38.266 ui.24471   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T12:29:38.266 ui.24416   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T12:47:24.370 ui.31527   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T12:47:24.371 ui.32028   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T16:16:12.419 ui.15354   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T16:16:12.420 ui.15702   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-30T18:00:31.772 ui.21832   tui_stop:615: TUI already stopped (race?)
+ERR 2025-09-12T00:48:44.565 ui.15371   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-12T00:53:05.507 ui.16027   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-12T00:53:05.507 ui.15988   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-12T00:57:11.207 ui.1923    tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-12T01:19:25.814 ui.5176    tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-12T23:24:56.287 ui.487     tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-17T16:30:54.995 ui.32433   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-27T00:30:44.122 ui.5692    tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-27T00:42:29.665 ui.6834    tui_stop:641: TUI already stopped (race?)

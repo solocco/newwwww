@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+# rofi_nightlight — super simple wlsunset-only (NO toggle)
+# Status 3 baris + separator; ON/OFF/Warmer/Cooler/Preset/Auto/Manual
+# FIX: menu parser pakai wildcard (*" On", *" Off", dst) biar aman dari bullet/glyph/spacing.
+
+set -euo pipefail
+
+# ===== Config =====
+THEME="${ROFI_NIGHTLIGHT_THEME:-$HOME/.config/rofi/rofi_nightlight.rasi}"
+ROFI_ARGS=(-dmenu -p "Nightlight" -l 18)
+[ -f "$THEME" ] && ROFI_ARGS+=(-theme "$THEME")
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
+CONF="$STATE_DIR/nightlight.conf"
+mkdir -p "$STATE_DIR"
+
+# Defaults (boleh dioverride via env / conf)
+DAY_TEMP="${DAY_TEMP:-6500}"
+NIGHT_TEMP="${NIGHT_TEMP:-3700}"
+STEP="${STEP:-200}"
+START_TIME="${START_TIME:-19:00}"
+END_TIME="${END_TIME:-06:00}"
+LAT="${LAT:-}"   # contoh: -6.2
+LON="${LON:-}"   # contoh: 106.8
+
+# ===== Helpers =====
+notify(){ command -v notify-send >/dev/null 2>&1 && notify-send "Nightlight" "$1" || true; }
+clamp(){ v="${1:-0}"; [ "$v" -lt "$2" ] && v="$2"; [ "$v" -gt "$3" ] && v="$3"; printf '%s' "$v"; }
+save_conf(){
+  cat >"$CONF" <<-EOF
+DAY_TEMP=$DAY_TEMP
+NIGHT_TEMP=$NIGHT_TEMP
+STEP=$STEP
+START_TIME=$START_TIME
+END_TIME=$END_TIME
+LAT=$LAT
+LON=$LON
+EOF
+}
+load_conf(){ [ -f "$CONF" ] && . "$CONF" || true; }
+load_conf
+
+running(){ pgrep -f wlsunset >/dev/null 2>&1; }
+
+stop_wlsunset(){
+  # bunuh semua proses terkait wlsunset
+  command -v killall >/dev/null 2>&1 && killall -q wlsunset 2>/dev/null || true
+  pkill -f '[w]lsunset' 2>/dev/null || true
+  sleep 0.1
+  # keras kalau masih hidup
+  pids="$(pgrep -f wlsunset || true)"
+  [ -n "${pids:-}" ] && kill -KILL $pids 2>/dev/null || true
+}
+
+neutralize_gamma(){
+  # fallback netral (wlsunset tidak reset gamma on exit)
+  wlsunset -T 6500 -t 6500 >/dev/null 2>&1 &
+  sleep 0.4
+  stop_wlsunset
+}
+
+start_wlsunset(){
+  stop_wlsunset
+  args=(-T "$DAY_TEMP" -t "$NIGHT_TEMP")
+  # geo (auto) kalau ada
+  if [ -n "$LAT" ] && [ -n "$LON" ]; then
+    args=(-l "$LAT" -L "$LON" "${args[@]}")
+  fi
+  # manual jika kamu memang set jam
+  if [ -n "$START_TIME" ] && [ -n "$END_TIME" ]; then
+    args+=(-S "$START_TIME" -s "$END_TIME")
+  fi
+  # jalanin di background
+  wlsunset "${args[@]}" >/dev/null 2>&1 &
+}
+
+# ===== Actions =====
+do_on(){  start_wlsunset; notify "Enabled (${DAY_TEMP}K → ${NIGHT_TEMP}K)"; }
+do_off(){ stop_wlsunset; neutralize_gamma; notify "Disabled"; }
+
+do_settemp(){
+  NIGHT_TEMP="$(clamp "${1:-$NIGHT_TEMP}" 1000 10000)"
+  start_wlsunset
+  notify "Temp set: ${NIGHT_TEMP}K"
+}
+do_warmer(){ do_settemp "$((NIGHT_TEMP - STEP))"; }
+do_cooler(){ do_settemp "$((NIGHT_TEMP + STEP))"; }
+
+do_auto(){ start_wlsunset; notify "Schedule: Auto (Sun/Geo)"; }
+do_manual(){
+  stop_wlsunset
+  wlsunset -T "$DAY_TEMP" -t "$NIGHT_TEMP" -S "$START_TIME" -s "$END_TIME" >/dev/null 2>&1 &
+  notify "Schedule: Manual ${START_TIME}–${END_TIME}"
+}
+
+# ===== CLI quick test (opsional) =====
+case "${1-}" in
+  --on)     do_on; exit 0 ;;
+  --off)    do_off; exit 0 ;;
+  --status) pgrep -fa wlsunset || echo "wlsunset: mati"; exit 0 ;;
+  "") ;; # lanjut rofi
+  *) echo "Usage: $0 [--on|--off|--status]"; exit 2 ;;
+esac
+
+# ===== Status 3 baris =====
+if running; then
+  running_lbl="On"; mark_on="●"; mark_off="○"
+else
+  running_lbl="Off"; mark_on="○"; mark_off="●"
+fi
+
+if   [ -n "$LAT" ] && [ -n "$LON" ]; then sched="Auto (Lat:$LAT, Lon:$LON)"
+elif [ -n "$START_TIME" ] && [ -n "$END_TIME" ]; then sched="Manual ${START_TIME}–${END_TIME}"
+else sched="Always-on"; fi
+
+L1="Status   : $running_lbl"
+L2="Temp     : ${DAY_TEMP} → ${NIGHT_TEMP}K"
+L3="Schedule : $sched"
+SEP="──────────────"
+
+# ===== Menu =====
+items=()
+items+=("$L1")
+items+=("$L2")
+items+=("$L3")
+items+=("$SEP")
+items+=("$mark_on  On")
+items+=("$mark_off Off")
+items+=("$SEP")
+items+=("Warmer  (+${STEP}K)")
+items+=("Cooler  (-${STEP}K)")
+items+=("Temp 3000K")
+items+=("Temp 3500K")
+items+=("Temp 4000K")
+items+=("Temp 4500K")
+items+=("Temp 5000K")   # <-- baru
+items+=("Temp 5500K")   # <-- baru
+items+=("$SEP")
+items+=("Schedule: Auto (Sun/Geo)")
+items+=("Schedule: Manual ${START_TIME}–${END_TIME}")
+
+choice="$(printf '%s\n' "${items[@]}" | rofi "${ROFI_ARGS[@]}")" || exit 0
+[ -z "${choice:-}" ] && exit 0
+
+# Normalisasi (buang leading/trailing spasi & CR)
+choice="$(printf '%s' "$choice" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | tr -d '\r')"
+
+# ===== Robust matcher: pakai wildcard suffix =====
+case "$choice" in
+  "$L1"|"$L2"|"$L3"|"$SEP") : ;;
+  *" On")                     do_on ;;
+  *" Off")                    do_off ;;
+  Warmer\ *|\ *Warmer\ *)     do_warmer ;;
+  Cooler\ *|\ *Cooler\ *)     do_cooler ;;
+  "Temp 3000K")               do_settemp 3000 ;;
+  "Temp 3500K")               do_settemp 3500 ;;
+  "Temp 4000K")               do_settemp 4000 ;;
+  "Temp 4500K")               do_settemp 4500 ;;
+  "Temp 5000K")               do_settemp 5000 ;;  # <-- baru
+  "Temp 5500K")               do_settemp 5500 ;;  # <-- baru
+  "Schedule: Auto (Sun/Geo)") do_auto ;;
+  "Schedule: Manual ${START_TIME}–${END_TIME}") do_manual ;;
+  *) : ;; # no-op
+esac
+
+save_conf
+exit 0

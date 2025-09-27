@@ -1,0 +1,71 @@
+/*****----- Configuration -----*****/
+configuration {
+    show-icons: true;
+}
+
+/*****----- Global Properties -----*****/
+@import "colors.rasi"
+@import "fonts.rasi"
+
+/*****----- Window (Centered) -----*****/
+window {
+    transparency:        "real";
+    location:            center;
+    anchor:              center;
+    width:               420px;
+
+    border:              1px;
+    border-radius:       14px;
+    border-color:        @border;
+    background-color:    @bg;
+
+    padding:             16px;
+}
+
+/*****----- Layout -----*****/
+mainbox {
+    spacing:             12px;
+    padding:             0px;
+    background-color:    transparent;
+    children:            [ "inputbar" ];
+}
+
+/*****----- Input (Password field) -----*****/
+inputbar {
+    spacing:             10px;
+    padding:             10px 12px;
+    background-color:    transparent;
+    text-color:          @fg;
+
+    border:              1px;
+    border-color:        @border;
+    border-radius:       10px;
+
+    children:            [ "textbox-prompt-colon", "entry" ];
+}
+
+textbox-prompt-colon {
+    str:                 "";       /* icon lock (Nerd Font) */
+    expand:              false;
+    padding:             0px 8px 0px 0px;
+    background-color:    transparent;
+    text-color:          inherit;
+    vertical-align:      0.5;
+}
+
+entry {
+    background-color:    transparent;
+    text-color:          inherit;
+    cursor:              text;
+    placeholder:         "Enter sudo password…";
+    placeholder-color:   @fg;
+    blink:               false;
+    vertical-align:      0.5;
+}
+
+/* Hide any list visuals (we only use the input) */
+listview, element, element-text, element-icon, message, textbox, error-message {
+    background-color:    transparent;
+    text-color:          @fg;
+}
+

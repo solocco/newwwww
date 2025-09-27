@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# Rofi Audio (PipeWire + EasyEffects)
+# - Volume up/down, mute speaker, mute mic
+# - Switch output device
+# - Load EasyEffects OUTPUT presets (keutamaan)
+set -euo pipefail
+
+export LC_ALL=C
+
+# ===== Config =====
+THEME="${ROFI_AUDIO_THEME:-$HOME/.config/rofi/rofi_audio.rasi}"
+PROMPT_BASE="${ROFI_AUDIO_PROMPT:-Audio}"
+STEP="${ROFI_AUDIO_STEP:-5}"                 # % per step
+NOTIFY_ICON="${ROFI_AUDIO_ICON:-audio-volume-high}"
+STAY_OPEN=1                                  # 1=loop rofi
+
+sink_default="@DEFAULT_AUDIO_SINK@"
+source_default="@DEFAULT_AUDIO_SOURCE@"
+
+# ===== Notify (Fnott ok) =====
+notify() {
+  command -v notify-send >/dev/null 2>&1 && \
+    notify-send -i "$NOTIFY_ICON" -a "Rofi Audio" "${1:-}" "${2:-}"
+}
+
+# ===== EasyEffects helpers =====
+ee_ensure() {
+  if ! pgrep -x easyeffects >/dev/null 2>&1; then
+    nohup easyeffects --gapplication-service >/dev/null 2>&1 &
+    sleep 0.6
+  fi
+}
+
+ee_list_output_presets() {
+  (
+    find "$HOME/.config/easyeffects/output" -maxdepth 1 -type f -name '*.json' 2>/dev/null
+    find /usr/share/easyeffects/output -maxdepth 1 -type f -name '*.json' 2>/dev/null
+  ) | awk -F/ '{print $NF}' | sed 's/\.json$//' | sort -u
+}
+
+ee_load_output_preset() {
+  local name="$1"
+  ee_ensure
+  # Coba format baru "output:Name", fallback ke nama polos
+  if easyeffects -l "output:${name}" >/dev/null 2>&1 \
+     || easyeffects -l "${name}" >/dev/null 2>&1; then
+    notify "Profile Applied" "$name"
+  else
+    notify "Gagal apply preset" "$name tidak ditemukan"
+  fi
+}
+
+# ===== PipeWire helpers =====
+need_wpctl() {
+  command -v wpctl >/dev/null 2>&1 || { notify "wpctl tidak ada" "xbps-install -S pipewire-tools"; exit 1; }
+}
+
+get_vol_pct() {
+  need_wpctl
+  # Output: "Volume: 0.53 ..." -> ambil angka kedua
+  wpctl get-volume "$sink_default" | awk '{printf "%d", $2*100}'
+}
+
+is_muted() {
+  need_wpctl
+  # Output bisa "Mute: yes/true" atau "no/false"
+  if wpctl get-mute "$sink_default" | grep -Eq '(yes|true)'; then echo yes; else echo no; fi
+}
+
+get_default_sink_name() {
+  need_wpctl
+  wpctl status | awk '
+    $1=="Sinks:"{ins=1; next}
+    ins && $1=="Sources:"{ins=0}
+    ins && /\*/ {
+      if (match($0,/\(([^)]+)\)/,m)) {print m[1]; exit}
+      sub(/^[[:space:]]*\*[[:space:]]*[0-9]+\.[[:space:]]*/,""); sub(/\[vol:.*/,"")
+      gsub(/[[:space:]]+$/,"")
+      print; exit
+    }'
+}
+
+prompt_dynamic() {
+  local v m s
+  v="$(get_vol_pct)"; m="$(is_muted)"; s="$(get_default_sink_name)"
+  [ -z "$s" ] && s="Unknown"
+  if [ "$m" = "yes" ]; then
+    echo "$PROMPT_BASE [MUTED] $v% · $s"
+  else
+    echo "$PROMPT_BASE $v% · $s"
+  fi
+}
+
+vol() {
+  need_wpctl
+  case "${1:-up}" in
+    up)   wpctl set-volume "$sink_default" "+${STEP}%";;
+    down) wpctl set-volume "$sink_default" "-${STEP}%";;
+  esac
+  notify "Volume" "$(get_vol_pct)%"
+}
+
+toggle_mute() {
+  need_wpctl
+  wpctl set-mute "$sink_default" toggle
+  [ "$(is_muted)" = "yes" ] && notify "Speaker Muted" || notify "Speaker Unmuted"
+}
+
+toggle_mic() {
+  need_wpctl
+  wpctl set-mute "$source_default" toggle
+  if wpctl get-mute "$source_default" | grep -Eq '(yes|true)'; then
+    notify "Mic Muted"
+  else
+    notify "Mic Unmuted"
+  fi
+}
+
+list_sinks() {
+  need_wpctl
+  wpctl status | awk '
+    $1=="Sinks:"{ins=1; next}
+    ins && $1=="Sources:"{ins=0}
+    ins && /^[[:space:]]*[0-9]+/ {
+      id=$1; sub(/\./,"",id)
+      line=$0
+      def=(index(line,"*")>0?" (default)":"")
+      name=""
+      if (match(line,/\(([^)]+)\)/,m)) name=m[1]
+      if (name=="") { sub(/^[[:space:]]*[0-9]+\.[[:space:]]*/,"",line); sub(/\[vol:.*/,"",line); name=line }
+      gsub(/[[:space:]]+$/,"",name)
+      printf "%s|%s%s\n", id, name, def
+    }'
+}
+
+switch_sink() {
+  local pick="$1"
+  local id="${pick%%|*}"
+  local name="${pick#*|}"
+  wpctl set-default "$id"
+  # pindahkan semua sink-input ke device baru
+  while read -r si; do
+    wpctl move-sink-input "$si" "$id" || true
+  done < <(wpctl status | awk '/Sink endpoints:/{s=1;next} s&&/^[[:space:]]*[0-9]+/{gsub(/[^0-9].*/,"",$1);print $1}')
+  notify "Device set" "$name"
+}
+
+device_picker() {
+  local list opts chosen line
+  list="$(list_sinks)"
+  [ -z "$list" ] && { notify "No sinks found"; return; }
+  opts="$(echo "$list" | awk -F'|' '{print $2}')"
+  chosen="$(echo "$opts" | rofi -dmenu -i -p "Device" -theme "$THEME")" || return
+  line="$(echo "$list" | awk -F'|' -v n="$chosen" '$2==n {print $0}')"
+  [ -n "$line" ] && switch_sink "$line"
+}
+
+profile_picker() {
+  ee_ensure
+  local list chosen
+  list="$(ee_list_output_presets)"
+  if [ -z "$list" ]; then
+    notify "Preset EasyEffects tidak ada" "taruh *.json di ~/.config/easyeffects/output/"
+    return
+  fi
+  chosen="$(echo "$list" | rofi -dmenu -i -p "Profile" -theme "$THEME")" || return
+  [ -n "$chosen" ] && ee_load_output_preset "$chosen"
+}
+
+menu() {
+  cat <<'EOF'
+  Volume +5%
+  Volume -5%
+  Toggle Mute
+  Toggle Mic
+  Device…
+  Profile…
+  Exit
+EOF
+}
+
+# ===== Main loop =====
+while :; do
+  PROMPT="$(prompt_dynamic)"
+  sel="$(menu | rofi -dmenu -p "$PROMPT" -theme "$THEME")" || exit 0
+  case "$sel" in
+    "  Volume "* ) vol up ;;
+    "  Volume "* ) vol down ;;
+    "  Toggle Mute" ) toggle_mute ;;
+    "  Toggle Mic" ) toggle_mic ;;
+    "  Device…" ) device_picker ;;
+    "  Profile…" ) profile_picker ;;
+    "  Exit" ) exit 0 ;;
+    * ) : ;;
+  esac
+  [ $STAY_OPEN -eq 1 ] || exit 0
+done

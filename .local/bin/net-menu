@@ -1,0 +1,285 @@
+#!/bin/sh
+# POSIX-Compliant Bluetooth Menu (bluetoothctl + fzf)
+# Fitur: scan, pair, connect, disconnect, forget, trust/untrust, toggle power, A2DP
+
+LOCKFILE="/tmp/bt-menu.lock"
+
+# --- Cleanup & traps ---
+cleanup() {
+    rm -f "$LOCKFILE"
+    stty echo 2>/dev/null
+    exit 0
+}
+trap cleanup INT TERM EXIT
+
+# --- Lock ---
+[ -e "$LOCKFILE" ] && printf "%s\n" "Error: Already running." >&2 && exit 1
+touch "$LOCKFILE"
+
+# --- Checks ---
+command -v bluetoothctl >/dev/null 2>&1 || { printf "%s\n" "bluetoothctl not found." >&2; exit 1; }
+command -v fzf >/dev/null 2>&1 || { printf "%s\n" "fzf not found." >&2; exit 1; }
+
+# --- Optional sudo fallback ---
+run_privileged() {
+    if command -v sudo >/dev/null 2>&1; then
+        sudo "$@"
+    else
+        "$@"
+    fi
+}
+
+# --- Util: baca pilihan angka yang bersih ---
+read_choice() {
+    read -r choice
+    choice=$(printf "%s" "$choice" | tr -d '\r\n')
+    # trim spasi kiri/kanan
+    choice=$(printf "%s" "$choice" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+    printf "%s" "$choice"
+}
+
+# --- Init: pastikan controller ready ---
+bt_init() {
+    # Ada controller?
+    if ! bluetoothctl list | grep -q '^Controller '; then
+        printf "%s\n" "No Bluetooth adapter found (bluetoothctl list empty)." >&2
+        return 1
+    fi
+    # rfkill unblock kalau ada
+    if command -v rfkill >/dev/null 2>&1; then
+        rfkill unblock bluetooth >/dev/null 2>&1
+    fi
+    # power ON + agent
+    run_privileged bluetoothctl power on >/dev/null 2>&1
+    bluetoothctl agent on >/dev/null 2>&1
+    bluetoothctl default-agent >/dev/null 2>&1
+    return 0
+}
+
+# --- Info helpers ---
+controller_power() {
+    bluetoothctl show | awk -F': ' '/Powered/ {print tolower($2); exit}'
+}
+
+paired_list() {
+    bluetoothctl paired-devices \
+      | awk '/^Device ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2} /{print $2}'
+}
+
+# Cari connected secara aman (loop dari union paired+devices)
+connected_devices() {
+    all="$( { paired_list; bluetoothctl devices | awk '/^Device /{print $2}'; } | awk 'NF' | awk '!s[$0]++' )"
+    for m in $all; do
+        if bluetoothctl info "$m" 2>/dev/null | awk -F': ' '/^Connected:/{print tolower($2)}' | grep -q '^yes$'; then
+            printf "%s\n" "$m"
+        fi
+    done
+}
+
+name_of() {
+    mac="$1"
+    [ -z "$mac" ] && return
+    bluetoothctl info "$mac" 2>/dev/null \
+      | awk -F': ' '/^Name:/{print substr($0, index($0,$2))}' \
+      | head -n1
+}
+
+trusted_of() {
+    mac="$1"
+    bluetoothctl info "$mac" 2>/dev/null | awk -F': ' '/^Trusted:/{print tolower($2)}'
+}
+
+rssi_of() {
+    mac="$1"
+    bluetoothctl info "$mac" 2>/dev/null | awk -F': ' '/^RSSI:/{print $2}'
+}
+
+# --- Scan & list ---
+scan_devices() {
+    bt_init || return 1
+    printf "%s\n" "Scanning (8s)..."
+    bluetoothctl --timeout 8 scan on >/dev/null 2>&1
+    bluetoothctl scan off >/dev/null 2>&1
+    bluetoothctl devices \
+      | awk '/^Device ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2} /{print $2}' \
+      | awk '!seen[$0]++'
+}
+
+# --- Format baris untuk fzf: "MAC | Name | [CPT] | RSSI" ---
+format_line() {
+    mac="$1"
+    [ -z "$mac" ] && return
+    name="$(name_of "$mac")"
+    [ -z "$name" ] && name="(unknown)"
+    c="" p="" t=""
+    if connected_devices | grep -qx "$mac"; then c="C"; fi
+    if paired_list | grep -qx "$mac"; then p="P"; fi
+    if [ "$(trusted_of "$mac")" = "yes" ]; then t="T"; fi
+    mark="[$c$p$t]"
+    rssi="$(rssi_of "$mac")"
+    [ -n "$rssi" ] && rssi="RSSI:$rssi" || rssi=""
+    printf "%s | %s | %s | %s\n" "$mac" "$name" "$mark" "$rssi"
+}
+
+# --- Selectors via fzf (pakai pemisah aman) ---
+pick_any_device() {
+    macs="$( { scan_devices; paired_list; } 2>/dev/null | awk 'NF' | awk '!seen[$0]++' )"
+    [ -z "$macs" ] && { printf "%s\n" "No devices found."; return 1; }
+    lines=""
+    for m in $macs; do
+        lines="$lines$(format_line "$m")\n"
+    done
+    sel=$(printf "%b" "$lines" | fzf --ansi --prompt="Select device: ")
+    [ -z "$sel" ] && return 1
+    printf "%s\n" "$sel" | awk -F'[[:space:]]*\\|[[:space:]]*' '{print $1}'
+}
+
+pick_paired_device() {
+    macs="$(paired_list)"
+    [ -z "$macs" ] && { printf "%s\n" "No paired devices."; return 1; }
+    lines=""
+    for m in $macs; do
+        lines="$lines$(format_line "$m")\n"
+    done
+    sel=$(printf "%b" "$lines" | fzf --ansi --prompt="Select paired: ")
+    [ -z "$sel" ] && return 1
+    printf "%s\n" "$sel" | awk -F'[[:space:]]*\\|[[:space:]]*' '{print $1}'
+}
+
+pick_connected_device() {
+    macs="$(connected_devices)"
+    [ -z "$macs" ] && { printf "%s\n" "No connected devices."; return 1; }
+    lines=""
+    for m in $macs; do
+        lines="$lines$(format_line "$m")\n"
+    done
+    sel=$(printf "%b" "$lines" | fzf --ansi --prompt="Select connected: ")
+    [ -z "$sel" ] && return 1
+    printf "%s\n" "$sel" | awk -F'[[:space:]]*\\|[[:space:]]*' '{print $1}'
+}
+
+# --- Actions ---
+toggle_power() {
+    if [ "$(controller_power)" = "yes" ]; then
+        run_privileged bluetoothctl power off >/dev/null 2>&1 && printf "%s\n" "Power: off"
+    else
+        run_privileged bluetoothctl power on  >/dev/null 2>&1 && printf "%s\n" "Power: on"
+    fi
+}
+
+connect_device() {
+    mac="$1"
+    [ -z "$mac" ] && mac="$(pick_any_device)" || true
+    [ -z "$mac" ] && return
+    [ "$(controller_power)" = "yes" ] || run_privileged bluetoothctl power on >/dev/null 2>&1
+    if ! bluetoothctl info "$mac" | grep -q "Paired: yes"; then
+        printf "%s\n" "Pairing $mac ..."
+        bluetoothctl --timeout 10 pair "$mac" >/dev/null 2>&1
+        bluetoothctl trust "$mac" >/dev/null 2>&1
+    fi
+    printf "%s\n" "Connecting $mac ..."
+    bluetoothctl --timeout 10 connect "$mac" | tail -n +1
+}
+
+connect_paired() {
+    mac="$(pick_paired_device)" || return
+    connect_device "$mac"
+}
+
+disconnect_device() {
+    mac="$1"
+    [ -z "$mac" ] && mac="$(pick_connected_device)" || true
+    [ -z "$mac" ] && return
+    printf "%s\n" "Disconnecting $mac ..."
+    bluetoothctl disconnect "$mac" >/dev/null 2>&1 && printf "%s\n" "Disconnected."
+}
+
+pair_new() {
+    mac="$(pick_any_device)" || return
+    printf "%s\n" "Pairing $mac ..."
+    bluetoothctl --timeout 10 pair "$mac" >/dev/null 2>&1
+    printf "%s\n" "Trusting $mac ..."
+    bluetoothctl trust "$mac" >/dev/null 2>&1
+    printf "%s\n" "Done."
+}
+
+forget_device() {
+    mac="$1"
+    [ -z "$mac" ] && mac="$(pick_paired_device)" || true
+    [ -z "$mac" ] && return
+    printf "%s\n" "Removing $mac ..."
+    bluetoothctl remove "$mac" >/dev/null 2>&1 && printf "%s\n" "Removed."
+}
+
+trust_untrust() {
+    mac="$1"
+    [ -z "$mac" ] && mac="$(pick_paired_device)" || true
+    [ -z "$mac" ] && return
+    if [ "$(trusted_of "$mac")" = "yes" ]; then
+        bluetoothctl untrust "$mac" >/dev/null 2>&1 && printf "%s\n" "Untrusted."
+    else
+        bluetoothctl trust "$mac"   >/dev/null 2>&1 && printf "%s\n" "Trusted."
+    fi
+}
+
+a2dp_upgrade() {
+    if ! command -v pactl >/dev/null 2>&1; then
+        printf "%s\n" "pactl not found (skip)."
+        return
+    fi
+    card="$(pactl list cards short 2>/dev/null | awk '/bluez_card/ {print $1; exit}')"
+    [ -z "$card" ] && { printf "%s\n" "No bluetooth audio card found."; return; }
+    pactl set-card-profile "$card" a2dp-sink >/dev/null 2>&1 && printf "%s\n" "Audio profile set: a2dp-sink"
+}
+
+# --- UI status ---
+show_status() {
+    pow=$(controller_power)
+    printf "\n%s\n" "--- Bluetooth Status ---"
+    printf "Power  : %s\n" "$pow"
+    conns="$(connected_devices)"
+    if [ -n "$conns" ]; then
+        printf "Active :\n"
+        for m in $conns; do
+            n="$(name_of "$m")"; [ -z "$n" ] && n="(unknown)"
+            printf "  - %s (%s)\n" "$n" "$m"
+        done
+    else
+        printf "Active : None\n"
+    fi
+}
+
+# --- Menu ---
+bt_menu() {
+    while :; do
+        show_status
+        printf "\n%s\n" "--- Bluetooth Menu ---"
+        printf "1) Scan & Connect\n"
+        printf "2) Connect Paired\n"
+        printf "3) Disconnect\n"
+        printf "4) Pair New Device\n"
+        printf "5) Remove/Forget Device\n"
+        printf "6) Trust/Untrust Device\n"
+        printf "7) Toggle Power\n"
+        printf "8) Upgrade Audio (A2DP)\n"
+        printf "9) Exit\n"
+        printf "Choice: "
+        choice=$(read_choice)
+        case "$choice" in
+            1) connect_device "" ;;
+            2) connect_paired ;;
+            3) disconnect_device "" ;;
+            4) pair_new ;;
+            5) forget_device "" ;;
+            6) trust_untrust "" ;;
+            7) toggle_power ;;
+            8) a2dp_upgrade ;;
+            9) break ;;
+            *) printf "%s\n" "Invalid choice: '$choice'"; sleep 0.6 ;;
+        esac
+    done
+}
+
+bt_menu
+cleanup
+

@@ -1,0 +1,13 @@
+# ~/.config/flavours/walls.map
+# scheme<TAB>path_wallpaper_folder
+
+gruvbox-dark-medium     /home/cid/pictures/walls/gruvbox/dark/
+catppuccin-mocha        /home/cid/pictures/walls/catppuccin/dark/
+onedark                 /home/cid/pictures/walls/onedark/dark/
+nord                    /home/cid/pictures/walls/nord/dark/
+everforest-dark-medium  /home/cid/pictures/walls/everforest/dark/
+solarized-dark          /home/cid/pictures/walls/solarized/dark/
+tokyo-night-storm       /home/cid/pictures/walls/tokyo-night/storm/
+dracula                 /home/cid/pictures/walls/dracula/dark/
+catppuccin-latte        /home/cid/pictures/walls/catppuccin/light/
+rose-pine-moon          /home/cid/pictures/walls/rose-pine/moon/

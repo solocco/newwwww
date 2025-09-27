@@ -1,0 +1,201 @@
+#!/bin/sh
+
+# =========================
+# Global Settings
+# =========================
+FONT="Iosevka Nerd Font:style=Regular:size=10, Noto Color Emoji"
+ALIGN="center"
+
+# Lebar tiap menu (kolom karakter), dan jumlah baris yang ditampilkan
+W_MAIN=32;      L_MAIN=6
+W_UTILS=30;     L_UTILS=5
+W_POWER=24;     L_POWER=4
+W_STREAM=28;    L_STREAM=2
+W_MEDIA=28;     L_MEDIA=2
+W_TODO=50
+W_RUN=50
+W_PROMPT=50     # prompt input (Twitch, kalkulator, dst)
+
+# Helper: tampilkan menu (pakai fuzzel --dmenu)
+show_menu() {
+    # $1 = daftar pilihan (multi-line), $2 = width, $3 = lines
+    printf '%s' "$1" | fuzzel --dmenu -f "$FONT" -a "$ALIGN" -w "$2" -l "$3"
+}
+
+# Launch app (arg pertama dicek binary-nya, sisanya jadi argumen)
+launch_app() {
+    if command -v "$1" >/dev/null 2>&1; then
+        exec "$@"
+    else
+        printf '%s\n' "$1 not found" >&2
+        exit 1
+    fi
+}
+
+# =========================
+# Utils Menu Handlers
+# =========================
+handle_utils_menu() {
+    choice="$(show_menu "$utils_menu" "$W_UTILS" "$L_UTILS")"
+    case "$choice" in
+        "⚙️ Run")       exec_fuzzel_run ;;
+        "💻 Streaming") exec_fuzzel_streaming ;;
+        "🔢 Calc")      exec_fuzzel_calc ;;
+        "📑 Todo")      exec_fuzzel_todo ;;
+        "⌨️ Keyboard")  toggle_keyboard ;;
+        *) printf 'Invalid choice: %s\n' "$choice" >&2; exit 1 ;;
+    esac
+}
+
+handle_power_menu() {
+    choice="$(show_menu "$power_menu" "$W_POWER" "$L_POWER")"
+    case "$choice" in
+        " Shutdown") sudo poweroff ;;
+        " Suspend")
+            if command -v loginctl >/dev/null 2>&1; then
+                loginctl suspend
+            elif command -v zzz >/dev/null 2>&1; then
+                sudo zzz
+            else
+                printf '%s\n' "No suspend method found (need loginctl or zzz)" >&2
+                exit 1
+            fi
+            ;;
+        " Reboot")   sudo reboot ;;
+        " Lock")     swaylock -c 000000 ;;
+        *) printf 'Invalid choice: %s\n' "$choice" >&2; exit 1 ;;
+    esac
+}
+
+# =========================
+# Streaming
+# =========================
+exec_fuzzel_streaming() {
+    platform_choice="$(show_menu "$streaming_menu" "$W_STREAM" "$L_STREAM")"
+    case "$platform_choice" in
+        " Media")
+            input_link="$(wl-paste)"
+            ;;
+        " Twitch")
+            channel_name="$(fuzzel --dmenu -p 'type twitch name: ' -f "$FONT" -a "$ALIGN" -w "$W_PROMPT" -l 0)"
+            [ -z "$channel_name" ] && exit 1
+            input_link="https://twitch.tv/${channel_name}"
+            ;;
+        *) printf 'Invalid choice: %s\n' "$platform_choice" >&2; exit 1 ;;
+    esac
+
+    media_choice="$(show_menu "$media_type_menu" "$W_MEDIA" "$L_MEDIA")"
+    case "$media_choice" in
+        " Video") mpv --pause=no "$input_link" ;;
+        " Audio") foot -T "MPV Terminal" -e mpv --pause=no --no-video --volume=100 "$input_link" ;;
+        *) printf 'Invalid choice: %s\n' "$media_choice" >&2; exit 1 ;;
+    esac
+}
+
+# =========================
+# Keyboard Toggle
+# =========================
+toggle_keyboard() {
+    if pgrep -x "wvkbd-mobintl" >/dev/null 2>&1; then
+        pkill wvkbd-mobintl
+    else
+        wvkbd-mobintl -H 50 -R 5 --bg "#282828" --fg "#ffffff" --fn "monospace 10" --alpha 200 &
+    fi
+}
+
+# =========================
+# Calculator (fuzzel + bc)
+# =========================
+exec_fuzzel_calc() {
+    LAST=""
+    while true; do
+        SPACE=" "
+        NEXT="$(fuzzel --dmenu -p "${LAST}${SPACE}" -f "$FONT" -a "$ALIGN" -w "$W_PROMPT" -l 0)"
+        [ -z "$NEXT" ] && exit 1
+        [ "$NEXT" = "y" ] && wl-copy "$LAST" && exit 0
+        LAST="$(printf '%s' "$LAST$NEXT" | bc -l | sed '/\./ s/\.\{0,1\}0\{1,\}$//')"
+    done
+}
+
+# =========================
+# Todo (simple toggle list)
+# =========================
+exec_fuzzel_todo() {
+    cache_dir="$HOME/.cache"
+    cache_file="$cache_dir/todo.cache"
+    tmp_file="$cache_dir/todo2.cache"
+    mkdir -p "$cache_dir"
+
+    [ -f "$cache_file" ] || : > "$cache_file"
+    cache_contents="$(cat "$cache_file")"
+
+    if [ -s "$cache_file" ]; then
+        cache_lines="$(printf '%s\n' "$cache_contents" | wc -l)"
+    else
+        cache_lines=0
+    fi
+
+    selection="$(printf '%s\n' "$cache_contents" | fuzzel --dmenu -f "$FONT" -a "$ALIGN" -w "$W_TODO" -l "$cache_lines" 2>/dev/null)"
+    [ -z "$selection" ] && exit 1
+
+    if grep -Fxq "$selection" "$cache_file"; then
+        grep -Fxv "$selection" "$cache_file" > "$tmp_file" && mv "$tmp_file" "$cache_file"
+    else
+        printf '%s\n' "$selection" >> "$cache_file"
+    fi
+}
+
+# =========================
+# App Runner (PATH executables)
+# =========================
+exec_fuzzel_run() {
+    selected="$(
+        { IFS=':'; for d in $PATH; do
+            [ -d "$d" ] || continue
+            find "$d" -maxdepth 1 -type f -executable -printf '%f\n' 2>/dev/null
+          done; } | sort -u | fuzzel --dmenu -f "$FONT" -a "$ALIGN" -w "$W_RUN"
+    )"
+    [ -n "$selected" ] && exec "$selected"
+}
+
+# =========================
+# Menu Definitions
+# =========================
+main_menu="🖥️ Terminal
+🗃️ Explorer
+🌍 Browser
+📦 Apps
+⚙️ Utils
+🔌 Power"
+
+utils_menu="📑 Todo
+💻 Streaming
+🔢 Calc
+⚙️ Run
+⌨️ Keyboard"
+
+power_menu=" Shutdown
+ Suspend
+ Reboot
+ Lock"
+
+streaming_menu=" Media
+ Twitch"
+
+media_type_menu=" Video
+ Audio"
+
+# =========================
+# Main Menu Logic
+# =========================
+choice="$(show_menu "$main_menu" "$W_MAIN" "$L_MAIN")"
+case "$choice" in
+    "🖥️ Terminal") launch_app foot ;;
+    "🗃️ Explorer") launch_app pcmanfm-qt ;;
+    "🌍 Browser")   launch_app google-chrome-stable ;;
+    "📦 Apps")      launch_app fuzzel ;;
+    "⚙️ Utils")     handle_utils_menu ;;
+    "🔌 Power")     handle_power_menu ;;
+    *) printf 'Invalid choice: %s\n' "$choice" >&2; exit 1 ;;
+esac
+

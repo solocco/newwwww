@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+rofi -dmenu -password -p "${SUDO_ASKPASS_PROMPT:-Password}" \
+     -theme "${ROFI_ASKPASS_THEME:-$HOME/.config/rofi/askpass.rasi}" \
+     -lines 1 -width 40
+
