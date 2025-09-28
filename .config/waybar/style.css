@@ -19,9 +19,9 @@
   box-shadow: none;
 }
 
-/** Sway Workspaces — Enhanced & Fixed **/
+/** Sway Workspaces — Slim & Clean **/
 #workspaces {
-  margin: 6px;
+  margin: 5px;
   padding: 0;
   background: transparent;
 }
@@ -29,123 +29,55 @@
 #workspaces button {
   background-color: @base01;
   color: @base05;
-  border-radius: 8px;
+  border-radius: 5px;
   margin: 0 2px;
-  padding: 2px 8px;
-  
-  /* Border dengan highlight atas sebagai indikator utama */
-  border: 2px solid transparent;
-  border-top-width: 2px;
-  
-  /* Efek visual */
+  padding: 3px 7px;
+  border: none;
+  border-top: 2px solid transparent;
   box-shadow: none;
-  transition: all 200ms ease-in-out;
-  font-weight: 600;
-  font-size: 12px;
-  min-width: 20px;
+  font-weight: 500;
+  font-size: 11px;
+  min-width: 16px;
 }
 
-/* Hover effect yang konsisten */
 #workspaces button:hover {
   background-color: @base02;
-  border-top-color: @base0C;
   color: @base07;
 }
 
-/* 1) FOCUSED: workspace aktif dengan highlight terang */
-#workspaces button.focused,
-#workspaces button.active.focused {
+#workspaces button.focused {
+  background-color: @base0D;
+  color: @base00;
+  border-top: 2px solid @base0C;
+}
+
+#workspaces button.visible {
   background-color: @base02;
-  border-top-color: @base0D;
-  color: @base07;
-}
-
-/* 2) ACTIVE non-focused: workspace dengan aplikasi tapi tidak fokus */
-#workspaces button.active:not(.focused) {
-  background-color: @base01;
-  border-top-color: @base04;
   color: @base06;
-}
-
-/* 3) VISIBLE: workspace terlihat di output lain */
-#workspaces button.visible:not(.focused):not(.active) {
-  background-color: @base01;
-  border-top-color: @base03;
-  color: @base05;
-  opacity: 0.8;
-}
-
-/* 4) OCCUPIED: workspace dengan aplikasi (tapi tidak terlihat) */
-#workspaces button.occupied:not(.active):not(.focused) {
-  background-color: @base01;
-  color: @base04;
-  border-left: 3px solid @base0A;
-}
-
-/* 5) EMPTY/PERSISTENT: workspace kosong */
-#workspaces button.empty,
-#workspaces button.persistent {
-  background-color: @base00;
-  color: @base03;
-  border-color: transparent;
-  border-top-color: transparent;
-  opacity: 0.6;
-  transition: opacity 200ms ease;
-}
-
-#workspaces button.empty:hover,
-#workspaces button.persistent:hover {
-  opacity: 1;
-  background-color: @base01;
-  color: @base05;
-}
-
-/* 6) SPECIAL: workspace khusus (floating, scratchpad, dll) */
-#workspaces button.special {
-  background-color: @base01;
-  border: 2px solid @base0E;
-  border-top-color: @base0E;
-  color: @base0E;
-}
-
-/* 7) URGENT: workspace yang membutuhkan perhatian */
-@keyframes ws-urgent-pulse {
-  0% { 
-    border-top-color: @base08; 
-    color: @base08;
-  }
-  50% { 
-    border-top-color: @base0A; 
-    color: @base0A;
-  }
-  100% { 
-    border-top-color: @base08; 
-    color: @base08;
-  }
+  border-top: 2px solid @base04;
 }
 
 #workspaces button.urgent {
+  background-color: @base08;
+  color: @base00;
+  border-top: 2px solid @base0A;
+}
+
+#workspaces button.persistent {
+  background-color: transparent;
+  color: @base03;
+  opacity: 0.4;
+}
+
+#workspaces button.empty {
+  background-color: transparent;
+  color: @base03;
+  opacity: 0.4;
+}
+
+#workspaces button.current_output {
   background-color: @base02;
-  color: @base08;
-  animation: ws-urgent-pulse 2s ease-in-out infinite;
-  border-top-color: @base08;
-}
-
-/* Responsif untuk layar kecil - menggunakan class selector */
-#workspaces.small button {
-  padding: 2px 6px;
-  margin: 0 1px;
-  font-size: 11px;
-  min-width: 18px;
-}
-
-/* Mode compact untuk workspace banyak */
-#workspaces.compact button {
-  padding: 1px 4px;
-  margin: 0 1px;
-  font-size: 10px;
-  border-radius: 6px;
-  min-width: 16px;
+  color: @base07;
 }
 
 /** Taskbar **/

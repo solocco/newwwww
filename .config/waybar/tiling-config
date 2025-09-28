@@ -89,21 +89,21 @@
     "format": "<span size='large'>{icon}</span>",
     "format-icons": ["󰏗","󱧖","󰋙","󱧙","󰏖"],
     "return-type": "json",
-    "exec-if": "[ -d /tmp/upd ]",
-    "exec": "python ~/.local/bin/updbar.py",
-    "on-click": "rofi-xr",
+    "exec": "python3 ~/.local/bin/updbar.py",
+    "on-click": "~/.local/bin/chckpds.sh",
     "on-click-right": "~/.local/bin/updbar_rst.sh",
     "signal": 9,
+    "interval": 30,
     "tooltip": true
   },
   "custom/updates#2": {
     "format": "{0}",
     "return-type": "json",
-    "exec-if": "[ -d /tmp/upd ]",
-    "exec": "python ~/.local/bin/updbar.py",
-    "on-click": "rofi-xr",
+    "exec": "python3 ~/.local/bin/updbar.py", 
+    "on-click": "~/.local/bin/chckpds.sh",
     "on-click-right": "~/.local/bin/updbar_rst.sh",
     "signal": 9,
+    "interval": 30,
     "tooltip": true
   },
 

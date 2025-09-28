@@ -15,9 +15,15 @@ PID="$HOME/.config/service/updatenotif/supervise/pid"
 # --- rofi theme path (point to your theme) ---
 THEME="$HOME/.config/rofi/update-void.rasi"
 
+# Pastikan direktori dan file ada
 mkdir -p "$DIR"
-# Pastikan COUNT bukan direktori (biang kerok error sebelumnya)
-[ -d "$COUNT" ] && rm -rf "$COUNT"
+touch "$UPD" "$UPN" "$UPO" "$PRT"
+
+# Pastikan COUNT adalah file, bukan direktori
+if [[ -d "$COUNT" ]]; then
+    rm -rf "$COUNT"
+fi
+[[ ! -f "$COUNT" ]] && echo "0" > "$COUNT"
 
 # Helper: hitung baris aman (fallback 0 kalau file tak ada)
 line_count() {
@@ -28,10 +34,12 @@ line_count() {
 
 # status text
 STT="-"
-[[ -f "$PID" ]] && STT="󰻾 $(<"$PID")"
+if [[ -f "$PID" ]] && [[ -r "$PID" ]]; then
+    STT="ó°»¾ $(<"$PID")"
+fi
 
 # if updater is refreshing, exit quietly
-if [[ -f "$UPD" ]] && [[ "$( < "$UPD" )" == "refreshing" ]]; then
+if [[ -f "$UPD" ]] && [[ "$( < "$UPD" 2>/dev/null || echo "")" == "refreshing" ]]; then
   exit 0
 fi
 
@@ -65,13 +73,17 @@ if [[ -s "$UPD" ]]; then
   printf '%s\n' "$c_upd" > "$COUNT"
 
   if [[ -s "$PRT" ]]; then
-    _rofi "[󰆧 $c_upd |󰆨 $c_new |$STT] " < "$PRT" > /dev/null
+    _rofi "[ó°†§ $c_upd |ó°†¨ $c_new |$STT] " < "$PRT" > /dev/null
   else
-    printf 'Updates available (no pretty list)\n' | _rofi "[󰆧 $c_upd |󰆨 $c_new |$STT] " > /dev/null
+    printf 'Updates available (no pretty list)\n' | _rofi "[ó°†§ $c_upd |ó°†¨ $c_new |$STT] " > /dev/null
   fi
 else
   # Tidak ada file UPD atau kosong
-  cls="$(python "$HOME/.local/bin/updbar.py" 2>/dev/null | jq -r .class 2>/dev/null || echo unknown)"
+  cls="unknown"
+  if [[ -f "$HOME/.local/bin/updbar.py" ]]; then
+    cls="$(python "$HOME/.local/bin/updbar.py" 2>/dev/null | jq -r .class 2>/dev/null || echo unknown)"
+  fi
+  
   if [[ "$cls" == "offline" ]]; then
     if [[ -s "$UPO" ]]; then
       _rofi "[offline |$STT] " < "$UPO" > /dev/null

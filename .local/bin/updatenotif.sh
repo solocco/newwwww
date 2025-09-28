@@ -14,20 +14,39 @@
 #	[[ "$(< ${PID})" != "$$" ]] && exit 1
 #fi
 
-UPC=/tmp/upd/count
-UPD=/tmp/upd/updates
-UPI=/tmp/upd/installed
-UPN=/tmp/upd/new
-UPO=/tmp/upd/old
-PRT=/tmp/upd/pretty
+# Pastikan direktori utama ada
+UPD_DIR=/tmp/upd
+mkdir -p "$UPD_DIR"
+
+UPC="$UPD_DIR/count"
+UPD="$UPD_DIR/updates"
+UPI="$UPD_DIR/installed"
+UPN="$UPD_DIR/new"
+UPO="$UPD_DIR/old"
+PRT="$UPD_DIR/pretty"
 UBR=$HOME/.local/bin/updbar.py
 SND=$HOME/.local/share/sounds
 
+# Pastikan file konfigurasi ada
 CFG=$HOME/.local/share/upd.conf
-snd_cfg=$(jq -r .sound ${CFG})
-cin_cfg=$(jq -r .check_interval ${CFG})
-rtr_cfg=$(jq -r .retry_interval ${CFG})
+if [[ ! -f "$CFG" ]]; then
+    # Buat konfigurasi default jika tidak ada
+    mkdir -p "$(dirname "$CFG")"
+    cat > "$CFG" << 'EOF'
+{
+  "sound": "notification.wav",
+  "check_interval": 30,
+  "retry_interval": 3
+}
+EOF
+fi
 
+# Baca konfigurasi dengan fallback ke default
+snd_cfg=$(jq -r '.sound // "notification.wav"' "$CFG" 2>/dev/null || echo "notification.wav")
+cin_cfg=$(jq -r '.check_interval // 30' "$CFG" 2>/dev/null || echo 30)
+rtr_cfg=$(jq -r '.retry_interval // 3' "$CFG" 2>/dev/null || echo 3)
+
+# Validasi konfigurasi
 if [[ "${cin_cfg}" -lt 15 ]] || [[ "${cin_cfg}" -gt 99 ]]
 then
 	cin_cfg=30
@@ -44,79 +63,101 @@ _chck_upd() {
 
 _sed_pc() {
 	local PC=percentage
-	sed -i -e "10s/${PC}\ =\ [0-9\"]*/${PC}\ =\ $1/" \
-		   -e "22s/${PC}\ =\ [0-9\"]*/${PC}\ =\ $2/" ${UBR}
-}
-
-_sed_cl() {
-	sed -i "27s/clss =\ .*\ #/clss\ =\ \"$1\"\ #/" ${UBR}
-}
-
-_sed_nw() {
-	local IFS=$'\n'
-	for i in $(< ${UPN})
-		do
-			sed -i "s/$i.*/&\ \ \ NEW/" ${UPD}
-		done
-
-	sed -i "s/NEW.*/NEW\ \ /g" ${UPD}
-}
-
-_mkp() {
-	paste -d' ' ${UPD} ${UPI} > ${PRT}
-}
-
-_sig() {
-	pkill -x -SIGRTMIN+9 waybar
-}
-
-_apl() {
-	if type aplay >/dev/null 2>&1
-	then
-		aplay -q --file-type=wav ${SND}/${snd_cfg} 2>/dev/null &
-	else
-		paplay ${SND}/${snd_cfg} 2>/dev/null &
+	if [[ -f "$UBR" ]]; then
+		sed -i -e "10s/${PC}\ =\ [0-9\"]*/${PC}\ =\ $1/" \
+			   -e "22s/${PC}\ =\ [0-9\"]*/${PC}\ =\ $2/" "$UBR"
 	fi
 }
 
-mkdir /tmp/upd
+_sed_cl() {
+	if [[ -f "$UBR" ]]; then
+		sed -i "27s/clss =\ .*\ #/clss\ =\ \"$1\"\ #/" "$UBR"
+	fi
+}
 
-: > ${UPI} ; : > ${UPN} ; : > ${UPO} ; echo 0 > ${UPC}
+_sed_nw() {
+	if [[ ! -f "$UPN" ]] || [[ ! -f "$UPD" ]]; then
+		return
+	fi
+	
+	local IFS=$'\n'
+	for i in $(< "$UPN")
+		do
+			sed -i "s/$i.*/&\ \ \ NEW/" "$UPD" 2>/dev/null || true
+		done
 
-[[ -f ${UPD} ]] || _chck_upd > ${UPD} >/dev/null 2>&1
+	sed -i "s/NEW.*/NEW\ \ /g" "$UPD" 2>/dev/null || true
+}
 
-while [[ -f ${UPC} ]]
+_mkp() {
+	if [[ -f "$UPD" ]] && [[ -f "$UPI" ]]; then
+		paste -d' ' "$UPD" "$UPI" > "$PRT"
+	fi
+}
+
+_sig() {
+	pkill -x -SIGRTMIN+9 waybar 2>/dev/null || true
+}
+
+_apl() {
+	local sound_file="$SND/$snd_cfg"
+	if [[ -f "$sound_file" ]]; then
+		if type aplay >/dev/null 2>&1; then
+			aplay -q --file-type=wav "$sound_file" 2>/dev/null &
+		elif type paplay >/dev/null 2>&1; then
+			paplay "$sound_file" 2>/dev/null &
+		fi
+	fi
+}
+
+# Inisialisasi file-file yang diperlukan
+touch "$UPI" "$UPN" "$UPO" "$PRT"
+echo 0 > "$UPC"
+
+# Cek jika UPD belum ada atau kosong, lakukan pengecekan awal
+if [[ ! -f "$UPD" ]] || [[ ! -s "$UPD" ]]; then
+	_chck_upd > "$UPD" 2>/dev/null || touch "$UPD"
+fi
+
+while [[ -f "$UPC" ]]
 	do
-		if [[ "$(python ${UBR} | jq -r .class)" != "offline" ]]
-		then
-			awk '{ print $1 }' ${UPD} > ${UPO}
+		# Pastikan python script ada sebelum dijalankan
+		if [[ -f "$UBR" ]] && [[ "$(python "$UBR" 2>/dev/null | jq -r .class 2>/dev/null || echo "unknown")" != "offline" ]]; then
+			if [[ -f "$UPD" ]] && [[ -s "$UPD" ]]; then
+				awk '{ print $1 }' "$UPD" > "$UPO"
+			fi
 		fi
 
-		echo "refreshing" > ${UPD} ; _sig
+		echo "refreshing" > "$UPD" ; _sig
 
 		if ping -4 -n -c 1 -W 5 www.voidlinux.org >/dev/null 2>&1
 		then
-			_sed_pc 100 0 ; _chck_upd | tee ${UPD} | wc -l > ${UPC}
+			_sed_pc 100 0 ; _chck_upd | tee "$UPD" | wc -l > "$UPC"
 
-			if [[ -s ${UPD} ]]
+			if [[ -s "$UPD" ]]
 			then
-				PKG=$(cat ${UPD} | xargs -n1 xbps-uhelper getpkgname)
-				for i in $(echo ${PKG})
+				PKG=$(cat "$UPD" | xargs -n1 xbps-uhelper getpkgname 2>/dev/null || true)
+				> "$UPI"  # Kosongkan file dulu
+				for i in $(echo $PKG)
 					do
-						xbps-query -p pkgver ${i} |
-							awk -F- '{ sub("", $NF); print " "$NF"" }'
-					done > ${UPI}
+						xbps-query -p pkgver "$i" 2>/dev/null |
+							awk -F- '{ sub("", $NF); print "ï…· "$NF"" }' >> "$UPI" || true
+					done
 			else
-				: > ${UPI}
+				> "$UPI"
 			fi
 
-			if diff ${UPD} ${UPO} >/dev/null 2>&1
+			if [[ -f "$UPO" ]] && diff "$UPD" "$UPO" >/dev/null 2>&1
 			then
-				[[ -s ${UPD} ]] || : > ${UPN}
+				[[ -s "$UPD" ]] || > "$UPN"
 
 				_sed_cl updates ; _sed_nw ; _mkp
 			else
-				comm -23 ${UPD} ${UPO} 2>/dev/null > ${UPN}
+				if [[ -f "$UPO" ]]; then
+					comm -23 "$UPD" "$UPO" 2>/dev/null > "$UPN" || > "$UPN"
+				else
+					cp "$UPD" "$UPN" 2>/dev/null || > "$UPN"
+				fi
 
 				_sed_cl new-updates ; _sed_nw ; _mkp ; _sig ; _apl
 
@@ -125,13 +166,13 @@ while [[ -f ${UPC} ]]
 
 			 _sig ; sleep ${cin_cfg}m
 		else
-			if [[ -s ${UPO} ]]
+			if [[ -s "$UPO" ]]
 			then
-				_sed_pc 70 70 ; : > ${UPD} ; _sig
+				_sed_pc 70 70 ; > "$UPD" ; _sig
 
 				sleep ${rtr_cfg}m
 			else
-				_sed_pc 30 30 ; : > ${UPD} ; _sig
+				_sed_pc 30 30 ; > "$UPD" ; _sig
 
 				sleep ${rtr_cfg}m
 			fi
@@ -139,4 +180,3 @@ while [[ -f ${UPC} ]]
 	done
 
 # Source code: "https://codeberg.org/dogknowsnx/dotfiles/scripts"
-
