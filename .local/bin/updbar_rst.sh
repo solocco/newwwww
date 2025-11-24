@@ -38,19 +38,21 @@ _sed_nw() {
 	if [[ ! -f "$UPN" ]] || [[ ! -f "$UPD" ]]; then
 		return
 	fi
-	
-	local IFS=$'\n'
-	for i in $(< "$UPN")
-		do
-			sed -i "s/$i.*/&\ \ \ NEW/" "$UPD" 2>/dev/null || true
-		done
 
-	sed -i "s/NEW.*/NEW\ \ /g" "$UPD" 2>/dev/null || true
+	local IFS=$'\n'
+	for i in $(< "$UPN"); do
+		sed -i "s/$i.*/&   NEW/" "$UPD" 2>/dev/null || true
+	done
+
+	sed -i "s/NEW.*/NEW   /g" "$UPD" 2>/dev/null || true
 }
 
 _mkp() {
+	# Gabungkan UPD + UPI jadi PRT, lalu hilangkan token "NEW" dari output
 	if [[ -f "$UPD" ]] && [[ -f "$UPI" ]]; then
-		paste -d' ' "$UPD" "$UPI" > "$PRT"
+		paste -d' ' "$UPD" "$UPI" \
+			| sed -E 's/[[:space:]]+NEW[[:space:]]+/ /g' \
+			> "$PRT"
 	fi
 }
 
@@ -65,30 +67,30 @@ if [[ -f "$UBR" ]] && [[ "$(python "$UBR" 2>/dev/null | jq -r .class 2>/dev/null
 	fi
 fi
 
-echo "refreshing" > "$UPD" ; _sig
+echo "refreshing" > "$UPD"
+_sig
 
-if ping -4 -n -c 1 -W 5 www.voidlinux.org >/dev/null 2>&1
-then
-	_sed_pc 100 0 ; _chck_upd | tee "$UPD" | wc -l > "$UPC"
+if ping -4 -n -c 1 -W 5 www.voidlinux.org >/dev/null 2>&1; then
+	_sed_pc 100 0
+	_chck_upd | tee "$UPD" | wc -l > "$UPC"
 
-	if [[ -s "$UPD" ]]
-	then
+	if [[ -s "$UPD" ]]; then
 		PKG=$(cat "$UPD" | xargs -n1 xbps-uhelper getpkgname 2>/dev/null || true)
 		> "$UPI"  # Kosongkan file dulu
-		for i in $(echo $PKG)
-			do
-				xbps-query -p pkgver "$i" 2>/dev/null |
-					awk -F- '{ sub("", $NF); print "ï…· "$NF"" }' >> "$UPI" || true
-			done
+		for i in $PKG; do
+			xbps-query -p pkgver "$i" 2>/dev/null \
+				| awk -F- '{ print "-> "$NF }' >> "$UPI" || true
+		done
 	else
 		> "$UPI"
 	fi
 
-	if [[ -f "$UPO" ]] && diff "$UPD" "$UPO" >/dev/null 2>&1
-	then
+	if [[ -f "$UPO" ]] && diff "$UPD" "$UPO" >/dev/null 2>&1; then
 		[[ -s "$UPD" ]] || > "$UPN"
 
-		_sed_cl updates ; _sed_nw ; _mkp
+		_sed_cl updates
+		_sed_nw
+		_mkp
 	else
 		if [[ -f "$UPO" ]]; then
 			comm -23 "$UPD" "$UPO" 2>/dev/null > "$UPN" || > "$UPN"
@@ -96,18 +98,24 @@ then
 			cp "$UPD" "$UPN" 2>/dev/null || > "$UPN"
 		fi
 
-		_sed_cl new-updates ; _sed_nw ; _mkp ; _sig
+		_sed_cl new-updates
+		_sed_nw
+		_mkp
+		_sig
 
 		sleep 10 && _sed_cl updates
 	fi
 
 	_sig
 else
-	if [[ -s "$UPO" ]]
-	then
-		_sed_pc 70 70 ; > "$UPD" ; _sig
+	if [[ -s "$UPO" ]]; then
+		_sed_pc 70 70
+		> "$UPD"
+		_sig
 	else
-		_sed_pc 30 30 ; > "$UPD" ; _sig
+		_sed_pc 30 30
+		> "$UPD"
+		_sig
 	fi
 fi
 

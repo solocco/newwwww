@@ -15,6 +15,11 @@ PID="$HOME/.config/service/updatenotif/supervise/pid"
 # --- rofi theme path (point to your theme) ---
 THEME="$HOME/.config/rofi/update-void.rasi"
 
+# --- Nerd Font icons (pastikan rofi pakai font Nerd Font) ---
+ICON_UPDATES=""   # nf-fa-download
+ICON_NEW=""       # nf-fa-bolt
+ICON_PID=""       # nf-fa-microchip
+
 # Pastikan direktori dan file ada
 mkdir -p "$DIR"
 touch "$UPD" "$UPN" "$UPO" "$PRT"
@@ -35,11 +40,11 @@ line_count() {
 # status text
 STT="-"
 if [[ -f "$PID" ]] && [[ -r "$PID" ]]; then
-    STT="ó°»¾ $(<"$PID")"
+    STT="$ICON_PID $(<"$PID")"
 fi
 
 # if updater is refreshing, exit quietly
-if [[ -f "$UPD" ]] && [[ "$( < "$UPD" 2>/dev/null || echo "")" == "refreshing" ]]; then
+if [[ -f "$UPD" ]] && [[ $(<"$UPD") == "refreshing" ]]; then
   exit 0
 fi
 
@@ -55,7 +60,6 @@ _rofi() {
   if [[ -f "$THEME" ]]; then
     timeout 60 rofi -dmenu -p "$prompt" -theme "$THEME" || true
   else
-    # Fallback theme (very minimal) jika update-void.rasi tidak ditemukan
     timeout 60 rofi -dmenu -p "$prompt" -theme-str '
       * { font: "monospace 12"; }
       window { width: 600px; }
@@ -73,9 +77,11 @@ if [[ -s "$UPD" ]]; then
   printf '%s\n' "$c_upd" > "$COUNT"
 
   if [[ -s "$PRT" ]]; then
-    _rofi "[ó°†§ $c_upd |ó°†¨ $c_new |$STT] " < "$PRT" > /dev/null
+    # Tampilkan isi pretty apa adanya (sudah diformat di script updater)
+    _rofi "[${ICON_UPDATES} ${c_upd} | ${ICON_NEW} ${c_new} | ${STT}]" < "$PRT" > /dev/null
   else
-    printf 'Updates available (no pretty list)\n' | _rofi "[ó°†§ $c_upd |ó°†¨ $c_new |$STT] " > /dev/null
+    printf 'Updates available (no pretty list)\n' \
+      | _rofi "[${ICON_UPDATES} ${c_upd} | ${ICON_NEW} ${c_new} | ${STT}]" > /dev/null
   fi
 else
   # Tidak ada file UPD atau kosong
@@ -86,13 +92,11 @@ else
   
   if [[ "$cls" == "offline" ]]; then
     if [[ -s "$UPO" ]]; then
-      _rofi "[offline |$STT] " < "$UPO" > /dev/null
+      _rofi "[offline | ${STT}]" < "$UPO" > /dev/null
     else
-      printf 'Right-click to refresh\n' | _rofi "[offline |$STT] " > /dev/null
+      printf 'Right-click to refresh\n' | _rofi "[offline | ${STT}]" > /dev/null
     fi
   else
-    printf 'Void is up-to-date\n' | _rofi "[$STT] " > /dev/null
+    printf 'Void is up-to-date\n' | _rofi "[${STT}]" > /dev/null
   fi
 fi
-
-# Source code: "https://codeberg.org/dogknowsnx/dotfiles/scripts"
