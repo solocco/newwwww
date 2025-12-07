@@ -1,25 +1,25 @@
 /*
 *
-* Base16 Gruvbox dark, medium
-* Author: morhetz, Dawid Kurek
+* Base16 Aamis
+* Author: VYRX
 *
 */
 
-@define-color base00 #282828;
-@define-color base01 #3c3836;
-@define-color base02 #504945;
-@define-color base03 #665c54;
-@define-color base04 #bdae93;
-@define-color base05 #d5c4a1;
-@define-color base06 #ebdbb2;
-@define-color base07 #fbf1c7;
-@define-color base08 #fb4934;
-@define-color base09 #fe8019;
-@define-color base0A #fabd2f;
-@define-color base0B #b8bb26;
-@define-color base0C #8ec07c;
-@define-color base0D #83a598;
-@define-color base0E #d3869b;
-@define-color base0F #d65d0e;
-@define-color bg rgba(40, 40, 40, 0.90);
-@define-color accentDim rgba(142, 192, 124, 0.35);
+@define-color base00 #0f0f0f;
+@define-color base01 #706a6a;
+@define-color base02 #cea37f;
+@define-color base03 #e2be8a;
+@define-color base04 #e6caab;
+@define-color base05 #ede4c8;
+@define-color base06 #eadccc;
+@define-color base07 #ede4c8;
+@define-color base08 #e25d6c;
+@define-color base09 #f4bb54;
+@define-color base0A #e8ab3b;
+@define-color base0B #edb95a;
+@define-color base0C #eacea7;
+@define-color base0D #cea37f;
+@define-color base0E #e9838f;
+@define-color base0F #ecb95c;
+@define-color bg rgba(15, 15, 15, 0.90);
+@define-color accentDim rgba(234, 206, 167, 0.35);

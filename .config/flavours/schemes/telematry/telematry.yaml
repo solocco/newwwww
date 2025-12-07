@@ -1,0 +1,20 @@
+scheme: "Telemetry"
+author: "Dothash"
+base00: "0F1B1D" # background utama (tetap)
+base01: "6b8d94" # background subtle
+base02: "8dac8b" # selection bg
+base03: "93bfc2" # comments / dim text
+base04: "a5cfcd" # secondary fg
+base05: "c1d3c0" # main fg
+base06: "e0f0ef" # light fg
+base07: "fde2af" # extreme light / highlight fg
+
+# Accents (syntax)
+base08: "c27166" # red-ish
+base09: "F4AE59" # orange
+base0A: "F3BF5D" # yellow
+base0B: "8dac8b" # green (dipakai juga sbg accent)
+base0C: "93bfc2" # cyan accent
+base0D: "cde3e4" # blue-ish
+base0E: "dfaca5" # pink-ish
+base0F: "e09785" # extra red/brown

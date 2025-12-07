@@ -1,5 +1,5 @@
 /*
- * Waybar style (Base16 via Flavours) — LEFT BAR
+ * Waybar style (Base16 via Flavours) — LEFT BAR (OUTLINE STYLE)
  */
 
 @import "./colors.css";
@@ -26,7 +26,6 @@ window#waybar.hidden {
 }
 
 /** ========= WORKSPACES (SWAY) ========= **/
-
 
 /* Container workspaces */
 #workspaces {
@@ -78,6 +77,8 @@ window#waybar.hidden {
   border-radius: 12px 12px 0px 0px;
   margin: 6px 5px 0px 5px;
   padding: 0px 4px;
+  background-color: transparent;
+  border: 1px solid @base01;      /* outline hanya */
 }
 
 #taskbar button {
@@ -91,7 +92,7 @@ window#waybar.hidden {
 }
 
 #taskbar button:hover {
-  background-color: @base01;
+  background-color: alpha(@base01, 0.25);
   color: @base07;
 }
 
@@ -118,28 +119,35 @@ window#waybar.hidden {
   font-size: 14px;
 }
 
-/* warna tetap dari style awal */
+/* menu: alt bg dulu -> sekarang outline */
 #custom-menu {
-  background-color: @base01;
+  background-color: transparent;
+  border: 1px solid @base01;
   color: @base0E;
 }
 
+/* themes: tetap hijau biar kelihatan tombol “mode” */
 #custom-themes {
   background-color: @base0B;
   color: @base00;
+  border: 1px solid @base0B;
 }
 
+/* power: tetap full merah */
 #custom-power {
   background-color: @base08;
   color: @base00;
+  border: 1px solid @base08;
 }
 
+/* yang lain: dulu bg @base01 -> sekarang outline */
 #custom-flavours,
 #custom-nightlight,
 #custom-qs,
 #bluetooth,
 #network {
-  background-color: @base01;
+  background-color: transparent;
+  border: 1px solid @base01;
   color: @base0E;
 }
 
@@ -150,17 +158,20 @@ window#waybar.hidden {
   border-radius: 12px;
   margin: 5px;
   padding: 8px 6px;
+  border: 1px solid @base0B;
 }
 #idle_inhibitor.deactivated {
   background-color: @base08;
+  border-color: @base08;
 }
 
 /** ========= TRAY ========= **/
 #tray {
-  background-color: @base01;
+  background-color: transparent;
   border-radius: 12px;
   margin: 5px;
   padding: 8px 6px;
+  border: 1px solid @base01;  /* outline */
 }
 #tray > .passive { -gtk-icon-effect: dim; }
 #tray > .needs-attention { -gtk-icon-effect: highlight; }
@@ -182,11 +193,12 @@ window#waybar.hidden {
 #mpd.2, 
 #mpd.3, 
 #mpd.4 {
-  background-color: @base01;
+  background-color: transparent;
   font-size: 14px;
   border-radius: 12px;
   margin: 5px 5px 0px 5px;
   padding: 6px 6px;
+  border: 1px solid @base01; /* outline */
 }
 
 /** ========= CPU / MEMORY / DISK ========= **/
@@ -205,8 +217,9 @@ window#waybar.hidden {
 /** ========= BATTERY ========= **/
 #battery { color: @base0C; }
 #battery.critical:not(.charging) {
-  background-color: @base02;
+  background-color: transparent;
   color: @base08;
+  border-color: @base08;
   animation: blink 0.5s linear infinite alternate;
 }
 @keyframes blink { 
@@ -229,7 +242,6 @@ window#waybar.hidden {
 #custom-nightlight { color: @base0E; }
 #custom-qs         { color: @base07; }
 
-
 /** ********** Clock ********** **/
 #clock {
     background-color: @base00;
@@ -237,16 +249,23 @@ window#waybar.hidden {
     font-size: 16px;
     font-weight: bold;
     border-radius: 12px 12px 0px 0px;
-    padding: 10px 5px 0px 5px;
+    /*            top right bottom left  */
+    padding: 10px 5px 6px 5px;   /* ⬅ dulu 10px 5px 0px 5px */
     margin-left: 5px;
     margin-right: 5px;
+    border: 1px solid @base01;
 }
+
 #clock.2 {
     background-color: @base00;
     color: @base08;
     border-radius: 0px 0px 12px 12px;
-    padding: 0px 5px 10px 5px;
+    /*            top right bottom left  */
+    padding: 6px 5px 10px 5px;   /* ⬅ dulu 0px 5px 10px 5px */
+    margin-left: 5px;
+    margin-right: 5px;
     margin-bottom: 5px;
+    border: 1px solid @base01;
 }
 
 /** ========= UPDATES ========= **/
@@ -262,12 +281,13 @@ window#waybar.hidden {
 
 /* bagian atas kartu updates (sejajar dengan backlight/battery/cpu/disk/memory) */
 #custom-updates {
-  background-color: @base01;
+  background-color: transparent;
   border-radius: 12px 12px 0px 0px;
   margin: 5px 5px 0px 5px;
   padding: 10px 6px 5px 6px;
   color: @base03;
   font-size: 14px;
+  border: 1px solid @base01;      /* outline */
 }
 
 #custom-updates.up-to-date { color: @base03; }
@@ -297,10 +317,11 @@ window#waybar.hidden {
 #wireplumber,
 #custom-void-updates,
 #memory {
-  background-color: @base01;
+  background-color: transparent;
   border-radius: 12px 12px 0px 0px;
   margin: 5px 5px 0px 5px;
   padding: 10px 5px 5px 5px;
+  border: 1px solid @base01;          /* garis luar alt bg */
 }
 
 /** ========= COMMON BLOCK STYLE (.2 / BOTTOM HALF) ========= **/
@@ -316,22 +337,23 @@ window#waybar.hidden {
 #custom-void-updates.2,
 #bluetooth.2,
 #custom-updates.2 {
-  background-color: @base01;
+  background-color: transparent;
   color: @base05;
   font-size: 14px;
   border-radius: 0px 0px 12px 12px;
   margin: 0px 5px 5px 5px;
   padding: 6px 5px 8px 5px;
+  border: 1px solid @base01;          /* garis luar alt bg */
 }
 
 /** ========= TRAY / GROUP BLOCKS ========= **/
 #tray {
-  background-color: @base01;
+  background-color: transparent;
   border-radius: 12px;
   margin: 5px;
   padding: 8px 5px;
+  border: 1px solid @base01;
 }
-
 
 /* ikon */
 /* warna status konsisten */

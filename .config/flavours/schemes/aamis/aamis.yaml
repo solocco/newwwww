@@ -1,0 +1,25 @@
+scheme: "Aamis"
+author: "VYRX"
+
+# Background & subtle UI
+base00: "0f0f0f"  # deep black
+base01: "706a6a"  # dim subtle UI
+base02: "cea37f"  # soft selection bg
+base03: "e2be8a"  # comments / muted fg
+
+# Main foreground & highlights
+base04: "e6caab"  # secondary fg
+base05: "ede4c8"  # main fg
+base06: "eadccc"  # bright text highlight
+base07: "ede4c8"  # brightest UI element (kept same for consistency)
+
+# Syntax colors (semantic)
+base08: "e25d6c"  # red: errors
+base09: "f4bb54"  # amber: numbers / signatures
+base0A: "e8ab3b"  # gold: functions / temps
+base0B: "edb95a"  # warm yellow: strings
+base0C: "eacea7"  # soft neutral yellow: regex / constants
+base0D: "cea37f"  # soft brown: types / classes
+base0E: "e9838f"  # pink: keywords / special syntax
+base0F: "ecb95c"  # accent alt → punctuation / inline highlights
+
