@@ -1,0 +1,289 @@
+{
+  "name": "main-bar-sway",
+  "id": "main-bar-sway",
+  "layer": "top",
+  //"mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "left",
+  "height": "",
+  "spacing": 0,
+  "margin": 0, 					// Space around the bar
+  "margin-top": 0, 				// Space above the bar
+  "margin-bottom": 0, 			// Space below the bar
+  "margin-left": 0, 				// Space to the left of the bar
+  "margin-right": 0, 				// Space to the right of the bar
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  // ==== Layout: pakai gaya stacking ====
+  "modules-left": [
+    "custom/menu",
+   "niri/workspaces",
+    "sway/window"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "cpu", "cpu#2",
+    "memory", "memory#2",
+    "backlight", "backlight#2",
+    "wireplumber", "wireplumber#2",
+    "network",
+    "clock", "clock#2",
+    "custom/qs",
+    "custom/power",
+    "tray"
+  ],
+
+  /* ---- Taskbar (dari stacking) ---- */
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "icon-theme": "breeze-dark",
+    "tooltip": true,
+    "tooltip-format": "{title}",
+    "on-click": "minimize-raise",
+    "on-click-middle": "close",
+    "sort-by-app-id": true,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "^(.{8}).+$": "$1…"
+    },
+    "app_ids-mapping": { "imv": "img" }
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 4,
+    "padding": "0 2px 0 2px",
+    "border-radius": 8
+  },
+
+  /* ---- Menu & util (dari stacking) ---- */
+  "custom/menu": {
+    "format": " ",
+    "on-click": "rofi_launcher",
+    "tooltip": false
+  },
+  "custom/flavours": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Theme selector",
+    "on-click": "rofi_flavours"
+  },
+  "custom/qs": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Quick Settings",
+    "on-click": "rofi_quicksettings"
+  },
+  "custom/power": {
+    "format": " ",
+    "on-click": "powermenu.sh",
+    "tooltip": false
+  },
+
+  /* ---- Updates (ikon + teks, dari stacking) ---- */
+
+// icon
+"custom/void-updates": {
+  "exec": "~/.local/bin/void-updates.py",
+  "return-type": "json",
+  "format": "{icon}",
+  "format-icons": ["󰏗"],
+  "interval": 1800,
+  "tooltip": true
+},
+
+// number
+"custom/void-updates#2": {
+  "exec": "~/.local/bin/void-updates.py",
+  "return-type": "json",
+  "format": "{percentage}",
+  "interval": 1800,
+  "tooltip": true
+},
+  
+"custom/updates": {
+  "exec": "phyton3 ~/.local/bin/updbar.py",
+  "return-type": "json",
+  "format": "{text}",          // penting: jangan {icon} {text} kalau mau spinner ini doang
+  "interval": 1,
+  "tooltip": true
+},
+  "custom/updates#2": {
+    "format": "{text}",                         // text dari script (angka / spinner)
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar.py", 
+    "on-click": "~/.local/bin/chckpds.sh",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 1,                              // lebih sering, buat animasi
+    "tooltip": true
+  },
+
+ 
+  // waybar-clock
+  "clock": {
+    "interval": 60,
+    "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>",
+    "format": "{:%I}"
+  },
+  "clock#2": {
+    "interval": 60,
+    "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>",
+    "format": "{:%M}"
+  },
+
+  /* ---- Audio: pakai pulseaudio model stacking (PipeWire kompatibel via pipewire-pulse) ---- */
+  "pulseaudio": {
+    "format": "",
+    "format-muted": "",
+    "on-click": "pavucontrol",
+    "max-volume": 150,
+    "scroll-step": 0.2,
+    "tooltip": true,
+    "tooltip-format": "{volume}%"
+  },
+  "pulseaudio#2": { "format": "{volume}%", "tooltip": false },
+
+"wireplumber": {
+        "format": "{icon}",
+        "format-muted": "婢",
+        "format-bluetooth": "",
+        "format-bluetooth-muted": "",
+        "format-source": "",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "ﳌ",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["奄", "奔", "墳"]
+        },
+        "scroll-step": 5.0,
+        //"on-click": "pulsemixer --toggle-mute",
+        //"on-click-right": "pulsemixer --toggle-mute",
+        "smooth-scrolling-threshold": 1,
+    },
+    "wireplumber#2": {
+        "format": "{volume}%",
+        "format-muted": "Mute",
+        "format-bluetooth": "{volume}%",
+        "format-bluetooth-muted": "Mute",
+        "format-source": "{volume}%",
+        "scroll-step": 5.0,
+        //"on-click": "pulsemixer --toggle-mute",
+        //"on-click-right": "pulsemixer --toggle-mute",
+        "smooth-scrolling-threshold": 1,
+    },
+
+
+  /* ---- Networking (dari stacking; klik buka net-menu) ---- */
+  "network": {
+    "format-wifi": " ",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "tooltip": true,
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "net-menu.sh bottom-right"
+  },
+  "network#2": { "format": "{signalStrength}%", "tooltip": false },
+
+  /* ---- Bluetooth (opsional; tetap disediakan) ---- */
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "",
+    "format-connected": "",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "rofi_bluetooth"
+  },
+  "bluetooth#2": { "format": "{status}", "tooltip": false },
+
+  /* ---- Battery & Backlight (gabung kebiasaan stacking + kebutuhan laptop) ---- */
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon}",
+    "format-charging": "{icon}",
+    "format-plugged": "{icon}",
+    "tooltip": true,
+    "tooltip-format": "{capacity}%",
+    "format-icons": ["","","","",""]
+  },
+  "battery#2": { "format": "{capacity}%", "tooltip": false },
+
+ 
+// waybar-backlight
+    "backlight": {
+		"interval": 2,
+        //"device": "amdgpu_bl0",
+        "format": "{icon}",
+        "format-icons": ["", "", "", "", "", "", ""],
+        //"on-scroll-up": "light -A 5%",
+        //"on-scroll-down": "light -U 5%",
+        "smooth-scrolling-threshold": 1,
+    },
+    "backlight#2": {
+		"interval": 2,
+        //"device": "amdgpu_bl0",
+        "format": "{percent}%",
+        //"on-scroll-up": "light -A 5%",
+        //"on-scroll-down": "light -U 5%",
+        "smooth-scrolling-threshold": 1,
+    },
+
+  /* ---- Stats (dari stacking) ---- */
+  "cpu": { "format": " ", "tooltip": true, "tooltip-format": "{usage}%" },
+  "cpu#2": { "format": "{usage}%", "tooltip": false },
+
+  "memory": { "format": " ", "tooltip": true, "tooltip-format": "{percentage}%" },
+  "memory#2": { "format": "{percentage}%", "tooltip": false },
+
+  "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
+  "disk#2": { "format": "{free}", "tooltip": false },
+
+  /* ---- Khusus SWAY (dari config pertama) ---- */
+  
+
+"niri/workspaces": {
+  "all-outputs": true,
+  "format": "{name}",
+  "disable-click": false,
+  "disable-markup": false,
+  "current-only": false,
+  "expand": false
+},
+  "sway/window": {
+    "format": "{title}",
+    "icon": true,
+    "icon-size": 14,
+    "max-length": 50,
+    "tooltip": false,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "": "Desktop"
+    }
+  },
+  "sway/language": {
+    "format": "",
+    "on-click": "dash ~/.config/waybar/scripts/sway-keyboard-toggle.sh",
+    "tooltip": true,
+    "tooltip-format": "fr/us"
+  },
+
+  /* ---- Night light: pakai toggle wlsunset dari config pertama ---- */
+  "custom/wlsunset": {
+    "format": "",
+    "on-click": "dash ~/.config/waybar/scripts/flavours-toggle",
+    "on-click-right": "dash ~/.config/waybar/scripts/sun-toggle",
+    "tooltip": true,
+    "tooltip-format": "Night light"
+  }
+}

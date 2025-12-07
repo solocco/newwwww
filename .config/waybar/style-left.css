@@ -1,0 +1,355 @@
+/*
+ * Waybar style (Base16 via Flavours) — LEFT BAR
+ */
+
+@import "./colors.css";
+
+/** ========= FONTS ========= **/
+* {
+  font-family: "Iosevka Nerd Font", "Symbols Nerd Font", archcraft;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/** ========= WAYBAR WINDOW (LEFT) ========= **/
+window#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-right: 0px solid @base01;
+  box-shadow: none;
+  transition-property: background-color;
+  transition-duration: .5s;
+}
+
+window#waybar.hidden {
+  opacity: 0.5;
+}
+
+/** ========= WORKSPACES (SWAY) ========= **/
+
+
+/* Container workspaces */
+#workspaces {
+  margin: 0 4px;
+}
+
+/* Semua tombol workspace */
+#workspaces button {
+  padding: 2px 8px;
+  margin: 2px 2px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Workspace yang aktif di output ini */
+#workspaces button.active {
+  background: @base02;
+  color: @base0A;
+}
+
+/* Workspace yang fokus (tempat keyboard focus) */
+#workspaces button.focused {
+  background: @base0D;
+  color: @base00;
+}
+
+/* Workspace kosong */
+#workspaces button.empty {
+  opacity: 0.6;
+}
+
+/* Workspace urgent */
+#workspaces button.urgent {
+  background: @base08;
+  color: @base00;
+}
+
+/* Workspace yang ada di output yang sama dengan bar ini */
+#workspaces button.current_output {
+  border: 1px solid @base03;
+}
+
+/** ========= TASKBAR ========= **/
+#taskbar {
+  font-style: normal;
+  font-weight: 500;
+  border-radius: 12px 12px 0px 0px;
+  margin: 6px 5px 0px 5px;
+  padding: 0px 4px;
+}
+
+#taskbar button {
+  margin: 0px 0px 2px 0px;
+  padding: 0px 4px;
+  border-radius: 0px;
+  background-color: transparent;
+  color: @base07;
+  border: 0;
+  box-shadow: none;
+}
+
+#taskbar button:hover {
+  background-color: @base01;
+  color: @base07;
+}
+
+#taskbar button.minimized {
+  border-left: 2px solid @base08;
+}
+
+#taskbar button.active {
+  border-left: 2px solid @base02;
+}
+
+/** ========= CUSTOM BUTTONS ========= **/
+#custom-menu,
+#custom-themes,
+#custom-power,
+#custom-flavours,
+#custom-nightlight,
+#custom-qs,
+#bluetooth,
+#network {
+  border-radius: 12px;
+  margin: 5px;
+  padding: 8px 6px;
+  font-size: 14px;
+}
+
+/* warna tetap dari style awal */
+#custom-menu {
+  background-color: @base01;
+  color: @base0E;
+}
+
+#custom-themes {
+  background-color: @base0B;
+  color: @base00;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+}
+
+#custom-flavours,
+#custom-nightlight,
+#custom-qs,
+#bluetooth,
+#network {
+  background-color: @base01;
+  color: @base0E;
+}
+
+/** ========= IDLE INHIBITOR ========= **/
+#idle_inhibitor {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 12px;
+  margin: 5px;
+  padding: 8px 6px;
+}
+#idle_inhibitor.deactivated {
+  background-color: @base08;
+}
+
+/** ========= TRAY ========= **/
+#tray {
+  background-color: @base01;
+  border-radius: 12px;
+  margin: 5px;
+  padding: 8px 6px;
+}
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/** ========= MPD ========= **/
+#mpd { 
+  color: @base05; 
+  font-size: 12px; 
+}
+#mpd.disconnected,
+#mpd.stopped { 
+  color: @base08; 
+}
+#mpd.playing { 
+  color: @base0C; 
+}
+
+/* varian blok vertikal */
+#mpd.2, 
+#mpd.3, 
+#mpd.4 {
+  background-color: @base01;
+  font-size: 14px;
+  border-radius: 12px;
+  margin: 5px 5px 0px 5px;
+  padding: 6px 6px;
+}
+
+/** ========= CPU / MEMORY / DISK ========= **/
+#cpu    { color: @base08; }
+#memory { color: @base0B; }
+#disk   { color: @base0A; }
+
+/** ========= PULSEAUDIO ========= **/
+#pulseaudio           { color: @base0D; }
+#pulseaudio.bluetooth { color: @base0C; }
+#pulseaudio.muted     { color: @base08; }
+
+/** ========= BACKLIGHT ========= **/
+#backlight { color: @base0E; }
+
+/** ========= BATTERY ========= **/
+#battery { color: @base0C; }
+#battery.critical:not(.charging) {
+  background-color: @base02;
+  color: @base08;
+  animation: blink 0.5s linear infinite alternate;
+}
+@keyframes blink { 
+  0% { color: @base08; }
+  100% { color: @base05; } 
+}
+
+/** ========= NETWORK ========= **/
+#network { color: @base0A; }
+#network.disconnected,
+#network.disabled { color: @base08; }
+
+/** ========= BLUETOOTH ========= **/
+#bluetooth { color: @base0B; }
+#bluetooth.disabled,
+#bluetooth.off { color: @base08; }
+
+/** ========= THEMES / NIGHTLIGHT / QS ========= **/
+#custom-flavours   { color: @base0C; }
+#custom-nightlight { color: @base0E; }
+#custom-qs         { color: @base07; }
+
+
+/** ********** Clock ********** **/
+#clock {
+    background-color: @base00;
+    color: @base0D;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 12px 12px 0px 0px;
+    padding: 10px 5px 0px 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+#clock.2 {
+    background-color: @base00;
+    color: @base08;
+    border-radius: 0px 0px 12px 12px;
+    padding: 0px 5px 10px 5px;
+    margin-bottom: 5px;
+}
+
+/** ========= UPDATES ========= **/
+@keyframes new-updates {
+  0%   { color: transparent; }
+  100% { color: @base0B; }
+}
+
+@keyframes refreshing {
+  0%   { color: @base03; }
+  100% { color: @base0C; }
+}
+
+/* bagian atas kartu updates (sejajar dengan backlight/battery/cpu/disk/memory) */
+#custom-updates {
+  background-color: @base01;
+  border-radius: 12px 12px 0px 0px;
+  margin: 5px 5px 0px 5px;
+  padding: 10px 6px 5px 6px;
+  color: @base03;
+  font-size: 14px;
+}
+
+#custom-updates.up-to-date { color: @base03; }
+#custom-updates.updates    { color: @base0B; }
+#custom-updates.offline    { color: @base08; }
+
+#custom-updates.new-updates {
+  animation-name: new-updates;
+  animation-duration: 0.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+#custom-updates.refreshing {
+  animation-name: refreshing;
+  animation-duration: 1.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+/** ========= COMMON BLOCK STYLE (TOP HALF) ========= **/
+/* semua kartu statistik di bar kiri – TERMASUK DISK */
+#backlight,
+#battery,
+#cpu,
+#disk,
+#wireplumber,
+#custom-void-updates,
+#memory {
+  background-color: @base01;
+  border-radius: 12px 12px 0px 0px;
+  margin: 5px 5px 0px 5px;
+  padding: 10px 5px 5px 5px;
+}
+
+/** ========= COMMON BLOCK STYLE (.2 / BOTTOM HALF) ========= **/
+#pulseaudio,
+#backlight.2,
+#battery.2,
+#cpu.2,
+#disk.2,
+#memory.2,
+#pulseaudio.2,
+#wireplumber.2,
+#network.2,
+#custom-void-updates.2,
+#bluetooth.2,
+#custom-updates.2 {
+  background-color: @base01;
+  color: @base05;
+  font-size: 14px;
+  border-radius: 0px 0px 12px 12px;
+  margin: 0px 5px 5px 5px;
+  padding: 6px 5px 8px 5px;
+}
+
+/** ========= TRAY / GROUP BLOCKS ========= **/
+#tray {
+  background-color: @base01;
+  border-radius: 12px;
+  margin: 5px;
+  padding: 8px 5px;
+}
+
+
+/* ikon */
+/* warna status konsisten */
+#custom-void-updates.has-updates,
+#custom-void-updates-2.has-updates {
+  color: #e67e80;
+}
+
+#custom-void-updates.up-to-date,
+#custom-void-updates-2.up-to-date {
+  color: #7fbbb3;
+}
+
+#custom-void-updates.error,
+#custom-void-updates-2.error {
+  color: #d08770;
+}
+
+/* 
+ * Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
+*/

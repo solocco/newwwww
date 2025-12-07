@@ -1,6 +1,6 @@
 binds {
 // Personal Keybinds
-    Mod+Return { spawn "footx"; }
+    Mod+Return { spawn "alacritty"; }
     Mod+Shift+Return { spawn "footx" "-f"; }
     Mod+D { spawn "rofi_launcher"; }
     Super+Alt+L { spawn "swaylock"; }

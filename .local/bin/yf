@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+# yf — Your Fetch (v1.4.2)
+# - Gutter 2 kolom selang-seling per baris (putih–hitam, lalu hitam–putih)
+# - Packages: "<xbps> (xbps) <flatpak> (flatpak) <nix> (nix) <snap> (snap)"
+# - Default TANPA ikon (set PKG_ICON untuk menyalakan ikon)
+# Opsi: --no-color  --gwidth=N  --dark=CHAR  --light=CHAR  --pad=N
+set -euo pipefail
+
+# ===== Options =====
+NO_COLOR=0
+GWIDTH=1
+DARK_CHAR="█"
+LIGHT_CHAR="░"
+PAD=2
+for arg in "$@"; do
+  case "$arg" in
+    --no-color) NO_COLOR=1 ;;
+    --gwidth=*) GWIDTH="${arg#*=}" ;;
+    --dark=*)   DARK_CHAR="${arg#*=}" ;;
+    --light=*)  LIGHT_CHAR="${arg#*=}" ;;
+    --pad=*)    PAD="${arg#*=}" ;;
+  esac
+done
+
+# ===== Colors =====
+if [[ -t 1 && $NO_COLOR -eq 0 ]]; then
+  c0=$'\e[0m'
+  ckey=$'\e[38;5;244m'
+  cval=$'\e[1;37m'
+else
+  c0=""; ckey=""; cval=""
+fi
+
+# ===== Helpers =====
+info() {
+  printf "%b%-12s%b %s\n" "$ckey" "$1" "$c0" "$2"
+}
+has() { command -v "$1" >/dev/null 2>&1; }
+
+repeat_char() {
+  local ch="${1:-#}"
+  local n="${2:-1}"
+  n=$(( n + 0 )) || true
+  if (( n <= 0 )); then
+    printf ""
+    return
+  fi
+  local out=""
+  local i
+  for i in $(seq 1 "$n"); do
+    out+="$ch"
+  done
+  printf "%s" "$out"
+}
+
+spaces() {
+  local n="${1:-2}"
+  n=$(( n + 0 )) || true
+  if (( n <= 0 )); then
+    printf ""
+    return
+  fi
+  repeat_char ' ' "$n"
+}
+
+count_safe() {
+  # Jalankan perintah, hitung baris; aman kalau error
+  bash -lc "$1" 2>/dev/null | wc -l | awk '{print $1}'
+}
+
+# ===== Distro / Host / Kernel / Arch =====
+DISTRO="$(. /etc/os-release 2>/dev/null; echo "${PRETTY_NAME:-Linux}")"
+HOST="$(hostnamectl --static 2>/dev/null || hostname)"
+KERNEL="$(uname -srmo 2>/dev/null || uname -sr)"
+ARCH="$(uname -m)"
+
+# ===== Uptime =====
+if read -r up_raw _ </proc/uptime 2>/dev/null; then
+  up_s="${up_raw%%.*}"
+else
+  up_s=0
+fi
+up_d=$(( up_s/86400 ))
+up_h=$(( (up_s%86400)/3600 ))
+up_m=$(( (up_s%3600)/60 ))
+UPTIME="$( ((up_d)) && printf "%dd " "$up_d"; ((up_h)) && printf "%dh " "$up_h"; printf "%dm" "$up_m" )"
+
+# ===== Packages (xbps/flatpak/nix/snap) =====
+PKG_ICON=${PKG_ICON:-""}   # kosong = tanpa ikon (default)
+xbps_cnt=0; flatpak_cnt=0; nix_cnt=0; snap_cnt=0
+
+if has xbps-query; then
+  xbps_cnt="$(count_safe 'xbps-query -l')"
+fi
+if has flatpak; then
+  flatpak_cnt="$(count_safe 'flatpak list --app')"
+fi
+if has nix-env; then
+  nix_cnt="$(count_safe 'nix-env -q')"
+elif has nix; then
+  nix_cnt="$(bash -lc 'nix profile list 2>/dev/null | sed "1d" | wc -l' | awk '{print $1}')"
+fi
+if has snap; then
+  snap_cnt="$(bash -lc 'snap list 2>/dev/null | sed "1d" | wc -l' | awk '{print $1}')"
+fi
+
+if [[ -n "${PKG_ICON}" ]]; then
+  PKGS_LINE="$(printf "%s  %s (xbps) %s (flatpak) %s (nix) %s (snap)" \
+    "$PKG_ICON" "$xbps_cnt" "$flatpak_cnt" "$nix_cnt" "$snap_cnt")"
+else
+  PKGS_LINE="$(printf "%s (xbps) %s (flatpak) %s (nix) %s (snap)" \
+    "$xbps_cnt" "$flatpak_cnt" "$nix_cnt" "$snap_cnt")"
+fi
+
+# ===== Shell & Terminal =====
+SHELL_NAME="${SHELL##*/}"
+ppid()  { ps -o ppid= -p "$1" 2>/dev/null | tr -d ' '; }
+pcomm() { ps -o comm= -p "$1" 2>/dev/null | awk '{print $1}'; }
+tid=$$; term="?"
+for _ in {1..10}; do
+  tid="$(ppid "$tid" || echo)"
+  [[ -z "${tid:-}" ]] && break
+  comm="$(pcomm "$tid" || echo)"
+  case "$comm" in
+    foot|footclient|kitty|alacritty|wezterm|termite|gnome-terminal-|konsole|xfce4-terminal|xterm|st|tmux|screen)
+      term="$comm"; break;;
+  esac
+done
+if [[ "$term" == "tmux" || "$term" == "screen" ]]; then
+  term="$term (${TERM:-})"
+fi
+[[ "$term" == "?" ]] && term="${TERM:-?}"
+
+# ===== Session / WM / DE =====
+SESSION="${XDG_SESSION_TYPE:-tty}"
+DE_RAW="${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-}}"
+wm="?"
+if [[ "$SESSION" == "wayland" ]]; then
+  if has swaymsg && swaymsg -t get_version >/dev/null 2>&1; then
+    wm="Sway $(swaymsg -t get_version | awk 'NR==1{print $3}')"
+  elif has niri; then
+    wm="Niri $(niri --version 2>/dev/null | awk '{print $2}')"
+  elif has labwc; then
+    wm="Labwc $(labwc -v 2>/dev/null | awk '{print $2}')"
+  elif has riverctl; then
+    wm="River $(riverctl -v 2>/dev/null | awk '{print $2}')"
+  else
+    wm="Wayland"
+  fi
+else
+  if has xprop && xprop -root _NET_SUPPORTING_WM_CHECK >/dev/null 2>&1; then
+    wm="$(xprop -root _NET_WM_NAME 2>/dev/null | cut -d\" -f2)"
+  fi
+fi
+
+DE="-"
+if [[ -n "${DE_RAW:-}" ]]; then
+  de_lc="$(printf "%s" "$DE_RAW" | tr '[:upper:]' '[:lower:]')"
+  wm_lc="$(printf "%s" "$wm"    | tr '[:upper:]' '[:lower:]')"
+  if [[ "$de_lc" != *"${wm_lc%% *}"* ]]; then
+    DE="$DE_RAW"
+  fi
+fi
+
+# ===== CPU / GPU =====
+CPU="$(awk -F: '/model name|Hardware|Processor/ {gsub(/^[ \t]+/,"",$2); print $2; exit}' /proc/cpuinfo 2>/dev/null)"
+if [[ -z "$CPU" ]]; then
+  CPU="$(lscpu 2>/dev/null | awk -F: '/Model name/ {gsub(/^[ \t]+/,"",$2); print $2}')"
+fi
+
+GPU="-"
+if has lspci; then
+  GPU="$(lspci 2>/dev/null | awk -F': ' '/VGA|3D|Display/ {print $3; exit}')"
+elif has glxinfo; then
+  GPU="$(glxinfo -B 2>/dev/null | awk -F: '/Device:/ {sub(/^[ \t]+/,"",$2); print $2; exit}')"
+fi
+[[ -z "${GPU:-}" ]] && GPU="-"
+
+# ===== RAM / Disk =====
+mem_total_kb="$(awk '/MemTotal/    {print $2}' /proc/meminfo)"
+mem_avail_kb="$(awk '/MemAvailable/{print $2}' /proc/meminfo)"
+mem_used_mb=$(( (mem_total_kb - mem_avail_kb) / 1024 ))
+mem_total_mb=$((  mem_total_kb / 1024 ))
+RAM="${mem_used_mb}MiB / ${mem_total_mb}MiB"
+
+DISK="$(df -hP / | awk 'NR==2 {print $3" / "$2" ("$5")"}')"
+
+# ===== Resolution (WxH) =====
+get_res() {
+  if has wlr-randr; then
+    wlr-randr 2>/dev/null | awk '/current/ {print}' | grep -m1 -oE '[0-9]+x[0-9]+' || true
+  elif has hyprctl; then
+    hyprctl monitors 2>/dev/null | grep -m1 -oE '[0-9]+x[0-9]+' || true
+  elif has xrandr; then
+    xrandr 2>/dev/null | awk '/\*/ {print $1; exit}' || true
+  fi
+}
+RES="$(get_res)"; [[ -z "${RES:-}" ]] && RES="-"
+
+# ===== Build info =====
+build_info() {
+  info "OS"         "$DISTRO ($ARCH)"
+  info "Host"       "$HOST"
+  info "Kernel"     "$KERNEL"
+  info "Uptime"     "$UPTIME"
+  info "Packages"   "$PKGS_LINE"
+  info "Shell"      "$SHELL_NAME"
+  info "Terminal"   "$term"
+  info "Session"    "$SESSION"
+  [[ "$DE" != "-" ]] && info "DE" "$DE"
+  info "WM"         "$wm"
+  info "Resolution" "$RES"
+  info "CPU"        "$CPU"
+  info "GPU"        "$GPU"
+  info "Memory"     "$RAM"
+  info "Disk"       "$DISK"
+}
+
+# ===== Render: 2 kolom blok selang-seling per baris =====
+render_alt_columns_per_row() {
+  mapfile -t LINES < <(build_info)
+  local colW; colW="$(repeat_char "$LIGHT_CHAR" "$GWIDTH")"
+  local colB; colB="$(repeat_char "$DARK_CHAR"  "$GWIDTH")"
+  local pad;  pad="$(spaces "$PAD")"
+  local gutter
+
+  local i
+  for i in "${!LINES[@]}"; do
+    if (( i % 2 == 0 )); then
+      gutter="${colW}${colB}"   # putih–hitam
+    else
+      gutter="${colB}${colW}"   # hitam–putih
+    fi
+    printf "%s%s%b%s%b\n" "$gutter" "$pad" "$cval" "${LINES[$i]}" "$c0"
+  done
+}
+
+# ===== Run =====
+render_alt_columns_per_row
