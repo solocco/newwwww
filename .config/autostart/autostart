@@ -6,18 +6,17 @@ LOG="/tmp/autostart.log"
 # Config
 # =========================
 AUDIO=true
-MODE="none"                 # swaybg, swaybg-random, none
-THEME_MODE="last"           # last, auto, fixed, none
-THEME_NAME="gruvbox-dark-medium"
 CURSOR="Bibata-Modern-Ice"
 WAYBAR_STYLE="none"         # stacking, tiling, none
 
-# Wallpaper lokal (fallback)
+# Fallback
 DWALL="$HOME/pictures/walls/wall.jpg"
-WALL_DIR="$HOME/pictures/walls"
 
-LAST_THEME_FILE="$HOME/.cache/flavours/last_theme"
-LAST_WALL_FILE="$HOME/.cache/last_wallpaper"
+# State dir (sama seperti rofi_flavours)
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
+LAST_THEME="$STATE_DIR/last_theme"
+LAST_WALL="$STATE_DIR/last_wall"
+WALL_MODE="${WALL_MODE:-fill}"
 
 # =========================
 # Tunggu Wayland siap (maks 10s)
@@ -75,73 +74,77 @@ fi
 # =========================
 # Helpers
 # =========================
-apply_swaybg() {
+set_wall_with_swaybg() {
   img="$1"
-  pkill -x swaybg >>"$LOG" 2>&1 || :
-  swaybg -i "$img" -m fill >>"$LOG" 2>&1 &
-  mkdir -p "$(dirname "$LAST_WALL_FILE")"
-  printf '%s\n' "$img" > "$LAST_WALL_FILE"
-  echo "Saved last wallpaper: $img" >>"$LOG"
-}
-
-# =========================
-# Flavours wrapper (auto-save last theme)
-# =========================
-flavours_apply() {
-  scheme="$1"
-  if command flavours apply "$scheme" >>"$LOG" 2>&1; then
-    mkdir -p "$(dirname "$LAST_THEME_FILE")"
-    printf '%s\n' "$scheme" > "$LAST_THEME_FILE"
-    echo "Saved last theme: $scheme" >>"$LOG"
+  mode="${2:-$WALL_MODE}"
+  
+  if [ ! -f "$img" ]; then
+    echo "Wallpaper not found: $img, using fallback" >>"$LOG"
+    img="$DWALL"
   fi
+  
+  if [ ! -f "$img" ]; then
+    echo "ERROR: Fallback wallpaper also missing: $DWALL" >>"$LOG"
+    return 1
+  fi
+  
+  pkill -x swaybg >>"$LOG" 2>&1 || :
+  sleep 0.2
+  printf '[%s] swaybg: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
+  swaybg -m "$mode" -i "$img" >>"$LOG" 2>&1 &
+  echo "Wallpaper applied: $img" >>"$LOG"
 }
 
 # =========================
-# Main (Wallpaper MODE=none → pakai last_wallpaper)
+# Restore Last Flavour + Wallpaper
 # =========================
-case "$MODE" in
-  none)
-    if [ -s "$LAST_WALL_FILE" ]; then
-      SEL="$(head -n1 "$LAST_WALL_FILE" | tr -d '\r\n')"
-      [ -f "$SEL" ] && apply_swaybg "$SEL" || apply_swaybg "$DWALL"
-    else
-      apply_swaybg "$DWALL"
+restore_last_setup() {
+  if [ ! -s "$LAST_THEME" ]; then
+    echo "No last theme found at $LAST_THEME" >>"$LOG"
+    return 1
+  fi
+  
+  SCHEME="$(head -n1 "$LAST_THEME" | tr -d '\r\n')"
+  WALL=""
+  
+  if [ -s "$LAST_WALL" ]; then
+    WALL="$(head -n1 "$LAST_WALL" | tr -d '\r\n')"
+  fi
+  
+  echo "[$(date '+%F %T')] Restoring: theme=$SCHEME wallpaper=${WALL:-none}" >>"$LOG"
+  
+  # Apply theme
+  if ! flavours apply "$SCHEME" >>"$LOG" 2>&1; then
+    echo "ERROR: Failed to restore theme: $SCHEME" >>"$LOG"
+    return 1
+  fi
+  echo "Theme applied: $SCHEME" >>"$LOG"
+  
+  # Apply wallpaper jika ada
+  if [ -n "$WALL" ] && [ -f "$WALL" ]; then
+    set_wall_with_swaybg "$WALL"
+  else
+    if [ -n "$WALL" ]; then
+      echo "Last wallpaper not found or invalid: $WALL" >>"$LOG"
     fi
-    ;;
-  *)
-    echo "Unknown MODE: $MODE" >>"$LOG"
-    ;;
-esac
+    return 1
+  fi
+  
+  return 0
+}
+
+# Attempt restore, fallback ke default jika gagal
+if ! restore_last_setup; then
+  echo "Using fallback wallpaper" >>"$LOG"
+  set_wall_with_swaybg "$DWALL"
+fi
 
 # =========================
-# Theme
+# Restart fnott if installed
 # =========================
-configure_theme() {
-  case "$THEME_MODE" in
-    last)
-      if [ -s "$LAST_THEME_FILE" ]; then
-        LAST_SCHEME="$(head -n1 "$LAST_THEME_FILE" | tr -d '\r\n')"
-        flavours_apply "$LAST_SCHEME"
-      else
-        flavours_apply "$THEME_NAME"
-      fi
-      ;;
-    auto)
-      if [ -s "$LAST_WALL_FILE" ]; then
-        WP="$(head -n1 "$LAST_WALL_FILE" | tr -d '\r\n')"
-        [ -f "$WP" ] && {
-          flavours generate dark "$WP" >>"$LOG" 2>&1
-          flavours_apply "generated"
-        }
-      fi
-      ;;
-    fixed)
-      flavours_apply "$THEME_NAME"
-      ;;
-    none) : ;;
-  esac
-}
-configure_theme
+if command -v fnott >/dev/null 2>&1; then
+  fnott >>"$LOG" 2>&1 &
+fi
 
 # =========================
 # Waybar
@@ -170,7 +173,6 @@ seat seat0 xcursor_theme "$CURSOR" >>"$LOG" 2>&1 &
 # =========================
 # Extras
 # =========================
-fnott >>"$LOG" 2>&1 &
 wlsunset -T 6500 -t 5000 -l -6.2 -L 106.8 >>"$LOG" 2>&1 &
 wl-paste --watch cliphist store -max-items 100 >>"$LOG" 2>&1 &
 xwayland-satellite &
