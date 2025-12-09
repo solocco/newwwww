@@ -2,43 +2,29 @@ layout {
     gaps 3.5
     center-focused-column "never"
     always-center-single-column
-    // empty-workspace-above-first
-
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
         proportion 0.66667
     }
-
     default-column-width {}
-
     focus-ring {
         off
         width 1.5
-        active-color "#d5c4a1"
-        inactive-color "#282828"
-        // active-gradient from="#80c8ff" to="#bbddff" angle=45
-        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+        // warna di-override dari colors.kdl
     }
-
     border {
-        off
-        width 0
-        active-color "#d5c4a1"
-        inactive-color "#282828"
-        // active-gradient from="#ffbb66" to="#ffc880" angle=45 relative-to="workspace-view"
-        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+        on
+        width 2
+        // warna di-override dari colors.kdl
     }
-
     struts {
         // left 64
         // right 64
         // top 64
         // bottom 64
     }
-
     tab-indicator {
-        // off
         hide-when-single-tab
         place-within-column
         gap 2
@@ -47,14 +33,8 @@ layout {
         position "left"
         gaps-between-tabs 8
         corner-radius 5
-        active-color "#d5c4a1"
-        inactive-color "#282828"
-        urgent-color "blue"
-        // active-gradient from="#80c8ff" to="#bbddff" angle=45
-        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
-        // urgent-gradient from="#800" to="#a33" angle=45
+        // warna di-override dari colors.kdl
     }
-
 }
 
 cursor {
@@ -65,10 +45,26 @@ cursor {
 
 overview {
     zoom 0.50
-    backdrop-color "#282828"
+    // backdrop-color di-override dari colors.kdl
 }
 
 hotkey-overlay {
     skip-at-startup
 }
 
+recent-windows {
+    // off
+    debounce-ms 750
+
+    open-delay-ms 150
+
+    highlight {
+        padding 30
+        corner-radius 8
+    }
+
+    previews {
+        max-height 480
+        max-scale 0.5
+    }
+}

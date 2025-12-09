@@ -1,20 +1,24 @@
-scheme: "Telemetry"
+scheme: "Telemetry Dark"
 author: "Dothash"
-base00: "0F1B1D" # background utama (tetap)
-base01: "6b8d94" # background subtle
-base02: "8dac8b" # selection bg
-base03: "93bfc2" # comments / dim text
-base04: "a5cfcd" # secondary fg
-base05: "c1d3c0" # main fg
-base06: "e0f0ef" # light fg
-base07: "fde2af" # extreme light / highlight fg
 
-# Accents (syntax)
-base08: "c27166" # red-ish
-base09: "F4AE59" # orange
-base0A: "F3BF5D" # yellow
-base0B: "8dac8b" # green (dipakai juga sbg accent)
-base0C: "93bfc2" # cyan accent
-base0D: "cde3e4" # blue-ish
-base0E: "dfaca5" # pink-ish
-base0F: "e09785" # extra red/brown
+# Background ramp (dark → readable)
+base00: "0F1B1D" # background utama
+base01: "1b2b2d" # dark UI layer 1
+base02: "2d4549" # dark UI layer 2 / selection
+base03: "3f5f63" # dim text / comments
+
+# Text ramp (comfortable to bright)
+base04: "8dac8b" # soft fg (natural tone)
+base05: "c1d3c0" # main readable fg
+base06: "e0f0ef" # bright fg highlight
+base07: "fde2af" # extreme bright highlight
+
+# Accents — futuristic wasteland palette
+base08: "c27166" # red warning
+base09: "F4AE59" # orange numeric
+base0A: "F3BF5D" # yellow emphasis
+base0B: "8dac8b" # moss green success
+base0C: "93bfc2" # cyan interface cue
+base0D: "cde3e4" # dusty steel-blue
+base0E: "dfaca5" # faded pink keyword
+base0F: "e09785" # brown-red deprecated

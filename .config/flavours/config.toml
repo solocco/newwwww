@@ -35,19 +35,19 @@ start = "!! Start flavours"
 end   = "!! End flavours"
 
 # Neovim colours
-#[[items]]
-#file = "/home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua"
-#template = "nvim"
-#hook = "[ -S /tmp/nvim-server ] && nvim --server /tmp/nvim-server --remote-send ':source /home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua<CR>:lua require(\"base16-colorscheme\").setup()<CR>' || true"
-#start = "-- Start flavours"
-#end   = "-- End flavours"
+[[items]]
+file = "/home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua"
+template = "nvim"
+hook = "[ -S /tmp/nvim-server ] && nvim --server /tmp/nvim-server --remote-send ':source /home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua<CR>:lua require(\"base16-colorscheme\").setup()<CR>' || true"
+start = "-- Start flavours"
+end   = "-- End flavours"
 
 # Neovim hardline
-#[[items]]
-#file = "/home/cid/.config/nvim/lua/speyll/plugins/nvim-hardline.lua"
-#template = "nvim-hardline"
-#start = "-- Start flavours"
-#end   = "-- End flavours"
+[[items]]
+file = "/home/cid/.config/nvim/lua/speyll/plugins/nvim-hardline.lua"
+template = "nvim-hardline"
+start = "-- Start flavours"
+end   = "-- End flavours"
 
 [[items]]
 file = "~/.config/fnott/fnott.ini"
@@ -76,3 +76,10 @@ subtemplate = "colors"
 rewrite = true
 light = false
 hook = "swaymsg reload"
+
+[[items]]
+file = "~/.config/niri/colors.kdl"
+template = "niri"
+subtemplate = "default"
+rewrite = true
+light = true

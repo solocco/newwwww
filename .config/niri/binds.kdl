@@ -145,4 +145,4 @@ binds {
     XF86MonBrightnessUp { spawn "~/.local/bin/bright.sh" "--inc"; }
     XF86MonBrightnessDown { spawn "~/.local/bin/bright.sh" "--dec"; }
 
-   }
+ }
