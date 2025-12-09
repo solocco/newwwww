@@ -83,3 +83,17 @@ template = "niri"
 subtemplate = "default"
 rewrite = true
 light = true
+
+[[items]]
+file = "~/.config/btop/themes/btop.theme"
+template = "btop"
+subtemplate = "default"
+rewrite = true
+light = true
+
+[[items]]
+file = "~/.config/superfile/theme/theme.toml"
+template = "superfile"
+subtemplate = "default"
+rewrite = true
+light = true
