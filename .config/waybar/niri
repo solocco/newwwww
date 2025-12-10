@@ -20,9 +20,8 @@
   // ==== Layout: pakai gaya stacking ====
   "modules-left": [
     "custom/menu",
-   "niri/workspaces",
-    "sway/window"
-  ],
+   "niri/workspaces"
+      ],
   "modules-center": [],
   "modules-right": [
     "cpu", "cpu#2",
@@ -36,24 +35,7 @@
     "tray"
   ],
 
-  /* ---- Taskbar (dari stacking) ---- */
-  "wlr/taskbar": {
-    "format": "{icon}",
-    "icon-size": 18,
-    "icon-theme": "breeze-dark",
-    "tooltip": true,
-    "tooltip-format": "{title}",
-    "on-click": "minimize-raise",
-    "on-click-middle": "close",
-    "sort-by-app-id": true,
-    "rewrite": {
-      "Firefox Web Browser": "Firefox",
-      "mpv Media Player": "mpv",
-      "^(.{8}).+$": "$1…"
-    },
-    "app_ids-mapping": { "imv": "img" }
-  },
-
+  
   "tray": {
     "icon-size": 18,
     "spacing": 4,
@@ -85,46 +67,6 @@
     "tooltip": false
   },
 
-  /* ---- Updates (ikon + teks, dari stacking) ---- */
-
-// icon
-"custom/void-updates": {
-  "exec": "~/.local/bin/void-updates.py",
-  "return-type": "json",
-  "format": "{icon}",
-  "format-icons": ["󰏗"],
-  "interval": 1800,
-  "tooltip": true
-},
-
-// number
-"custom/void-updates#2": {
-  "exec": "~/.local/bin/void-updates.py",
-  "return-type": "json",
-  "format": "{percentage}",
-  "interval": 1800,
-  "tooltip": true
-},
-  
-"custom/updates": {
-  "exec": "phyton3 ~/.local/bin/updbar.py",
-  "return-type": "json",
-  "format": "{text}",          // penting: jangan {icon} {text} kalau mau spinner ini doang
-  "interval": 1,
-  "tooltip": true
-},
-  "custom/updates#2": {
-    "format": "{text}",                         // text dari script (angka / spinner)
-    "return-type": "json",
-    "exec": "python3 ~/.local/bin/updbar.py", 
-    "on-click": "~/.local/bin/chckpds.sh",
-    "on-click-right": "~/.local/bin/updbar_rst.sh",
-    "signal": 9,
-    "interval": 1,                              // lebih sering, buat animasi
-    "tooltip": true
-  },
-
- 
   // waybar-clock
   "clock": {
     "interval": 60,
@@ -138,17 +80,7 @@
   },
 
   /* ---- Audio: pakai pulseaudio model stacking (PipeWire kompatibel via pipewire-pulse) ---- */
-  "pulseaudio": {
-    "format": "",
-    "format-muted": "",
-    "on-click": "pavucontrol",
-    "max-volume": 150,
-    "scroll-step": 0.2,
-    "tooltip": true,
-    "tooltip-format": "{volume}%"
-  },
-  "pulseaudio#2": { "format": "{volume}%", "tooltip": false },
-
+  
 "wireplumber": {
         "format": "{icon}",
         "format-muted": "婢",
@@ -191,7 +123,7 @@
     "tooltip": true,
     "tooltip-format": "{ipaddr}",
     "tooltip-format-disconnected": "Disconnected",
-    "on-click": "net-menu.sh bottom-right"
+    "on-click": "rofi_network"
   },
   "network#2": { "format": "{signalStrength}%", "tooltip": false },
 
@@ -248,42 +180,17 @@
   "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
   "disk#2": { "format": "{free}", "tooltip": false },
 
-  /* ---- Khusus SWAY (dari config pertama) ---- */
-  
-
 "niri/workspaces": {
-  "all-outputs": true,
-  "format": "{name}",
-  "disable-click": false,
-  "disable-markup": false,
-  "current-only": false,
-  "expand": false
-},
-  "sway/window": {
-    "format": "{title}",
-    "icon": true,
-    "icon-size": 14,
-    "max-length": 50,
-    "tooltip": false,
-    "rewrite": {
-      "Firefox Web Browser": "Firefox",
-      "mpv Media Player": "mpv",
-      "": "Desktop"
-    }
-  },
-  "sway/language": {
-    "format": "",
-    "on-click": "dash ~/.config/waybar/scripts/sway-keyboard-toggle.sh",
-    "tooltip": true,
-    "tooltip-format": "fr/us"
-  },
-
-  /* ---- Night light: pakai toggle wlsunset dari config pertama ---- */
-  "custom/wlsunset": {
-    "format": "",
-    "on-click": "dash ~/.config/waybar/scripts/flavours-toggle",
-    "on-click-right": "dash ~/.config/waybar/scripts/sun-toggle",
-    "tooltip": true,
-    "tooltip-format": "Night light"
+        "format": "{icon}",
+        "format-icons": {
+            "browser": "",
+            "discord": "",
+            "chat": "<b></b>",
+            // "2": "Two",
+            // "focused": "F",
+            "default": "",
+        },
+        // "current-only": true,
+        // "all-outputs": true,
+    },  
   }
-}

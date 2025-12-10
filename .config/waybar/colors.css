@@ -1,25 +1,25 @@
 /*
 *
-* Base16 Aamis
+* Base16 Aamis Dark
 * Author: VYRX
 *
 */
 
 @define-color base00 #0f0f0f;
-@define-color base01 #706a6a;
-@define-color base02 #cea37f;
-@define-color base03 #e2be8a;
+@define-color base01 #5e5959;
+@define-color base02 #706a6a;
+@define-color base03 #cea37f;
 @define-color base04 #e6caab;
 @define-color base05 #ede4c8;
 @define-color base06 #eadccc;
-@define-color base07 #ede4c8;
+@define-color base07 #fcfcfc;
 @define-color base08 #e25d6c;
 @define-color base09 #f4bb54;
 @define-color base0A #e8ab3b;
-@define-color base0B #edb95a;
-@define-color base0C #eacea7;
-@define-color base0D #cea37f;
+@define-color base0B #e2be8a;
+@define-color base0C #99dbc5;
+@define-color base0D #edb95a;
 @define-color base0E #e9838f;
 @define-color base0F #ecb95c;
 @define-color bg rgba(15, 15, 15, 0.90);
-@define-color accentDim rgba(234, 206, 167, 0.35);
+@define-color accentDim rgba(153, 219, 197, 0.35);
