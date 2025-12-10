@@ -1,0 +1,201 @@
+/*====== Configuration ======*/
+configuration {
+    show-icons: true;
+}
+
+/*====== Imports ======*/
+@import "colors.rasi"
+@import "fonts.rasi"
+
+/*====== Window ======*/
+window {
+    transparency:        "real";
+    location:            southwest;
+    anchor:              southwest;
+    fullscreen:          false;
+    width:               420px;
+    height:              470px;
+    x-offset:            0px;
+    y-offset:            0px;
+    margin:              0px;
+    padding:             0px;
+    border:              0px;
+    border-radius:       0px 30px 0px 0px;
+    cursor:              "default";
+    background-color:    @bg;
+}
+
+/*====== Main Box ======*/
+mainbox {
+    spacing:             10px;
+    margin:              0px;
+    padding:             20px;
+    background-color:    transparent;
+    children:            [ "inputbar", "message", "listview" ];
+}
+
+/*====== Inputbar ======*/
+inputbar {
+    enabled:             true;
+    spacing:             10px;
+    margin:              0px;
+    padding:             0px;
+    border-radius:       0px;
+    background-color:    transparent;
+    text-color:          @fg;
+    children:            [ "textbox-prompt-colon", "entry", "mode-switcher" ];
+}
+
+/* ikon kiri atas – mirip versi pertama */
+textbox-prompt-colon {
+    enabled:             true;
+    expand:              false;
+    str:                 "";            /* icon lama */
+    padding:             8px 10px;
+    border-radius:       100%;
+    background-color:    @sel;
+    text-color:          @bg;
+    vertical-align:      0.5;
+}
+
+entry {
+    enabled:             true;
+    padding:             10px 0px;
+    background-color:    transparent;
+    text-color:          inherit;
+    cursor:              text;
+    placeholder:         "Search...";
+    placeholder-color:   @fg;
+    vertical-align:      0.5;
+}
+
+/*====== Mode Switcher ======*/
+mode-switcher {
+    enabled:             true;
+    spacing:             10px;
+    margin:              0px;
+    padding:             0px;
+    background-color:    transparent;
+    text-color:          @fg;
+}
+
+button {
+    padding:             6px 12px;
+    border-radius:       12px;
+    background-color:    @bg;
+    text-color:          inherit;
+    cursor:              pointer;
+    border:              1px solid;
+    border-color:        @border;
+}
+
+button selected {
+    background-color:    @sel;
+    text-color:          @bg;
+    border:              1px solid;
+    border-color:        @sel;
+}
+
+/*====== Message (Status) ======*/
+message {
+    enabled:             true;
+    margin:              0px;
+    padding:             6px 12px;
+    border-radius:       10px;
+    background-color:    @bg;
+    text-color:          @fg;
+}
+
+textbox {
+    background-color:    transparent;
+    text-color:          @fg;
+    vertical-align:      0.5;
+    horizontal-align:    0.0;
+    highlight:           none;
+    placeholder-color:   @fg;
+    blink:               true;
+    markup:              true;
+}
+
+error-message {
+    padding:             30px;
+    background-color:    @bg;
+    text-color:          @fg;
+}
+
+/*====== Listview ======*/
+listview {
+    enabled:             true;
+    columns:             1;
+    lines:               10;
+    cycle:               true;
+    dynamic:             true;
+    scrollbar:           false;
+    layout:              vertical;
+    reverse:             false;
+    fixed-height:        true;
+    fixed-columns:       true;
+    margin:              0px;
+    padding:             0px;
+    spacing:             4px;
+    background-color:    transparent;
+    text-color:          @fg;
+    cursor:              "default";
+}
+
+scrollbar {
+    handle-width:        5px;
+    handle-color:        @sel;
+    border-radius:       10px;
+    background-color:    @bg;
+}
+
+/*====== Elements ======*/
+element {
+    enabled:             true;
+    spacing:             8px;
+    margin:              0px;
+    padding:             6px 8px;
+    border-radius:       12px;
+    background-color:    transparent;
+    text-color:          @fg;
+    cursor:              pointer;
+    horizontal-align:    0.0;      /* rata kiri */
+}
+
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active,
+element normal.urgent,
+element alternate.urgent {
+    background-color:    transparent;
+    text-color:          @fg;
+}
+
+element selected.normal,
+element selected.active,
+element selected.urgent {
+    background-color:    @sel;
+    text-color:          @bg;
+}
+
+/* icon di list (wifi signal, lock, dll) – mirip feel pertama tapi lebih rapih */
+element-icon {
+    background-color:    transparent;
+    text-color:          inherit;
+    size:                18px;
+    cursor:              inherit;
+    vertical-align:      0.5;
+    horizontal-align:    0.0;
+    margin:              0px 6px 0px 0px;
+}
+
+element-text {
+    background-color:    transparent;
+    text-color:          inherit;
+    highlight:           inherit;
+    cursor:              inherit;
+    vertical-align:      0.5;
+    horizontal-align:    0.0;
+}

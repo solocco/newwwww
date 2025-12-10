@@ -15,8 +15,8 @@ configuration {
 /*****----- Main Window -----*****/
 window {
     transparency:               "real";
-    location:                   southwest;   /* kiri bawah */
-    anchor:                     southwest;
+    location:                   northwest;   /* kiri bawah */
+    anchor:                     northwest;
     fullscreen:                 false;
     width:                      420px;
     x-offset:                   0px;
@@ -25,7 +25,7 @@ window {
     margin:                     0px;
     padding:                    0px;
     border:                     0px solid;
-    border-radius:              0px 30px 0px 0px; /* TL TR BR BL */
+    border-radius:              0px 0px 30px 0px; /* TL TR BR BL */
     border-color:               @border;
     background-color:           @bg;
 }

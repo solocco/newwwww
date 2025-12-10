@@ -14,7 +14,7 @@ window {
     border-color: @border;
     border-radius: 8px;
     background-color: @bg;
-    font: "monospace 12";
+    font: "Iosevka Nerd Font 12";
 }
 
 mainbox {

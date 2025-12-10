@@ -10,8 +10,8 @@ configuration {
 /* Window kanan–bawah */
 window {
   transparency:               "real";
-  location:                   southeast;
-  anchor:                     southeast;
+  location:                   southwest;
+  anchor:                     southwest;
   fullscreen:                 false;
   width:                      420px;               /* sesuaikan */
   x-offset:                   0px;
@@ -20,7 +20,7 @@ window {
   margin:                     0px;
   padding:                    0px;
   border:                     0px;                 /* tanpa border */
-  border-radius:              30px 0px 0px 0px;    /* TL TR BR BL */
+  border-radius:              0px 30px 0px 0px;    /* TL TR BR BL */
   border-color:               @border;             /* tak terpakai krn border:0 */
   background-color:           @bg;                 /* gunakan @bg semi/transparan */
 }
