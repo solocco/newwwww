@@ -1,0 +1,238 @@
+/* =====================================================
+ * WAYBAR — HYPRLAND
+ * Base16 via Flavours
+ * GTK CSS VALID
+ * ===================================================== */
+
+@import "../colors.css";
+
+/* ================= GLOBAL ================= */
+
+* {
+  font-family: "Iosevka Nerd Font", "Symbols Nerd Font", archcraft;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Waybar container */
+#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-radius: 6px;
+}
+
+/* =====================================================
+ * WORKSPACES — HYPRLAND WAYBAR (REFINED)
+ * Clean • Clear • Elegant
+ * ===================================================== */
+
+#workspaces {
+  margin: 6px 10px;
+  background: transparent;
+}
+
+/* BASE */
+#workspaces button {
+  background: transparent;
+  color: @base04;
+
+  margin: 0 7px;
+  padding: 2px 0;
+
+  border: none;
+  border-bottom: 2px solid transparent;
+
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 12px;
+}
+
+/* Label (angka workspace) */
+#workspaces .workspace-label {
+  padding: 0;
+}
+
+/* Hover — subtle */
+#workspaces button:hover {
+  color: @base06;
+}
+
+/* ACTIVE (monitor ini) */
+#workspaces button.active.hosting-monitor {
+  color: @base07;
+  border-bottom: 2px solid @base0D;
+}
+
+/* ACTIVE tapi bukan monitor ini */
+#workspaces button.active:not(.hosting-monitor) {
+  color: @base05;
+  border-bottom: 2px solid @base02;
+}
+
+/* Visible (monitor lain, tidak aktif) */
+#workspaces button.visible {
+  color: @base05;
+  border-bottom: 2px dashed @base02;
+}
+
+/* Urgent */
+#workspaces button.urgent {
+  color: @base08;
+  border-bottom: 2px solid @base08;
+}
+
+/* Special workspace */
+#workspaces button.special {
+  color: @base0E;
+}
+
+/* Persistent */
+#workspaces button.persistent {
+  color: @base04;
+}
+
+/* Empty */
+#workspaces button.empty {
+  color: @base03;
+  opacity: 0.45;
+}
+
+/* =====================================================
+ * WINDOW TITLE
+ * ===================================================== */
+
+#window {
+  color: @base05;
+  margin: 0 8px;
+}
+
+/* =====================================================
+ * COMMON MODULE BASE (GTK SAFE)
+ * ===================================================== */
+
+#custom-menu,
+#custom-qs,
+#custom-power,
+#network,
+#cpu,
+#cpu.2,
+#memory,
+#memory.2,
+#disk,
+#disk.2,
+#battery,
+#battery.2,
+#backlight,
+#backlight.2,
+#custom-updates,
+#custom-updates.2,
+#tray,
+#clock {
+  min-height: 22px;
+
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  margin: 6px 4px;
+
+  border-radius: 10px;
+  border: 1px solid @base01;
+  background: transparent;
+}
+
+/* =====================================================
+ * STACKING MODULES (ICON + TEXT)
+ * ===================================================== */
+
+/* Icon */
+#cpu,
+#memory,
+#disk,
+#battery,
+#backlight,
+#custom-updates {
+  margin-right: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+/* Text */
+#cpu.2,
+#memory.2,
+#disk.2,
+#battery.2,
+#backlight.2,
+#custom-updates.2 {
+  margin-left: 0;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+}
+
+/* =====================================================
+ * COLORS
+ * ===================================================== */
+
+#cpu        { color: @base08; }
+#memory     { color: @base0B; }
+#disk       { color: @base0A; }
+#battery    { color: @base0C; }
+#backlight  { color: @base0E; }
+#network    { color: @base0A; }
+#clock      { color: @base0D; }
+
+/* =====================================================
+ * STATE AWARE
+ * ===================================================== */
+
+#battery.critical:not(.charging) {
+  color: @base08;
+  border-color: @base08;
+}
+
+#network.disconnected,
+#network.disabled {
+  color: @base08;
+  border-color: @base08;
+}
+
+#custom-updates.updates {
+  color: @base0B;
+  border-color: @base0B;
+}
+
+#custom-updates.offline {
+  color: @base08;
+  border-color: @base08;
+}
+
+/* =====================================================
+ * SPECIAL BUTTONS
+ * ===================================================== */
+
+#custom-menu,
+#custom-qs {
+  color: @base0E;
+}
+
+#custom-power {
+  color: @base08;
+  border-color: @base08;
+}
+
+/* =====================================================
+ * TRAY
+ * ===================================================== */
+
+#tray {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}

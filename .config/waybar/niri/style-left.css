@@ -2,7 +2,7 @@
  * Waybar style (Base16 via Flavours) — LEFT BAR (OUTLINE STYLE)
  */
 
-@import "./colors.css";
+@import "../colors.css";
 
 /** ========= FONTS ========= **/
 * {
@@ -355,23 +355,3 @@ window#waybar.hidden {
   border: 1px solid @base01;
 }
 
-/* ikon */
-/* warna status konsisten */
-#custom-void-updates.has-updates,
-#custom-void-updates-2.has-updates {
-  color: #e67e80;
-}
-
-#custom-void-updates.up-to-date,
-#custom-void-updates-2.up-to-date {
-  color: #7fbbb3;
-}
-
-#custom-void-updates.error,
-#custom-void-updates-2.error {
-  color: #d08770;
-}
-
-/* 
- * Copyright (C) 2020-2024 Aditya Shakya <adi1090x@gmail.com>
-*/

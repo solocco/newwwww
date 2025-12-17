@@ -1,0 +1,85 @@
+#!/bin/sh
+# Void Linux + Hyprland session launcher (PipeWire safe, WirePlumber safe)
+
+set -eu
+
+### =========================
+### Cursor defaults
+### =========================
+CURSOR_THEME="${CURSOR_THEME:-Bibata-Modern-Ice}"
+CURSOR_SIZE="${CURSOR_SIZE:-24}"
+
+### =========================
+### Logging
+### =========================
+mkdir -p "$HOME/.cache"
+LOGFILE="$HOME/.cache/wsession-hyprland.log"
+exec >>"$LOGFILE" 2>&1
+echo "Hyprland session started: $(date)"
+
+### =========================
+### DBus session (WAJIB dulu)
+### =========================
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+  eval "$(/usr/bin/dbus-launch --exit-with-session --sh-syntax)"
+fi
+
+### =========================
+### Environment (JANGAN overwrite XDG_DATA_DIRS)
+### =========================
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_DESKTOP=Hyprland
+
+export QT_QPA_PLATFORM=wayland
+export QT_QPA_PLATFORMTHEME=qt6ct
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export MOZ_ENABLE_WAYLAND=1
+export SDL_VIDEODRIVER=wayland
+export GTK_USE_PORTAL=1
+export NO_AT_BRIDGE=1
+
+export XCURSOR_THEME="$CURSOR_THEME"
+export XCURSOR_SIZE="$CURSOR_SIZE"
+export XCURSOR_PATH="$HOME/.icons:$HOME/.local/share/icons:/usr/share/icons"
+
+# PENTING: append, bukan replace
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
+
+### =========================
+### Cleanup
+### =========================
+rm -f "$HOME/.cache"/*.wob 2>/dev/null || true
+
+### =========================
+### PipeWire stack (Void-safe)
+### =========================
+if ! pgrep -x pipewire >/dev/null; then
+  pipewire &
+fi
+
+# Tunggu socket PipeWire benar-benar siap
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  [ -S "$XDG_RUNTIME_DIR/pipewire-0" ] && break
+  sleep 0.2
+done
+
+if ! pgrep -x wireplumber >/dev/null; then
+  wireplumber &
+fi
+
+if ! pgrep -x pipewire-pulse >/dev/null; then
+  pipewire-pulse &
+fi
+
+### =========================
+### Final check (debug friendly)
+### =========================
+echo "PipeWire socket: $(ls -l "$XDG_RUNTIME_DIR/pipewire-0" 2>/dev/null || echo missing)"
+echo "WirePlumber PID: $(pgrep -x wireplumber || echo none)"
+
+### =========================
+### Launch Hyprland (LAST)
+### =========================
+exec Hyprland
+

@@ -2,9 +2,10 @@
 # Global Variables
 # ====================
 set $mod Mod4
-set $term footx
+set $term alacrittyx
 set $menu rofi_launcher
 set $cursor Bibata-Modern-Ice
+seat * xcursor_theme Bibata-Modern-Ice 24
 
 # ====================
 # Autostart
@@ -24,6 +25,7 @@ input "type:pointer" {
 input "type:touchpad" {
     dwt enabled
     tap enabled
+    drag enabled
     natural_scroll disabled
     middle_emulation enabled
 }
@@ -34,8 +36,27 @@ input "type:keyboard" {
     xkb_numlock enabled
 }
 
+output "eDP-1" {
+    mode  1920x1080@60Hz
+    scale 1.0
+}
+
 floating_modifier $mod normal
 focus_follows_mouse no
+
+# title bar
+title_align center
+font pango: Roboto Condensed Bold 10
+titlebar_border_thickness 3
+titlebar_padding 3
+for_window [app_id="^.*"] title_format "%title"
+for_window [class="^.*"] title_format "%title"
+
+# adjusting borders
+default_border none
+default_border normal 0
+default_floating_border normal 0
+for_window [app_id="^.*"] border pixel 3
 
 # ====================
 # Key Bindings
@@ -43,17 +64,14 @@ focus_follows_mouse no
 
 ## Basics
 bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term -f
 bindsym $mod+q kill
 bindsym $mod+d exec $menu
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 ## Custom
-bindsym $mod+Shift+n exec foot -T yazi yazi
-bindsym $mod+Shift+b exec librewolf
-bindsym $mod+period exec bemoji
 bindsym $mod+comma exec clip-manager
-bindsym $mod+Shift+Return exec footx -f
 
 ## Navigation
 bindsym $mod+Left focus left
@@ -75,7 +93,6 @@ bindsym $mod+4 workspace number 4
 bindsym $mod+5 workspace number 5
 bindsym $mod+6 workspace number 6
 bindsym $mod+7 workspace number 7
-bindsym $mod+8 workspace number 8
 bindsym $mod+9 workspace number 9
 
 ## Move Windows to Workspaces
@@ -90,16 +107,16 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 
 ## Special Keys
-bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+
-bindsym XF86AudioLowerVolume exec amixer sset Master 5%-
-bindsym XF86AudioMute exec amixer sset Master toggle
+bindsym XF86AudioRaiseVolume exec ~/.local/bin/vols.sh --inc
+bindsym XF86AudioLowerVolume exec ~/.local/bin/vols.sh --dec
+bindsym XF86AudioMute exec ~/.local/bin/vols.sh --toggle
 
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
-bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec ~/.local/bin/bright.sh --dec
+bindsym XF86MonBrightnessUp exec ~/.local/bin/bright.sh --inc
 
 bindsym Print exec grim-print copy
 bindsym $mod+Print exec grim
-bindsym $mod+Shift+s exec grim-print slurp
+bindsym $mod+Shift+s exec ~/.local/bin/shot-menu.sh
 bindsym $mod+Shift+Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | wl-copy
 
 ## Layouts
@@ -137,54 +154,51 @@ include $HOME/.config/sway/config.d/colors*
 
 set $bg $base00
 set $fg $base07
-set $accent $base0C
-set $urgent $base0A
-set $unslec $base03
+set $accent $base0A
+set $urgent $base08
+set $unslec $base01
 
+
+# =========================
 # Window Colors
-client.focused           $accent        $accent         $unslec     $accent     $accent
-client.focused_inactive  $unslec        $unslec         $fg         $unslec     $unslec
-client.unfocused         $unslec        $unslec         $fg         $unslec     $unslec
-client.urgent            $urgent        $urgent         $fg         $urgent     $urgent
+# =========================
 
-# Bar Configuration
-#bar {
-#  colors {
-#    background $bg
-#    statusline $fg
-#    separator $accent
-#    focused_workspace  $accent     $accent     $bg
-#    active_workspace   $accent     $unslec     $accent
-#    inactive_workspace $unslec     $unslec     $fg
-#    urgent_workspace   $urgent     $urgent     $unslec
-#  }
-#  position bottom
-#  height 24
-#  separator_symbol |
-#  font pango:monospace 12px
-#  status_command $HOME/.config/sway/sway-start-bar.sh
-#}
+client.focused           $accent   $accent   $unslec   $accent   $accent
+client.focused_inactive  $unslec   $unslec   $fg       $unslec   $unslec
+client.unfocused         $unslec   $unslec   $fg       $unslec   $unslec
+client.urgent            $urgent   $urgent   $fg       $urgent   $urgent
 
-#exec_always sh -c "pkill -x yambar; yambar -c .config/yambar/sway-config.yml >/dev/null 2>&1 &"
-exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/tiling-config -s ~/.config/waybar/style.css >/dev/null 2>&1 &"
+
+# ====================
+# Waybar
+# ====================
+
+exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css >/dev/null 2>&1 &"
 
 # ====================
 # Borders and Gaps
 # ====================
-default_border pixel 2
-default_floating_border pixel 2
-smart_borders no_gaps
+#default_border pixel 2
+#default_floating_border pixel 2
+#smart_borders no_gaps
 
-titlebar_padding 2
-title_align center
-titlebar_border_thickness 2
+#titlebar_padding 2
+#title_align center
+#titlebar_border_thickness 2
 
-smart_gaps on
+# gaps
 gaps inner 5
-gaps outer 5
+gaps outer 0
 
 # ====================
 # External Rules
 # ====================
 include $HOME/.config/sway/config.d/*
 #include /etc/sway/config.d/*
+
+# ====================
+# Workspace Layout Defaults (FIX)
+# ====================
+# Jadikan workspace 1 & 2 tabbed saat start,
+# workspace lain tetap pakai layout default.
+exec --no-startup-id swaymsg 'workspace number 1; layout tabbed; workspace number 2; layout tabbed; workspace number 1'
