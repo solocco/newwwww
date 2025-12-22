@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") <pattern> [launch-command]"
+  exit 1
+fi
+
+PATTERN="$1"
+CMD="${2:-$1}"
+
+# ---------------------------
+# Hyprland backend
+# ---------------------------
+if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && command -v hyprctl >/dev/null 2>&1; then
+  ADDR=$(
+    hyprctl clients -j | jq -r --arg p "$PATTERN" '
+      .[] | select(
+        (.class // "" | test($p;"i")) or
+        (.title // "" | test($p;"i"))
+      ) | .address
+    ' | head -n1
+  )
+
+  if [ -n "$ADDR" ]; then
+    hyprctl dispatch focuswindow "address:$ADDR"
+    exit 0
+  fi
+fi
+
+# ---------------------------
+# Sway / wlroots backend
+# ---------------------------
+if [ -n "${SWAYSOCK:-}" ] && command -v swaymsg >/dev/null 2>&1; then
+  if swaymsg -t get_tree | jq -e --arg p "$PATTERN" '
+    recurse(.nodes[], .floating_nodes[])
+    | select(
+        (.app_id // "" | test($p;"i")) or
+        (.name // "" | test($p;"i"))
+      )
+  ' >/dev/null; then
+    swaymsg "[app_id=\"$PATTERN\"] focus" || true
+    exit 0
+  fi
+fi
+
+# ---------------------------
+# Fallback (launch only)
+# ---------------------------
+setsid sh -c "$CMD" >/dev/null 2>&1 &
+

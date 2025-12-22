@@ -1,19 +1,19 @@
-## Base16 Gruvbox dark, medium
-# Author: morhetz, Dawid Kurek
+## Base16 Everforest Dark Medium
+# Author: sainnhe
 
-set $base00 #282828
-set $base01 #3c3836
-set $base02 #504945
-set $base03 #665c54
-set $base04 #bdae93
-set $base05 #d5c4a1
-set $base06 #ebdbb2
-set $base07 #fbf1c7
-set $base08 #fb4934
-set $base09 #fe8019
-set $base0A #fabd2f
-set $base0B #b8bb26
-set $base0C #8ec07c
-set $base0D #83a598
-set $base0E #d3869b
-set $base0F #d65d0e
+set $base00 #2d353b
+set $base01 #343f44
+set $base02 #3d484d
+set $base03 #475258
+set $base04 #9da9a0
+set $base05 #d3c6aa
+set $base06 #e4e1cd
+set $base07 #fdf6e3
+set $base08 #e67e80
+set $base09 #e69875
+set $base0A #dbbc7f
+set $base0B #a7c080
+set $base0C #83c092
+set $base0D #7fbbb3
+set $base0E #d699b6
+set $base0F #d3c6aa

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+CONFIG="$HOME/.config/alacritty/alacritty.toml"
+
+case "$1" in
+  -f)
+    shift
+    exec alacritty \
+      --class 'alacritty-float,alacritty-float' \
+      --config-file "$CONFIG" "$@"
+    ;;
+  -F)
+    shift
+    exec alacritty \
+      --class 'alacritty-fullscreen,alacritty-fullscreen' \
+      --config-file "$CONFIG" \
+      -o window.startup_mode="'Fullscreen'" \
+         window.padding.x=30 \
+         window.padding.y=30 \
+         window.opacity=0.95 \
+         font.size=14 \
+      "$@"
+    ;;
+  -c)
+    CLASS="$2"
+    shift 2
+    exec alacritty \
+      --class "$CLASS,$CLASS" \
+      --config-file "$CONFIG" "$@"
+    ;;
+  *)
+    exec alacritty --config-file "$CONFIG" "$@"
+    ;;
+esac

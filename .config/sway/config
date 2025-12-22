@@ -175,6 +175,7 @@ client.urgent            $urgent   $urgent   $fg       $urgent   $urgent
 
 exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css >/dev/null 2>&1 &"
 
+#exec waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css
 # ====================
 # Borders and Gaps
 # ====================

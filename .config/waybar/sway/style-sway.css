@@ -2,6 +2,8 @@
  * Waybar style (Base16 via Flavours)
  */
 
+
+
 @import "../colors.css";
 
 /** Fonts **/
@@ -124,10 +126,16 @@
   padding: 2px 8px;
 }
 
+#bluetooth {
+  background-color: @base01;
+  font-size: 14px;
+  margin: 8px 0px 8px 5px;
+  padding: 2px 8px;
+}
+
 #custom-flavours,
 #custom-nightlight,
 #custom-qs,
-#bluetooth,
 #network {
   background-color: @base01;
   color: @base0E;
@@ -204,7 +212,7 @@
   background-color: @base01;
   font-size: 18px;
   border-radius: 0px;
-  margin: 8px 8px 8px 8px;
+  margin: 8px 5px 8px 5px;
   padding: 2px 8px;
 }
 

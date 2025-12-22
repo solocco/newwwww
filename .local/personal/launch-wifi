@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eu
+
+TITLE="impala"
+
+exec launch-or-focus "$TITLE" \
+  "alacritty --title $TITLE -e impala"

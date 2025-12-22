@@ -34,6 +34,7 @@
     "wireplumber", 
     "wireplumber#2",
     "network",
+    "bluetooth",
     "clock",
     "custom/qs",
     "custom/power",
@@ -140,7 +141,7 @@
     "tooltip": true,
     "tooltip-format": "{ipaddr}",
     "tooltip-format-disconnected": "Disconnected",
-    "on-click": "net-menu.sh bottom-right"
+    "on-click": "launch-wifi"
   },
   "network#2": { "format": "{signalStrength}%", "tooltip": false },
 
@@ -151,7 +152,7 @@
     "format-connected": "",
     "tooltip-format-connected": "{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}",
-    "on-click": "rofi_bluetooth"
+    "on-click": "launch-bluetooth"
   },
   "bluetooth#2": { "format": "{status}", "tooltip": false },
 

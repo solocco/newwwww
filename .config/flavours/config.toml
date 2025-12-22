@@ -98,3 +98,10 @@ template = "superfile"
 subtemplate = "default"
 rewrite = true
 light = true
+
+[[items]]
+file = "~/.config/mango/colors.conf"
+template = "mangowc"
+subtemplate = "default"
+rewrite = true
+hook = "mmsg -d reload_config"

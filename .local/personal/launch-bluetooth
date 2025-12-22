@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+set -eu
+
+TITLE="bluetui"
+
+exec launch-or-focus "$TITLE" \
+  "alacritty --title $TITLE -e bluetui"
+

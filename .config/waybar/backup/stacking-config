@@ -1,0 +1,177 @@
+{
+  "name": "main-bar",
+  "id": "main-bar",
+  "layer": "top",
+  "mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "bottom",
+  "height": 32,
+  "spacing": 0,
+  "margin": "8 60 8 60",
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  "modules-left": [
+    "custom/menu",
+    "wlr/taskbar"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "custom/updates",
+    "cpu",
+    "cpu#2",
+    "memory",
+    "memory#2",
+    "disk",
+    "disk#2",
+    "backlight",
+    "backlight#2",
+    "custom/nightlight",
+    "bluetooth",
+    "network",
+    "clock",
+    "custom/flavours",
+    "custom/power",
+    "tray"
+  ],
+
+  /* ---- Taskbar (ikon 1 per app) ---- */
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "icon-theme": "breeze-dark",
+    "tooltip": true,
+    "tooltip-format": "{title}",
+    "on-click": "minimize-raise",
+    "on-click-middle": "close",
+    "sort-by-app-id": true,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "^(.{8}).+$": "$1…"
+    },
+    "app_ids-mapping": {
+      "imv": "img"
+    }
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 4,
+    "padding": "0 2px 0 2px",
+    "border-radius": 8
+  },
+
+  "custom/menu": {
+    "format": " ",
+    "on-click": "fuzz-launcher",
+    "tooltip": false
+  },
+
+  "custom/flavours": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Theme selector",
+    "on-click": "~/.local/bin/flavours-menu.sh bottom-right"
+  },
+
+  "custom/power": {
+    "format": " ",
+    "on-click": "powermenu.sh",
+    "tooltip": false
+  },
+
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": { "activated": "", "deactivated": "" },
+    "timeout": 0
+  },
+
+  "custom/nightlight": {
+     "format": "",
+     "on-click": "~/.local/bin/nightlight-menu.sh bottom-right",
+     "tooltip": true,
+     "tooltip-format": "Night light",
+    },
+
+  	"custom/updates": {
+		"format": "<span size='large'>{icon}</span> {0}",
+		"format-icons": ["󰏗", "󱧖", "󰋙", "󱧙", "󰏖"],
+	//	"format-icons": ["", "", "", "", ""], // alternative (faces)
+		"return-type":"json",
+		"exec-if": "[ -d /tmp/upd ]",
+		"exec": "python ~/.local/bin/updbar.py",
+		"on-click": "~/.local/bin/chckpds.sh",
+		"on-click-right": "~/.local/bin/updbar_rst.sh",
+		"signal": 9,
+		"tooltip": true
+	},
+
+  "clock": {
+    "format": "{:L%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%a %d %b}"
+  },
+  "clock#2": { "format": "{:L%d}", "tooltip": false },
+
+  "pulseaudio": {
+    "format": "",
+    "format-muted": "",
+    "on-click": "pavucontrol",
+    "max-volume": 150,
+    "scroll-step": 0.2,
+    "tooltip": true,
+    "tooltip-format": "{volume}%"
+  },
+  "pulseaudio#2": { "format": "{volume}%", "tooltip": false },
+
+  "network": {
+    "format-wifi": " ",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "tooltip": true,
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "net-menu.sh bottom-right"
+  },
+  "network#2": { "format": "{signalStrength}%", "tooltip": false },
+
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "",
+    "format-connected": "",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "bt-menu.sh"
+  },
+  "bluetooth#2": { "format": "{status}", "tooltip": false },
+
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon}",
+    "format-charging": "{icon}",
+    "format-plugged": "{icon}",
+    "tooltip": true,
+    "tooltip-format": "{capacity}%",
+    "format-icons": ["","","","",""]
+  },
+  "battery#2": { "format": "{capacity}%", "tooltip": false },
+
+  "backlight": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "{percent}%"
+  },
+  "backlight#2": { "format": "{percent}%", "tooltip": false },
+
+  "cpu": { "format": " ", "tooltip": true, "tooltip-format": "{usage}%" },
+  "cpu#2": { "format": "{usage}%", "tooltip": false },
+
+  "memory": { "format": " ", "tooltip": true, "tooltip-format": "{percentage}%" },
+  "memory#2": { "format": "{percentage}%", "tooltip": false },
+
+  "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
+  "disk#2": { "format": "{free}", "tooltip": false }
+}

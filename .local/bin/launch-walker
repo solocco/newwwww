@@ -1,0 +1,9 @@
+#!/bin/bash
+
+command -v walker >/dev/null || {
+  notify-send "walker not found"
+  exit 1
+}
+
+exec walker --width 644 --minheight 300 --maxheight 300 "$@"
+
