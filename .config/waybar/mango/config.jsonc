@@ -17,8 +17,7 @@
   "modules-left": [
     "custom/menu",
     "ext/workspaces",
-    "dwl/window",
-    "hyprland/window"
+    "dwl/window"
   ],
   "modules-center": [],
   "modules-right": [
@@ -52,14 +51,15 @@
   /* ---- Menu & util ---- */
   "custom/menu": {
     "format": "<span > </span>",
-    "on-click": "rofi_launcher",
+    "on-click": "launch-menu",
     "tooltip": false
   },
   "custom/flavours": {
     "format": " ",
     "tooltip": true,
     "tooltip-format": "Theme selector",
-    "on-click": "rofi_flavours"
+    "on-click": "launch-flavours",
+    "escape": "true"
   },
   "custom/qs": {
     "format": " ",
@@ -193,11 +193,13 @@
 		"interval": 2,
     "format": "{icon}",
     "format-icons": ["", "", "", "", "", "", ""],
+    "on-click": "launch-nl",
     "smooth-scrolling-threshold": 1
   },
   "backlight#2": {
 		"interval": 2,
     "format": "{percent}%",
+    "on-click": "launch-nl",
     "smooth-scrolling-threshold": 1
   },
 
