@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Jangan pakai set -e, karena akan error saat grep tidak match
+# set -euo pipefail
+# ------------------ deps ------------------
+need() { command -v "$1" >/dev/null 2>&1 || { echo "[!] missing: $1"; exit 1; }; }
+need gum awk sort grep
+# ------------------ paths -----------------
+STATE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/gum-launcher"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/gum-launcher"
+USAGE="$STATE_DIR/usage"
+CACHE="$CACHE_DIR/apps.cache"
+mkdir -p "$STATE_DIR" "$CACHE_DIR"
+touch "$USAGE"
+APP_DIRS=(
+  "$HOME/.local/share/applications"
+  "/usr/share/applications"
+)
+# ------------------ build cache (ONCE) ------------------
+# cache format:
+# name<TAB>desktop-id<TAB>exec
+if [ ! -f "$CACHE" ]; then
+  find "${APP_DIRS[@]}" -name '*.desktop' 2>/dev/null |
+  while read -r file; do
+    name="$(awk -F= '/^Name=/{print $2; exit}' "$file")"
+    exec="$(awk -F= '/^Exec=/{print $2; exit}' "$file")"
+    id="$(basename "$file")"
+    [ -z "$name" ] && continue
+    [ -z "$exec" ] && continue
+    printf '%s\t%s\t%s\n' "$name" "$id" "$exec"
+  done > "$CACHE"
+fi
+# ------------------ build internal list ------------------
+# internal format:
+# count<TAB>name<TAB>id<TAB>exec
+LIST_INTERNAL="$(
+  while IFS=$'\t' read -r name id exec; do
+    count="$(awk -v id="$id" '$1==id{print $2}' "$USAGE")"
+    [ -z "$count" ] && count=0
+    printf '%d\t%s\t%s\t%s\n' "$count" "$name" "$id" "$exec"
+  done < "$CACHE" |
+  sort -t $'\t' -k1,1nr -k2,2
+)"
+[ -z "$LIST_INTERNAL" ] && exit 0
+# ------------------ UI list (NAMA APP SAJA) ------------------
+LIST_UI="$(printf '%s\n' "$LIST_INTERNAL" | cut -f2)"
+SEL="$(printf '%s\n' "$LIST_UI" | gum filter --placeholder "Search application…")" || exit 0
+[ -z "$SEL" ] && exit 0
+# ------------------ lookup selection ------------------
+line="$(printf '%s\n' "$LIST_INTERNAL" | awk -F'\t' -v n="$SEL" '$2==n{print; exit}')"
+id="$(cut -f3 <<<"$line")"
+exec="$(cut -f4 <<<"$line")"
+# ------------------ update usage ------------------
+if grep -q "^$id " "$USAGE"; then
+  awk -v id="$id" '
+    $1==id { print $1, $2+1; next }
+    { print }
+  ' "$USAGE" > "$USAGE.tmp"
+  mv "$USAGE.tmp" "$USAGE"
+else
+  printf '%s 1\n' "$id" >> "$USAGE"
+fi
+# ------------------ launch (SIMPLE & RELIABLE) ------------------
+# Remove placeholder parameters (%F, %f, %U, %u, etc)
+clean_exec="$exec"
+clean_exec="${clean_exec// %[FfUuiIcDN]/}"
+clean_exec="$(echo "$clean_exec" | xargs)"
+
+# Spawn in detached session, completely outside current shell
+setsid -f sh -c "$clean_exec" >/dev/null 2>&1

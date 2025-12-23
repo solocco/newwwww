@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# gum butuh TTY
+[ -t 0 ] && [ -t 1 ] || exit 0
+
+# ------------------------------------------------------------
+# Dependencies
+# ------------------------------------------------------------
+need() { command -v "$1" >/dev/null 2>&1 || { echo "[!] '$1' not found"; exit 1; }; }
+need flavours
+need gum
+need swaybg
+
+# ------------------------------------------------------------
+# Config
+# ------------------------------------------------------------
+WALL_DIR="${WALL_DIR:-$HOME/pictures/walls}"
+MAP_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/flavours/walls.map"
+WALL_MODE="${WALL_MODE:-fill}"   # fill|fit|center|stretch|tile
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
+LAST_THEME="$STATE_DIR/last_theme"
+LAST_WALL="$STATE_DIR/last_wall"
+LOG="$STATE_DIR/flavours-wall.log"
+mkdir -p "$STATE_DIR"
+: >"$LOG" 2>/dev/null || true
+
+# ------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------
+notify() {
+  command -v notify-send >/dev/null 2>&1 || return 0
+  notify-send -a "Flavours" "$1" "${2:-}"
+}
+
+to_title() {
+  printf '%s\n' "$1" | tr '_-' ' ' |
+  awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2)); print}'
+}
+
+normalize() {
+  printf '%s\n' "$1" | tr '[:upper:]' '[:lower:]' | tr ' _' '-'
+}
+
+current_theme() {
+  [ -f "$LAST_THEME" ] && to_title "$(cat "$LAST_THEME")" || echo "None"
+}
+
+first_image() {
+  find "$1" -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+    2>/dev/null | head -n1
+}
+
+resolve_wall() {
+  s="$1"
+
+  # 1) explicit map
+  if [ -f "$MAP_FILE" ]; then
+    map_path="$(awk -v s="$s" '($1==s){$1=""; sub(/^[ \t]+/,""); print; exit}' "$MAP_FILE")"
+    if [ -n "${map_path:-}" ]; then
+      [ -f "$map_path" ] && { printf '%s\n' "$map_path"; return; }
+      [ -d "$map_path" ] && first_image "$map_path" && return
+    fi
+  fi
+
+  # 2) exact file
+  for ext in jpg jpeg png webp; do
+    [ -f "$WALL_DIR/$s.$ext" ] && { printf '%s\n' "$WALL_DIR/$s.$ext"; return; }
+  done
+
+  # 3) folder
+  [ -d "$WALL_DIR/$s" ] && first_image "$WALL_DIR/$s" && return
+
+  # 4) default
+  [ -d "$WALL_DIR/default" ] && first_image "$WALL_DIR/default"
+}
+
+apply_wallpaper() {
+  img="$1"
+  [ -f "$img" ] || return 0
+
+  pkill -x swaybg 2>/dev/null || true
+  sleep 0.1
+
+  printf '[%s] swaybg %s %s\n' "$(date '+%F %T')" "$WALL_MODE" "$img" >>"$LOG"
+  nohup swaybg -m "$WALL_MODE" -i "$img" >>"$LOG" 2>&1 &
+}
+
+save_state() {
+  printf '%s\n' "$1" >"$LAST_THEME"
+  if [ -n "${2:-}" ]; then
+    printf '%s\n' "$2" >"$LAST_WALL"
+  else
+    : >"$LAST_WALL"
+  fi
+}
+
+# ------------------------------------------------------------
+# UI
+# ------------------------------------------------------------
+gum style --bold "Flavours"
+gum style "Current : $(current_theme)"
+echo
+
+TMP="$(mktemp)"
+trap 'rm -f "$TMP"' EXIT
+
+flavours list 2>/dev/null |
+tr ' ' '\n' |
+awk 'NF' |
+sort -u |
+while read -r f; do to_title "$f"; done >"$TMP"
+
+[ ! -s "$TMP" ] && exit 0
+
+choice="$(gum choose <"$TMP")"
+[ -z "${choice:-}" ] && exit 0
+
+scheme="$(normalize "$choice")"
+
+# ------------------------------------------------------------
+# Apply
+# ------------------------------------------------------------
+if flavours apply "$scheme" >>"$LOG" 2>&1; then
+  save_state "$scheme" ""
+
+  wall="$(resolve_wall "$scheme" || true)"
+  if [ -n "${wall:-}" ] && [ -f "$wall" ]; then
+    apply_wallpaper "$wall"
+    save_state "$scheme" "$wall"
+
+    gum style "Applied   : $choice"
+    gum style "Wallpaper: $(basename -- "$wall")"
+
+    notify "󰉼  Theme applied" "󰏘  $choice
+󰋫  $(basename -- "$wall")"
+  else
+    gum style "Applied   : $choice"
+    gum style "Wallpaper: not found"
+
+    notify "󰉼  Theme applied" "󰏘  $choice
+󰋫  Wallpaper not found"
+  fi
+else
+  gum style --bold --foreground 196 "✖ Apply failed"
+  notify "󰅖  Flavours error" "Failed to apply: $choice"
+  exit 1
+fi

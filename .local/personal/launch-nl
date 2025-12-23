@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -eu
+
+TITLE="gum-nighlight"
+
+exec launch-or-focus "$TITLE" \
+  "alacritty --title $TITLE -e gum-nighlight"
+
+
+

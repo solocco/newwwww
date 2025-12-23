@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+need() { command -v "$1" >/dev/null || { echo "Missing: $1"; exit 1; }; }
+need gum
+need cliphist
+need wl-copy
+
+notify() {
+  command -v notify-send >/dev/null && notify-send "Clipboard" "$1"
+}
+
+WIPE="🧹  Wipe clipboard history"
+
+menu() {
+  printf '%s\n\n' "$WIPE"
+  cliphist list
+}
+
+while true; do
+  sel="$(menu | gum choose --height 12 --header "Clipboard")" || break
+  [ -z "$sel" ] && break
+
+  case "$sel" in
+    "$WIPE")
+      if gum confirm "Clear all clipboard history?"; then
+        if cliphist wipe 2>/dev/null; then
+          :
+        else
+          cliphist list | awk '{print $1}' | xargs -r cliphist delete
+        fi
+        notify "History cleared"
+      fi
+      continue
+      ;;
+    "")
+      continue
+      ;;
+    *)
+      id="$(printf '%s' "$sel" | awk '{print $1}')"
+      cliphist decode "$id" | wl-copy
+      notify "Copied"
+      continue
+      ;;
+  esac
+done

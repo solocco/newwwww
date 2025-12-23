@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ============================================================
+# launch-or-focus
+# ============================================================
 if [ $# -lt 1 ]; then
   echo "Usage: $(basename "$0") <pattern> [launch-command]"
   exit 1
@@ -9,43 +12,40 @@ fi
 PATTERN="$1"
 CMD="${2:-$1}"
 
-# ---------------------------
-# Hyprland backend
-# ---------------------------
+# Try Hyprland
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && command -v hyprctl >/dev/null 2>&1; then
-  ADDR=$(
-    hyprctl clients -j | jq -r --arg p "$PATTERN" '
-      .[] | select(
-        (.class // "" | test($p;"i")) or
-        (.title // "" | test($p;"i"))
-      ) | .address
-    ' | head -n1
-  )
-
+  ADDR=$(hyprctl clients -j 2>/dev/null | jq -r --arg p "$PATTERN" '
+    .[] | select(
+      (.class // "" | test($p;"i")) or
+      (.title // "" | test($p;"i"))
+    ) | .address
+  ' | head -n1)
+  
   if [ -n "$ADDR" ]; then
-    hyprctl dispatch focuswindow "address:$ADDR"
+    hyprctl dispatch focuswindow "address:$ADDR" 2>/dev/null
     exit 0
   fi
 fi
 
-# ---------------------------
-# Sway / wlroots backend
-# ---------------------------
+# Try Sway
 if [ -n "${SWAYSOCK:-}" ] && command -v swaymsg >/dev/null 2>&1; then
-  if swaymsg -t get_tree | jq -e --arg p "$PATTERN" '
+  if swaymsg -t get_tree 2>/dev/null | jq -e --arg p "$PATTERN" '
     recurse(.nodes[], .floating_nodes[])
     | select(
-        (.app_id // "" | test($p;"i")) or
-        (.name // "" | test($p;"i"))
-      )
-  ' >/dev/null; then
-    swaymsg "[app_id=\"$PATTERN\"] focus" || true
+      (.app_id // "" | test($p;"i")) or
+      (.name // "" | test($p;"i"))
+    )
+  ' >/dev/null 2>&1; then
+    swaymsg "[app_id=\"$PATTERN\"] focus" 2>/dev/null || true
     exit 0
   fi
 fi
 
-# ---------------------------
-# Fallback (launch only)
-# ---------------------------
-setsid sh -c "$CMD" >/dev/null 2>&1 &
+# Try wmctrl (X11)
+if command -v wmctrl >/dev/null 2>&1; then
+  wmctrl -a "$PATTERN" 2>/dev/null && exit 0
+fi
 
+# Fallback: launch
+setsid sh -c "$CMD" >/dev/null 2>&1 </dev/null &
+exit 0

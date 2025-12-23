@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -eu
+
+TITLE="gum-launcher"
+
+exec launch-or-focus "$TITLE" \
+  "alacritty --title $TITLE -e gum-launcher"
+
+
+

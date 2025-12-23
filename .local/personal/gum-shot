@@ -1,0 +1,72 @@
+#!/bin/sh
+# -------------------------------------------------
+# Gum Screenshot Menu (Wayland)
+# grim + slurp + wl-copy + notify-send
+# -------------------------------------------------
+
+set -eu
+
+SHOT_DIR="$HOME/pictures/ScreenShots"
+mkdir -p "$SHOT_DIR"
+
+need() {
+  command -v "$1" >/dev/null 2>&1 || {
+    gum style --foreground 196 "Missing dependency: $1"
+    exit 1
+  }
+}
+
+for cmd in gum grim slurp wl-copy; do
+  need "$cmd"
+done
+
+notify() {
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send -a Screenshot -i camera-photo "$1"
+  else
+    gum style --foreground 114 --bold "$1"
+  fi
+}
+
+ts=$(date +%F_%H-%M-%S)
+
+choice=$(gum choose \
+  --header "📸 Screenshot Menu" \
+  --cursor "➤ " \
+  --item.foreground 250 \
+  --selected.foreground 212 \
+  --height 8 \
+  "󰹑  Region → Clipboard" \
+  "󰹑  Region → File" \
+  "󰍹  Full Screen → Clipboard" \
+  "󰍹  Full Screen → File" \
+  "󱊷  Cancel"
+)
+
+[ -z "$choice" ] && exit 0
+
+case "$choice" in
+  *"Region → Clipboard"*)
+    if slurp | grim -g - - | wl-copy -t image/png; then
+      notify "Screenshot copied to clipboard"
+    fi
+    ;;
+  *"Region → File"*)
+    file="$SHOT_DIR/shot-$ts.png"
+    if slurp | grim -g - "$file"; then
+      notify "Saved screenshot: $file"
+    fi
+    ;;
+  *"Full Screen → Clipboard"*)
+    grim - | wl-copy -t image/png
+    notify "Full screen copied to clipboard"
+    ;;
+  *"Full Screen → File"*)
+    file="$SHOT_DIR/shot-$ts.png"
+    grim "$file"
+    notify "Saved screenshot: $file"
+    ;;
+  *)
+    exit 0
+    ;;
+esac

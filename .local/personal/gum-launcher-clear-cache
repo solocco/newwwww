@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/gum-launcher/apps.cache"
+
+if [ -f "$CACHE" ]; then
+  rm -f -- "$CACHE"
+  echo "✔ Cache dihapus: $CACHE"
+else
+  echo "ℹ Cache tidak ditemukan: $CACHE"
+fi
