@@ -50,19 +50,22 @@ end   = "!! End flavours"
 #start = "-- Start flavours"
 #end   = "-- End flavours"
 
+
 [[items]]
-file = "~/.config/fnott/fnott.ini"
+file = "/home/cid/.config/fnott/fnott.ini"
 start = "# Start flavours (default)"
 end   = "# End flavours"
 template = "fnott-dark"
 only = ["*dark*","*mocha*","*night*","*noir*"]
+hook = "pkill -x fnott || true"
 
 [[items]]
-file = "~/.config/fnott/fnott.ini"
+file = "/home/cid/.config/fnott/fnott.ini"
 start = "# Start flavours (default)"
 end   = "# End flavours"
 template = "fnott-light"
 only = ["*light*","*latte*","*day*","*dawn*"]
+hook = "pkill -x fnott || true"
 
 # Rofi
 [[items]]

@@ -1,0 +1,21 @@
+scheme: "Kanagawa"
+author: "Yang Mulia"
+
+base00: "1f1f28" # background
+base01: "090618" # black
+base02: "2d4f67" # selection background
+base03: "727169" # comments / dim text
+base04: "c8c093" # light foreground
+base05: "dcd7ba" # foreground
+base06: "e6c384" # bright yellow-ish foreground
+base07: "dcd7ba" # brightest foreground
+
+base08: "c34043" # red
+base09: "ffa066" # orange (indexed 16)
+base0A: "c0a36e" # yellow
+base0B: "76946a" # green
+base0C: "6a9589" # cyan
+base0D: "7e9cd8" # blue
+base0E: "957fb8" # magenta
+base0F: "ff5d62" # extra red (indexed 17)
+
