@@ -224,48 +224,6 @@
   padding: 2px 8px;
 }
 
-/** Updates **/
-@keyframes new-updates {
-  0% { color: transparent; }
-  100% { color: @base0B; }
-}
-
-@keyframes refreshing {
-  0% { color: @base03; }
-  100% { color: @base0C; }
-}
-
-#custom-updates {
-  background-color: @base02;
-  border-radius: 10px 0px 0px 10px;
-  margin: 6px 0px;
-  padding: 4px 6px;
-  color: @base03;
-  font-size: 14px;
-}
-
-#custom-updates.up-to-date { color: @base03; }
-#custom-updates.updates    { color: @base0B; }
-#custom-updates.offline    { color: @base08; }
-
-#custom-updates.new-updates {
-  animation-name: new-updates;
-  animation-duration: 0.5s;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-}
-
-#custom-updates.refreshing {
-  border-radius: 10px 0px 0px 10px;
-  margin: 6px 0px;
-  padding: 4px 6px;
-  color: @base03;
-  animation-name: refreshing;
-  animation-duration: 1.5s;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-}
-
 /** Backlight **/
 #backlight {
   background-color: @base0E;
@@ -415,8 +373,35 @@
   margin: 8px 5px 8px 0px;
 }
 
-#battery,
-#custom-updates {
+#custom-updates{
+  background-color: @base0F;
+  color: @base00;
+  font-size: 14px;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#custom-updates.idle {
+  background: @base03;
+  color: @base00;
+}
+
+#custom-updates.updates {
+  background: @base0B;
+  color: @base00;
+}
+
+#custom-updates.2 {
+  color: @base07;
+  background-color: @base01;
+  font-size: 14px;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#battery {
   background-color: transparent;
   border-radius: 10px 0px 0px 10px;
   margin: 6px 0px;
@@ -425,8 +410,7 @@
 
 #battery.2,
 #network.2,
-#bluetooth.2,
-#custom-updates.2 {
+#bluetooth.2 {
   background-color: transparent;
   color: @base05;
   font-size: 14px;

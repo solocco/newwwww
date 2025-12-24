@@ -21,6 +21,8 @@
   ],
   "modules-center": [],
   "modules-right": [
+    "custom/updates",
+    "custom/updates#2",
     "cpu", 
     "cpu#2",
     "memory", 
@@ -36,7 +38,7 @@
     "network",
     "bluetooth",
     "clock",
-    "custom/qs",
+    "custom/flavours",
     "custom/power",
     "tray"
   ],
@@ -75,25 +77,25 @@
 
   /* ---- Updates ---- */
   "custom/updates": {
-    "format": "<span size='large'>{icon}</span>",
-    "format-icons": ["󰏗","󱧖","󰋙","󱧙","󰏖"],
+    "format": "{icon}",
+    "format-icons": " ",
     "return-type": "json",
-    "exec": "python3 ~/.local/bin/updbar.py",
-    "on-click": "~/.local/bin/chckpds.sh",
+    "exec": "python3 ~/.local/bin/updbar_icon.py",
+    "on-click": "launch-xr",
     "on-click-right": "~/.local/bin/updbar_rst.sh",
     "signal": 9,
     "interval": 30,
-    "tooltip": true
+    "tooltip": false
   },
   "custom/updates#2": {
     "format": "{0}",
     "return-type": "json",
-    "exec": "python3 ~/.local/bin/updbar.py", 
-    "on-click": "~/.local/bin/chckpds.sh",
-    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "exec": "python3 ~/.local/bin/updbar_count.py", 
+    "on-click": "launch-xr",
+    "on-click-right": "updbar_rst.sh",
     "signal": 9,
     "interval": 30,
-    "tooltip": true
+    "tooltip": false
   },
 
   /* ---- Clock ---- */
