@@ -1,24 +1,43 @@
 #!/usr/bin/env bash
-# Jangan pakai set -e, karena akan error saat grep tidak match
-# set -euo pipefail
-# ------------------ deps ------------------
+# App launcher dengan frequency tracking menggunakan gum
+# Auto-rebuild cache ketika aplikasi baru terdeteksi
 need() { command -v "$1" >/dev/null 2>&1 || { echo "[!] missing: $1"; exit 1; }; }
-need gum awk sort grep
-# ------------------ paths -----------------
+need gum awk sort grep find
+
+# Inisialisasi paths
 STATE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/gum-launcher"
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/gum-launcher"
 USAGE="$STATE_DIR/usage"
 CACHE="$CACHE_DIR/apps.cache"
+CACHE_MARKER="$CACHE_DIR/.cache_marker"
+
 mkdir -p "$STATE_DIR" "$CACHE_DIR"
 touch "$USAGE"
+
 APP_DIRS=(
   "$HOME/.local/share/applications"
   "/usr/share/applications"
 )
-# ------------------ build cache (ONCE) ------------------
-# cache format:
-# name<TAB>desktop-id<TAB>exec
-if [ ! -f "$CACHE" ]; then
+
+# ============================================================================
+# Cache Auto-Update Logic
+# ============================================================================
+
+should_rebuild_cache() {
+  # Rebuild kalau cache belum ada
+  [ ! -f "$CACHE" ] && return 0
+  [ ! -f "$CACHE_MARKER" ] && return 0
+
+  local old_count new_count
+  old_count="$(cat "$CACHE_MARKER")"
+  new_count="$(find "${APP_DIRS[@]}" -name '*.desktop' 2>/dev/null | wc -l)"
+
+  # Rebuild kalau jumlah .desktop files berubah (ada yang di-install/uninstall)
+  [ "$old_count" -ne "$new_count" ] && return 0
+  return 1
+}
+
+build_cache() {
   find "${APP_DIRS[@]}" -name '*.desktop' 2>/dev/null |
   while read -r file; do
     name="$(awk -F= '/^Name=/{print $2; exit}' "$file")"
@@ -28,10 +47,20 @@ if [ ! -f "$CACHE" ]; then
     [ -z "$exec" ] && continue
     printf '%s\t%s\t%s\n' "$name" "$id" "$exec"
   done > "$CACHE"
+
+  # Save marker dengan jumlah .desktop files yang ditemukan
+  find "${APP_DIRS[@]}" -name '*.desktop' 2>/dev/null | wc -l > "$CACHE_MARKER"
+}
+
+# Build cache hanya jika perlu
+if should_rebuild_cache; then
+  build_cache
 fi
-# ------------------ build internal list ------------------
-# internal format:
-# count<TAB>name<TAB>id<TAB>exec
+
+# ============================================================================
+# Build internal list dengan usage count (format: count<TAB>name<TAB>id<TAB>exec)
+# ============================================================================
+
 LIST_INTERNAL="$(
   while IFS=$'\t' read -r name id exec; do
     count="$(awk -v id="$id" '$1==id{print $2}' "$USAGE")"
@@ -40,30 +69,44 @@ LIST_INTERNAL="$(
   done < "$CACHE" |
   sort -t $'\t' -k1,1nr -k2,2
 )"
+
 [ -z "$LIST_INTERNAL" ] && exit 0
-# ------------------ UI list (NAMA APP SAJA) ------------------
+
+# ============================================================================
+# Tampilkan UI dan ambil pilihan user
+# ============================================================================
+
 LIST_UI="$(printf '%s\n' "$LIST_INTERNAL" | cut -f2)"
 SEL="$(printf '%s\n' "$LIST_UI" | gum filter --placeholder "Search application…")" || exit 0
 [ -z "$SEL" ] && exit 0
-# ------------------ lookup selection ------------------
+
+# ============================================================================
+# Cari data aplikasi yang dipilih
+# ============================================================================
+
 line="$(printf '%s\n' "$LIST_INTERNAL" | awk -F'\t' -v n="$SEL" '$2==n{print; exit}')"
 id="$(cut -f3 <<<"$line")"
 exec="$(cut -f4 <<<"$line")"
-# ------------------ update usage ------------------
+
+# ============================================================================
+# Update usage count
+# ============================================================================
+
 if grep -q "^$id " "$USAGE"; then
-  awk -v id="$id" '
-    $1==id { print $1, $2+1; next }
-    { print }
-  ' "$USAGE" > "$USAGE.tmp"
+  awk -v id="$id" '$1==id { print $1, $2+1; next } { print }' "$USAGE" > "$USAGE.tmp"
   mv "$USAGE.tmp" "$USAGE"
 else
   printf '%s 1\n' "$id" >> "$USAGE"
 fi
-# ------------------ launch (SIMPLE & RELIABLE) ------------------
-# Remove placeholder parameters (%F, %f, %U, %u, etc)
+
+# ============================================================================
+# Jalankan aplikasi
+# ============================================================================
+
+# Hapus placeholder parameters (%F, %f, %U, %u, %i, %I, %c, %D, %N)
 clean_exec="$exec"
 clean_exec="${clean_exec// %[FfUuiIcDN]/}"
 clean_exec="$(echo "$clean_exec" | xargs)"
 
-# Spawn in detached session, completely outside current shell
+# Spawn di detached session
 setsid -f sh -c "$clean_exec" >/dev/null 2>&1

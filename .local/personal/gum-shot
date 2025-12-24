@@ -3,7 +3,6 @@
 # Gum Screenshot Menu (Wayland)
 # grim + slurp + wl-copy + notify-send
 # -------------------------------------------------
-
 set -eu
 
 SHOT_DIR="$HOME/pictures/ScreenShots"
@@ -31,40 +30,64 @@ notify() {
 ts=$(date +%F_%H-%M-%S)
 
 choice=$(gum choose \
-  --header "📸 Screenshot Menu" \
-  --cursor "➤ " \
+  --header "Screenshot Menu" \
+  --cursor "> " \
   --item.foreground 250 \
   --selected.foreground 212 \
   --height 8 \
-  "󰹑  Region → Clipboard" \
-  "󰹑  Region → File" \
-  "󰍹  Full Screen → Clipboard" \
-  "󰍹  Full Screen → File" \
-  "󱊷  Cancel"
+  "Region → Clipboard" \
+  "Region → File" \
+  "Full Screen → Clipboard" \
+  "Full Screen → File" \
+  "Cancel"
 )
 
 [ -z "$choice" ] && exit 0
 
+# Hide terminal window sebelum screenshot
+hide_terminal() {
+  mmsg -d "minimized" 2>/dev/null || true
+}
+
+# Restore terminal window
+show_terminal() {
+  mmsg -d "restore_minimized" 2>/dev/null || true
+}
+
 case "$choice" in
   *"Region → Clipboard"*)
-    if slurp | grim -g - - | wl-copy -t image/png; then
+    hide_terminal
+    sleep 0.2
+    region=$(slurp)
+    if [ -n "$region" ]; then
+      grim -g "$region" - | wl-copy -t image/png
       notify "Screenshot copied to clipboard"
     fi
+    show_terminal
     ;;
   *"Region → File"*)
+    hide_terminal
+    sleep 0.2
     file="$SHOT_DIR/shot-$ts.png"
     if slurp | grim -g - "$file"; then
       notify "Saved screenshot: $file"
     fi
+    show_terminal
     ;;
   *"Full Screen → Clipboard"*)
+    hide_terminal
+    sleep 0.2
     grim - | wl-copy -t image/png
     notify "Full screen copied to clipboard"
+    show_terminal
     ;;
   *"Full Screen → File"*)
+    hide_terminal
+    sleep 0.2
     file="$SHOT_DIR/shot-$ts.png"
     grim "$file"
     notify "Saved screenshot: $file"
+    show_terminal
     ;;
   *)
     exit 0
