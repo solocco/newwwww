@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Power Menu for Void Linux with Gum
+# Requires: gum (https://github.com/charmbracelet/gum)
+
+# Select option with gum choose
+choice=$(gum choose "Shutdown" "Reboot" "Suspend" "Logout" "Cancel" \
+    --header "Power Menu" \
+    --cursor.foreground "212" \
+    --selected.foreground "212" \
+    --timeout 30s)
+
+case "$choice" in
+    "Shutdown")
+        if gum confirm "Are you sure you want to shutdown?"; then
+            sudo shutdown -h now
+        fi
+        ;;
+    "Reboot")
+        if gum confirm "Are you sure you want to reboot?"; then
+            sudo reboot
+        fi
+        ;;
+    "Suspend")
+        if gum confirm "Are you sure you want to suspend?"; then
+            sudo zzz
+        fi
+        ;;
+    "Logout")
+        if gum confirm "Are you sure you want to logout?"; then
+            pkill -KILL -u $USER
+        fi
+        ;;
+    *)
+        exit 0
+        ;;
+esac
