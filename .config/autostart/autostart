@@ -7,7 +7,6 @@ LOG="/tmp/autostart.log"
 # =========================
 AUDIO=true
 CURSOR="Bibata-Modern-Ice"
-WAYBAR_STYLE="none"         # stacking, tiling, none
 
 # Fallback
 DWALL="$HOME/pictures/walls/wall.jpg"
@@ -60,15 +59,6 @@ if [ "$AUDIO" = true ]; then
   sleep 1
   wireplumber >>"$LOG" 2>&1 &
   pipewire-pulse >>"$LOG" 2>&1 &
-fi
-
-# =========================
-# OpenRGB (opsional)
-# =========================
-if command -v openrgb >/dev/null 2>&1; then
-  openrgb --server -p pureWhite >>"$LOG" 2>&1 &
-else
-  echo "OpenRGB not found" >>"$LOG"
 fi
 
 # =========================
@@ -145,24 +135,6 @@ fi
 if command -v fnott >/dev/null 2>&1; then
   fnott >>"$LOG" 2>&1 &
 fi
-
-# =========================
-# Waybar
-# =========================
-configure_waybar() {
-  case "$WAYBAR_STYLE" in
-    stacking)
-      pkill -x waybar >>"$LOG" 2>&1 || :
-      waybar -c "$HOME/.config/waybar/config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
-      ;;
-    tiling)
-      pkill -x waybar >>"$LOG" 2>&1 || :
-      waybar -c "$HOME/.config/waybar/tiling-config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
-      ;;
-    none) : ;;
-  esac
-}
-configure_waybar
 
 # =========================
 # Cursor

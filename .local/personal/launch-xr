@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -eu
+TITLE="gum-xr"
+TERMINAL=$($(dirname "$0")/get-terminal)
+exec launch-or-focus "$TITLE" "$TERMINAL --title $TITLE -e gum-xr"

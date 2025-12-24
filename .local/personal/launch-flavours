@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
 set -eu
-
 TITLE="gum-flavours"
-
-exec launch-or-focus "$TITLE" \
-  "alacritty --title $TITLE -e gum-flavours"
-
-
+TERMINAL=$($(dirname "$0")/get-terminal)
+exec launch-or-focus "$TITLE" "$TERMINAL --title $TITLE -e gum-flavours"

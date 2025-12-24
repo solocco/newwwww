@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 set -eu
-
 TITLE="gum-clip"
-
-exec launch-or-focus "$TITLE" \
-  "alacritty --title $TITLE -e gum-clip"
-
+TERMINAL=$($(dirname "$0")/get-terminal)
+exec launch-or-focus "$TITLE" "$TERMINAL --title $TITLE -e gum-clip"

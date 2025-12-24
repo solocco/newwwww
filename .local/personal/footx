@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Foot launcher (colors only from foot.ini)
+
+set -euo pipefail
+
+CONFIG="${CONFIG:-$HOME/.config/foot/foot.ini}"
+FOOT_BIN="${FOOT_BIN:-foot}"
+
+die() { printf '%s\n' "$*" >&2; exit 1; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+# Ambil warna hex dari foot.ini (bagian [colors])
+read_foot_color() {
+  local key="$1"
+  awk -v want="$key" '
+    BEGIN{IGNORECASE=1; in_colors=0}
+    /^\s*\[/{in_colors=tolower($0) ~ /^\s*\[colors\]\s*$/}
+    in_colors && match($0,/^\s*([a-z0-9_-]+)\s*=\s*#?([0-9a-fA-F]{6}([0-9a-fA-F]{2})?)\s*$/,m){
+      k=tolower(m[1]); v="#" m[2];
+      if (k==tolower(want)) { print v; exit }
+    }
+  ' "$CONFIG" 2>/dev/null
+}
+
+get_background() { read_foot_color "background"; }
+get_accent() {
+  read_foot_color "selection-background" \
+  || read_foot_color "cursor"
+}
+
+strip_hash() { echo "${1#\#}"; }
+
+MODE=""
+EXTRA_ARGS=()
+while (( "$#" )); do
+  case "${1:-}" in
+    -f|-F|-s) MODE="$1"; shift ;;
+    -h|--help)
+      cat <<EOF
+Usage: $(basename "$0") [-f|-F|-s] [-- extra foot args...]
+
+  -f    Floating window
+  -F    Fullscreen (font override)
+  -s    Size via slurp (pakai warna dari foot.ini)
+EOF
+      exit 0 ;;
+    --) shift; EXTRA_ARGS=("$@"); break ;;
+    *) EXTRA_ARGS+=("$1"); shift ;;
+  esac
+done
+
+[[ -x "$(command -v "$FOOT_BIN")" ]] || die "foot not found."
+
+case "$MODE" in
+  -f)
+    exec "$FOOT_BIN" --app-id='foot-float' --config="$CONFIG" "${EXTRA_ARGS[@]}"
+    ;;
+  -F)
+    exec "$FOOT_BIN" --fullscreen --app-id='foot-full' \
+      --font="Iosevka Nerd Font:size=14" --override=pad=35x35 \
+      --config="$CONFIG" "${EXTRA_ARGS[@]}"
+    ;;
+  -s)
+    have slurp || die "slurp required for -s mode"
+    BG="$(get_background)"
+    AC="$(get_accent)"
+    BGRGBA="$(strip_hash "$BG")"
+    ACRGBA="$(strip_hash "$AC")"
+    SIZE="$(slurp -b "${BGRGBA}CC" -c "${ACRGBA}FF" -s "${ACRGBA}0D" -w 4 -f "%wx%h")"
+    [[ -n "$SIZE" ]] || die "Selection canceled"
+    exec "$FOOT_BIN" --app-id='foot-float' --config="$CONFIG" --window-size-pixels="$SIZE" "${EXTRA_ARGS[@]}"
+    ;;
+  ""|*)
+    exec "$FOOT_BIN" --config="$CONFIG" "${EXTRA_ARGS[@]}"
+    ;;
+esac

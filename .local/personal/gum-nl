@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ===== Config =====
+# gum butuh TTY
+[ -t 0 ] && [ -t 1 ] || exit 0
+
+# ------------------------------------------------------------
+# Config
+# ------------------------------------------------------------
 DAY_TEMP="${DAY_TEMP:-6500}"
 NIGHT_TEMP="${NIGHT_TEMP:-3700}"
 STEP="${STEP:-200}"
@@ -12,15 +17,29 @@ LON="${LON:-}"
 
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/nightlight"
 CONF="$STATE_DIR/config"
+LOG="$STATE_DIR/nightlight.log"
 mkdir -p "$STATE_DIR"
+: >"$LOG" 2>/dev/null || true
 
-command -v gum >/dev/null || {
-  echo "gum not found"; exit 1
+command -v gum >/dev/null || { echo "gum not found"; exit 1; }
+command -v wlsunset >/dev/null || { echo "wlsunset not found"; exit 1; }
+
+# ------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------
+notify(){ command -v notify-send >/dev/null && notify-send "Nightlight" "$1" || true; }
+
+running(){
+  pgrep -x wlsunset >/dev/null
 }
 
-# ===== Helpers =====
-notify(){ command -v notify-send >/dev/null && notify-send "Nightlight" "$1" || true; }
-running(){ pgrep -f wlsunset >/dev/null; }
+active_temp(){
+  if running; then
+    printf '%sK' "$NIGHT_TEMP"
+  else
+    printf 'Neutral (6500K)'
+  fi
+}
 
 save_conf(){
   cat >"$CONF" <<EOF
@@ -32,59 +51,57 @@ EOF
 [ -f "$CONF" ] && source "$CONF"
 
 stop_wlsunset(){
-  pkill -f '[w]lsunset' 2>/dev/null || true
+  pkill -x wlsunset 2>/dev/null || true
 }
 
 neutralize(){
-  wlsunset -T 6500 -t 6500 >/dev/null 2>&1 &
+  # set netral sebentar lalu hentikan
+  nohup wlsunset -T 6500 -t 6500 >>"$LOG" 2>&1 &
   sleep 0.4
   stop_wlsunset
 }
 
 start_wlsunset(){
   stop_wlsunset
-  args=(-T "$DAY_TEMP" -t "$NIGHT_TEMP")
+  sleep 0.1
 
+  args=(-T "$DAY_TEMP" -t "$NIGHT_TEMP")
   [ -n "$LAT" ] && [ -n "$LON" ] && args+=(-l "$LAT" -L "$LON")
   [ -n "$START_TIME" ] && [ -n "$END_TIME" ] && args+=(-S "$START_TIME" -s "$END_TIME")
 
-  wlsunset "${args[@]}" >/dev/null 2>&1 &
+  printf '[%s] wlsunset %s\n' "$(date '+%F %T')" "${args[*]}" >>"$LOG"
+  nohup wlsunset "${args[@]}" >>"$LOG" 2>&1 &
 }
 
-# ===== UI: Header =====
+# ------------------------------------------------------------
+# UI
+# ------------------------------------------------------------
 STATUS="$(running && echo "ON" || echo "OFF")"
+ACTIVE="$(active_temp)"
 
-gum style --border normal --margin "0 1" --padding "0 1" \
-  --bold "🌙 Nightlight"
+gum style --bold "Nightlight"
+gum style "Status  : $STATUS"
+gum style "Active  : $ACTIVE"
+gum style "Preset : ${DAY_TEMP}K → ${NIGHT_TEMP}K"
+echo
 
-gum style "Status   : $STATUS"
-gum style "Temp     : ${DAY_TEMP} → ${NIGHT_TEMP}K"
-gum style "Schedule : ${LAT:+Auto (Geo)}${LAT:+" "}\
-${LAT:+" "}${LAT:+}\
-$( [ -z "$LAT" ] && echo "Manual ${START_TIME}–${END_TIME}" )"
-
-gum style --dim "────────────────────────"
-
-# ===== Menu =====
 action="$(gum choose \
-  "Enable" \
-  "Disable" \
-  "────────" \
+  "On" \
+  "Off" \
   "Warmer (+${STEP}K)" \
   "Cooler (-${STEP}K)" \
   "Set temperature…" \
-  "────────" \
-  "Schedule: Auto (Sun/Geo)" \
+  "Schedule: Auto" \
   "Schedule: Manual" \
   "Quit"
 )"
 
 case "$action" in
-  Enable)
+  On)
     start_wlsunset
     notify "Enabled"
     ;;
-  Disable)
+  Off)
     stop_wlsunset
     neutralize
     notify "Disabled"
@@ -101,14 +118,15 @@ case "$action" in
     NIGHT_TEMP="$(gum input --prompt "Kelvin:" --value "$NIGHT_TEMP")"
     start_wlsunset
     ;;
-  "Schedule: Auto (Sun/Geo)")
+  "Schedule: Auto")
     start_wlsunset
     notify "Auto schedule"
     ;;
   "Schedule: Manual")
     stop_wlsunset
-    wlsunset -T "$DAY_TEMP" -t "$NIGHT_TEMP" \
-      -S "$START_TIME" -s "$END_TIME" >/dev/null 2>&1 &
+    sleep 0.1
+    nohup wlsunset -T "$DAY_TEMP" -t "$NIGHT_TEMP" \
+      -S "$START_TIME" -s "$END_TIME" >>"$LOG" 2>&1 &
     ;;
   Quit|*)
     exit 0

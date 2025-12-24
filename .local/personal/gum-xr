@@ -14,31 +14,18 @@ need xr
 need sudo
 
 # ---------------------------------------------------------
-# Detect terminal emulator
+# Get terminal emulator
 # ---------------------------------------------------------
-detect_terminal() {
-  if command -v alacritty >/dev/null 2>&1; then
-    echo "alacritty"
-  elif command -v konsole >/dev/null 2>&1; then
-    echo "konsole"
-  elif command -v gnome-terminal >/dev/null 2>&1; then
-    echo "gnome-terminal"
-  elif command -v xterm >/dev/null 2>&1; then
-    echo "xterm"
-  else
-    echo "none"
-  fi
-}
-
-TERMINAL=$(detect_terminal)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TERMINAL=$("$SCRIPT_DIR/get-terminal")
 
 run_in_terminal() {
   local cmd="$1"
   # Minimize main window dulu
   mmsg -d minimized
   sleep 0.2
-  # Buka alacritty floating
-  alacritty --class="alacritty-float" -e bash -c "$cmd; read -p 'Press enter to close...'"
+  # Buka terminal floating
+  $TERMINAL --class="$TERMINAL-float" -e bash -c "$cmd; read -p 'Press enter to close...'"
   # Restore main window
   mmsg -d restore_minimized
 }

@@ -1,72 +1,78 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime as dt
 from pathlib import Path
 import json
 import shutil
 
-# ===== Paths =====
 UPD_DIR = Path("/tmp/upd")
 UPD_DIR.mkdir(parents=True, exist_ok=True)
 
-upc = UPD_DIR / "count"
-upd = UPD_DIR / "updates"
-upn = UPD_DIR / "new"
-lock = UPD_DIR / "refresh.lock"
+upc   = UPD_DIR / "count"
+upd   = UPD_DIR / "updates"
+upn   = UPD_DIR / "new"
+lock  = UPD_DIR / "refresh.lock"
+state = UPD_DIR / "state"   # ⬅ cache state
 
-# Pastikan file-file dasar ada (kalau kebetulan berupa folder, hapus dulu)
-for file_path in [upc, upd, upn]:
-    if file_path.exists() and file_path.is_dir():
-        shutil.rmtree(str(file_path))
-    if not file_path.exists():
-        file_path.touch()
+for p in [upc, upd, upn, state]:
+    if p.exists() and p.is_dir():
+        shutil.rmtree(p)
+    if not p.exists():
+        p.touch()
 
-# Pastikan count file punya nilai
-if upc.is_dir():
-    shutil.rmtree(str(upc))
-    upc.touch()
-    upc.write_text("0")
-elif not upc.exists() or upc.stat().st_size == 0:
+if upc.stat().st_size == 0:
     upc.write_text("0")
 
-def safe_read_text(p: Path, default: str = "") -> str:
+def safe_read(p, default=""):
     try:
-        if not p.exists():
-            p.touch()
-            return default
-        if p.is_dir():
-            return default
-        return p.read_text(encoding="utf-8", errors="ignore").rstrip("\n")
+        return p.read_text().strip()
     except Exception:
         return default
 
-# Spinner frames
-SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+count = safe_read(upc, "0")
+try:
+    count_int = int(count)
+except ValueError:
+    count_int = 0
 
-# ===== Logic sederhana =====
-is_refreshing = lock.exists()
+# =========================
+# STATE RESOLUTION (ANTI RACE)
+# =========================
 
-if is_refreshing:
-    # cuma spinner
-    idx = int(dt.now().timestamp() * 5) % len(SPINNER_FRAMES)
-    frame = SPINNER_FRAMES[idx]
+if lock.exists():
+    cur_state = "refreshing"
+elif count_int > 0:
+    cur_state = "updates"
+else:
+    cur_state = "idle"
 
+# simpan state terakhir
+state.write_text(cur_state)
+
+# =========================
+# RENDER
+# =========================
+
+if cur_state == "refreshing":
     data = {
         "class": "refreshing",
-        # percentage bebas, asal konsisten sama CSS / format-icons-mu
-        "percentage": 50,
-        # tooltip dikosongin biar ga ada tulisan "refreshing" / "update"
+        "percentage": 1,
         "tooltip": "",
-        "text": f"<span color='#777777'>{frame}</span>",
+        "text": "-",          # ⬅ TIDAK BISA DIGANTI 0 LAGI
+    }
+elif cur_state == "updates":
+    data = {
+        "class": "updates",
+        "percentage": 2,
+        "tooltip": "",
+        "text": str(count_int),
     }
 else:
-    # lagi idle: modul kosong (ga ada icon/teks)
     data = {
         "class": "idle",
         "percentage": 0,
         "tooltip": "",
-        "text": "",
+        "text": "0",
     }
 
 print(json.dumps(data, ensure_ascii=False))

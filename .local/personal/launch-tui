@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -eu
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") <app> [args...]"
+  exit 1
+fi
+
+APP_NAME="$(basename "$1")"
+APP_ID="tui.$APP_NAME"
+
+# Launch command (TUI, usually in terminal)
+LAUNCH_COMMAND="$*"
+
+exec launch-or-focus "$APP_ID" "$LAUNCH_COMMAND"
+

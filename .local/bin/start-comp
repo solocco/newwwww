@@ -1,12 +1,11 @@
 #!/bin/sh
-# Unified compositor launcher + cursor fixes per compositor (Sway/River/Niri)
+# Unified compositor launcher
 # Usage: wsession [-p] <compositor>
 # Env overrides (opsional): CURSOR_THEME, CURSOR_SIZE
 
 # --- Parse Arguments ---
 START_PIPEWIRE=false
 COMPOSITOR=""
-
 while [ $# -gt 0 ]; do
   case "$1" in
     -p) START_PIPEWIRE=true ;;
@@ -44,7 +43,6 @@ export MOZ_ENABLE_WAYLAND=1
 export XCURSOR_THEME="$CURSOR_THEME"
 export XCURSOR_SIZE="$CURSOR_SIZE"
 export XCURSOR_PATH="$HOME/.icons:$HOME/.local/share/icons:/usr/share/icons"
-
 export XDG_SESSION_TYPE=wayland
 export XDG_SESSION_DESKTOP="$COMPOSITOR"
 export XDG_CURRENT_DESKTOP="$COMPOSITOR"
@@ -69,22 +67,6 @@ if [ "$START_PIPEWIRE" = true ]; then
   pgrep -x wireplumber >/dev/null || wireplumber &
   pgrep -x pipewire-pulse >/dev/null || pipewire-pulse &
 fi
-
-# --- Per-compositor cursor helpers (tidak memodifikasi file: hanya echo info) ---
-case "$COMPOSITOR" in
-  sway)
-    echo "TIP (sway): Tambahkan ke ~/.config/sway/config ->  seat * xcursor_theme \"$CURSOR_THEME\" $CURSOR_SIZE"
-    ;;
-  river)
-    echo "TIP (river): Pastikan ~/.config/river/init berisi ->  riverctl xcursor-theme \"$CURSOR_THEME\" $CURSOR_SIZE"
-    ;;
-  niri|Niri)
-    echo "TIP (niri): Set di ~/.config/niri/config.kdl ->  input { cursor { theme \"$CURSOR_THEME\"; size $CURSOR_SIZE; } }"
-    ;;
-  *)
-    :
-    ;;
-esac
 
 # --- Launch Compositor ---
 command -v "$COMPOSITOR" >/dev/null 2>&1 || {

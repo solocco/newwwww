@@ -1,10 +1,5 @@
 #!/usr/bin/env sh
 set -eu
-
-TITLE="gum-nighlight"
-
-exec launch-or-focus "$TITLE" \
-  "alacritty --title $TITLE -e gum-nighlight"
-
-
-
+TITLE="gum-nl"
+TERMINAL=$($(dirname "$0")/get-terminal)
+exec launch-or-focus "$TITLE" "$TERMINAL --title $TITLE -e gum-nl"
