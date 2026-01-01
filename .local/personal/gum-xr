@@ -21,13 +21,56 @@ TERMINAL=$("$SCRIPT_DIR/get-terminal")
 
 run_in_terminal() {
   local cmd="$1"
-  # Minimize main window dulu
-  mmsg -d minimized
+  # Minimize main window
+  mmsg -d minimized || true
+  sleep 0.3
+  
+  # Buka terminal dengan cara yang bener berdasarkan terminal emulator
+  case "$TERMINAL" in
+    footx)
+      # footx dengan -f flag untuk floating mode (app-id: foot-float)
+      $TERMINAL -f bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    alacrittyx)
+      # alacrittyx dengan -f flag untuk floating mode (app-id: alacritty-float)
+      $TERMINAL -f bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    alacritty)
+      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    foot)
+      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    ghostty)
+      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    kitty)
+      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    termite)
+      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    wezterm)
+      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    konsole|gnome-terminal|xfce4-terminal|mate-terminal|xterm|urxvt)
+      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+    *)
+      # Default: coba -e dulu
+      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
+      ;;
+  esac
+  
+  local terminal_pid=$!
+  sleep 0.5
+  
+  # Wait terminal selesai
+  wait $terminal_pid 2>/dev/null || true
   sleep 0.2
-  # Buka terminal floating
-  $TERMINAL --class="$TERMINAL-float" -e bash -c "$cmd; read -p 'Press enter to close...'"
+  
   # Restore main window
-  mmsg -d restore_minimized
+  mmsg -d restore_minimized || true
 }
 
 # ---------------------------------------------------------
@@ -87,6 +130,7 @@ xr_xbps_menu() {
     esac
   done
 }
+
 # ---------------------------------------------------------
 # Change mirror menu
 # ---------------------------------------------------------
@@ -94,6 +138,7 @@ mirror_menu() {
   gum style --foreground 33 "Opening xmirror..."
   sudo xmirror
 }
+
 # ---------------------------------------------------------
 # fzf interactive mode
 # ---------------------------------------------------------
@@ -105,6 +150,7 @@ fzf_mode() {
     gum style --foreground 196 "󰜺 fzf not installed"
   fi
 }
+
 # ---------------------------------------------------------
 # Update system with feedback
 # ---------------------------------------------------------
@@ -119,6 +165,7 @@ update_system() {
     gum style --foreground 196 "󰚰 Update failed!"
   fi
 }
+
 # ---------------------------------------------------------
 # Clean unused packages
 # ---------------------------------------------------------
@@ -133,6 +180,7 @@ clean_packages() {
     gum style --foreground 196 "󰃢 Cleanup failed!"
   fi
 }
+
 # ---------------------------------------------------------
 # Manage old kernels
 # ---------------------------------------------------------
@@ -146,6 +194,7 @@ manage_kernels() {
     gum style --foreground 33 "󰌽 No old kernels to remove"
   fi
 }
+
 # ---------------------------------------------------------
 # Main menu
 # ---------------------------------------------------------
@@ -162,6 +211,7 @@ main_menu() {
     "󰜺  xr fzf mode" \
     "󰈆  Exit"
 }
+
 # ---------------------------------------------------------
 # Loop
 # ---------------------------------------------------------
