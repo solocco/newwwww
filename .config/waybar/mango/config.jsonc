@@ -2,244 +2,239 @@
   "name": "main-bar",
   "id": "main-bar",
   "layer": "top",
-  //"mode": "dock",
   "exclusive": true,
   "passthrough": false,
   "position": "top",
-  "height": 32,
-  "spacing": "",
-  "margin": "",
+  "height": 34,
+  "spacing": 0,
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "margin-left": 0,
+  "margin-right": 0,
   "fixed-center": true,
   "ipc": true,
   "reload_style_on_change": true,
 
-  // ==== Layout: Sway ====
+  // ==== Layout: macOS Style ====
   "modules-left": [
     "custom/menu",
     "ext/workspaces",
     "dwl/window"
   ],
-  "modules-center": [],
+  "modules-center": [
+    "clock"
+  ],
   "modules-right": [
+    "tray",
     "custom/updates",
     "custom/updates#2",
-    "cpu", 
-    "cpu#2",
-    "memory", 
-    "custom/memory",
-    "disk", 
-    "disk#2",
     "custom/temp-icon",
-    "custom/temp",
+    "cpu", 
+    "custom/memory", 
+    "disk",
     "backlight", 
-    "backlight#2",
-    "wireplumber", 
-    "wireplumber#2",
-    "network",
+    "wireplumber",
     "bluetooth",
-    "clock",
-    "custom/flavours",
-    "custom/power",
-    "tray"
+    "network",
+    "custom/power"
   ],
 
   "tray": {
-    "icon-size": 18,
-    "spacing": 4,
-    "padding": "0 2px 0 2px",
-    "border-radius": 8
+    "icon-size": 16,
+    "spacing": 8,
+    "show-passive-items": false
   },
 
-  /* ---- Menu & util ---- */
+  /* ---- Menu (Apple Logo) ---- */
   "custom/menu": {
-    "format": "<span > </span>",
+    "format": "",
     "on-click": "launch-menu",
     "tooltip": false
   },
-  "custom/flavours": {
-    "format": " ",
-    "tooltip": true,
-    "tooltip-format": "Theme selector",
-    "on-click": "launch-flavours",
-    "escape": "true"
-  },
-  "custom/qs": {
-    "format": " ",
-    "tooltip": true,
-    "tooltip-format": "Quick Settings",
-    "on-click": "rofi_quicksettings"
-  },
+
+  /* ---- Power ---- */
   "custom/power": {
-    "format": " ",
-    "on-click": "powermenu.sh",
+    "format": "⏻",
+    "on-click": "launch-power",
     "tooltip": false
+  },
+
+   "custom/memory": {
+    "exec": "~/.config/waybar/scripts/memory_usage.sh",
+    "interval": 2,
+    "return-type": "json",
+    "format": "󰍛 {}"
   },
 
   /* ---- Updates ---- */
   "custom/updates": {
-    "format": "{icon}",
-    "format-icons": " ",
+    "format": "",
     "return-type": "json",
     "exec": "python3 ~/.local/bin/updbar_icon.py",
     "on-click": "launch-xr",
     "on-click-right": "~/.local/bin/updbar_rst.sh",
     "signal": 9,
-    "interval": 30,
+    "interval": 300,
     "tooltip": false
   },
   "custom/updates#2": {
-    "format": "{0}",
+    "format": "{text}",
     "return-type": "json",
-    "exec": "python3 ~/.local/bin/updbar_count.py", 
+    "exec": "python3 ~/.local/bin/updbar_count.py",
     "on-click": "launch-xr",
-    "on-click-right": "updbar_rst.sh",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
     "signal": 9,
-    "interval": 30,
+    "interval": 300,
     "tooltip": false
   },
 
-  /* ---- Clock ---- */
+  /* ---- Clock (Center) ---- */
   "clock": {
-    "format": "{:L%H:%M}",
+    "format": "{:%a %d %b  %H:%M}",
     "tooltip": true,
-    "tooltip-format": "{:%a %d %b}"
+    "tooltip-format": "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>"
   },
-  "clock#2": { "format": "{:L%d}", "tooltip": false },
 
   /* ---- Audio (PipeWire) ---- */
   "wireplumber": {
-    "format": "{icon}",
-    "format-muted": "婢",
-    "format-bluetooth": "",
-    "format-bluetooth-muted": "",
-    "format-source": "",
-    "format-source-muted": "",
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁",
     "format-icons": {
-        "headphone": "",
-        "hands-free": "ﳌ",
-        "headset": "",
-        "phone": "",
-        "portable": "",
-        "car": "",
-        "default": ["奄", "奔", "墳"]
-      },
-        "scroll-step": 5.0,
-        "smooth-scrolling-threshold": 1
+      "headphone": "󰋋",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "phone": "󰄜",
+      "portable": "󰄜",
+      "car": "󰄋",
+      "default": ["󰕿", "󰖀", "󰕾"]
     },
-    "wireplumber#2": {
-      "format": "{volume}%",
-      "format-muted": "Mute",
-      "format-bluetooth": "{volume}%",
-      "format-bluetooth-muted": "Mute",
-      "format-source": "{volume}%",
-      "scroll-step": 5.0,
-      "smooth-scrolling-threshold": 1
-    },
+    "scroll-step": 2,
+    "on-click": "pavucontrol",
+    "tooltip": true,
+    "tooltip-format": "Volume: {volume}%"
+  },
+  "wireplumber#2": {
+    "format": "{volume}%",
+    "format-muted": "Mute",
+    "scroll-step": 2,
+    "on-click": "pavucontrol",
+    "tooltip": false
+  },
 
   /* ---- Network ---- */
   "network": {
-    "format-wifi": " ",
-    "format-ethernet": "",
-    "format-disconnected": "",
+    "format-wifi": "󰖩",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰖪",
     "tooltip": true,
-    "tooltip-format": "{ipaddr}",
+    "tooltip-format": "{essid} - {signalStrength}%\n{ipaddr}/{cidr}",
     "tooltip-format-disconnected": "Disconnected",
     "on-click": "launch-wifi"
   },
-  "network#2": { "format": "{signalStrength}%", "tooltip": false },
 
   /* ---- Bluetooth ---- */
   "bluetooth": {
-    "format": "",
-    "format-disabled": "",
-    "format-connected": "",
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "tooltip-format": "{controller_alias}\t{controller_address}",
     "tooltip-format-connected": "{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}",
+    "tooltip-format-enumerate-connected": "• {device_alias}\t{device_address}",
     "on-click": "launch-bluetooth"
   },
-  "bluetooth#2": { "format": "{status}", "tooltip": false },
 
   /* ---- Temperature ---- */
-  "temperature": {
-    "format": ""
-  },
-
   "custom/temp-icon": {
     "exec": "~/.config/waybar/scripts/temp.sh icon",
-    "interval": 2,
+    "interval": 3,
     "return-type": "json",
-    "format": "{}"
+    "format": "{text}"
   },
 
   "custom/temp": {
     "exec": "~/.config/waybar/scripts/temp.sh value",
-    "interval": 2,
+    "interval": 3,
     "return-type": "json",
-    "format": "{}"
+    "format": "{text}"
   },
 
   /* ---- Battery ---- */
   "battery": {
-    "states": { "warning": 30, "critical": 15 },
-    "format": "{icon}",
-    "format-charging": "{icon}",
-    "format-plugged": "{icon}",
+    "states": { 
+      "warning": 30, 
+      "critical": 15 
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰁹 Full",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "tooltip": true,
-    "tooltip-format": "{capacity}%",
-    "format-icons": ["","","","",""]
+    "tooltip-format": "{timeTo}\n{power}W"
   },
-  "battery#2": { "format": "{capacity}%", "tooltip": false },
 
-   /* ---- Backlight ---- */
+  /* ---- Backlight ---- */
   "backlight": {
-		"interval": 2,
-    "format": "{icon}",
-    "format-icons": ["", "", "", "", "", "", ""],
-    "on-click": "launch-nl",
-    "smooth-scrolling-threshold": 1
-  },
-  "backlight#2": {
-		"interval": 2,
-    "format": "{percent}%",
-    "on-click": "launch-nl",
-    "smooth-scrolling-threshold": 1
-  },
-
-  /* ---- Stats (dari stacking) ---- */
-  "cpu": { "format": " ", "tooltip": true, "tooltip-format": "{usage}%" },
-  "cpu#2": { "format": "{usage}%", "tooltip": false },
-
-  "memory": { 
-    "format": " ",
-    "tooltip": true, 
-    "tooltip-format": "{used}GiB" },
-  // "memory#2": { "format": "{used}GiB", "tooltip": false },
-  "custom/memory": {
-    "exec": "~/.config/waybar/scripts/memory_usage.sh",
     "interval": 2,
-    "return-type": "json",
-    "format": "{}"
+    "format": "{icon} {percent}%",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "on-click": "launch-nl",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-",
+    "smooth-scrolling-threshold": 1,
+    "tooltip": false
   },
-  "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
-  "disk#2": { "format": "{free}", "tooltip": false },
+
+  /* ---- CPU ---- */
+  "cpu": { 
+    "format": "󰻠 {usage}%",
+    "interval": 3,
+    "on-click": "kitty -e btop",
+    "tooltip": true,
+    "tooltip-format": "CPU Usage: {usage}%"
+  },
+
+  /* ---- Memory ---- */
+  "memory": { 
+    "format": "󰍛 {percentage}%",
+    "interval": 3,
+    "on-click": "kitty -e btop",
+    "tooltip": true,
+    "tooltip-format": "RAM: {used:0.1f}GiB / {total:0.1f}GiB"
+  },
+
+  /* ---- Disk ---- */
+  "disk": { 
+    "format": "󰋊 {percentage_used}%",
+    "interval": 30,
+    "path": "/",
+    "tooltip": true,
+    "tooltip-format": "Used: {used}\nFree: {free}\nTotal: {total}"
+  },
  
-  /* workspaces */
+  /* ---- Workspaces ---- */
   "ext/workspaces": {
     "format": "{icon}",
     "ignore-hidden": true,
     "on-click": "activate",
-    "on-click-right": "deactivate",
+    "on-scroll-up": "hyprctl dispatch workspace e+1",
+    "on-scroll-down": "hyprctl dispatch workspace e-1",
     "sort-by-id": true
   },
-  "dwl/tags": {
-      "num-tags":9
-  },
+
+  /* ---- Window Title ---- */
   "dwl/window": {
     "format": "{title}",
     "icon": true,
-    "icon-size": 14,
-    "max-length": 50,
-    "tooltip": false
+    "icon-size": 16,
+    "max-length": 60,
+    "tooltip": false,
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "󰈹 $1",
+      "(.*) - Google Chrome": " $1",
+      "(.*) - Visual Studio Code": "󰨞 $1",
+      "(.*)nvim": " $1"
+    }
   }
 }
-
