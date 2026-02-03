@@ -5,5 +5,8 @@ import = [ "~/.config/alacritty/colors.toml", "~/.config/alacritty/fonts.toml" ]
 padding.x = 24
 padding.y = 24
 
+[colors]
+draw_bold_text_with_bright_colors = true
+
 [cursor]
 style = { shape = "Block", blinking = "On" }

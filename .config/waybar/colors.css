@@ -1,25 +1,25 @@
 /*
 *
-* Base16 Kanagawa
-* Author: Yang Mulia
+* Base16 eye-cachy
+* Author: best of all worlds - ultimate comfort blend
 *
 */
 
-@define-color base00 #1f1f28;
-@define-color base01 #090618;
-@define-color base02 #2d4f67;
-@define-color base03 #727169;
-@define-color base04 #c8c093;
-@define-color base05 #dcd7ba;
-@define-color base06 #e6c384;
-@define-color base07 #dcd7ba;
-@define-color base08 #c34043;
-@define-color base09 #ffa066;
-@define-color base0A #c0a36e;
-@define-color base0B #76946a;
-@define-color base0C #6a9589;
-@define-color base0D #7e9cd8;
-@define-color base0E #957fb8;
-@define-color base0F #ff5d62;
-@define-color bg rgba(31, 31, 40, 0.90);
-@define-color accentDim rgba(106, 149, 137, 0.35);
+@define-color base00 #1d2021;
+@define-color base01 #282a36;
+@define-color base02 #3c3f4c;
+@define-color base03 #545862;
+@define-color base04 #8b92a8;
+@define-color base05 #c5cdd9;
+@define-color base06 #dde3ed;
+@define-color base07 #f0f4f8;
+@define-color base08 #e67e80;
+@define-color base09 #e69875;
+@define-color base0A #dbbc7f;
+@define-color base0B #a7c080;
+@define-color base0C #89beb7;
+@define-color base0D #7fbbb3;
+@define-color base0E #d699b6;
+@define-color base0F #d65d0e;
+@define-color bg rgba(29, 32, 33, 0.90);
+@define-color accentDim rgba(137, 190, 183, 0.35);

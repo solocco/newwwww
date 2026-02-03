@@ -1,18 +1,18 @@
-scheme: "rxyhn"
-author: "base46 converted"
-base00: "061115"
-base01: "0c171b"
-base02: "101b1f"
-base03: "192428"
-base04: "212c30"
-base05: "d9d7d6"
-base06: "e3e1e0"
-base07: "edebea"
-base08: "f26e74"
-base09: "ecd28b"
-base0A: "e9967e"
-base0B: "82c29c"
-base0C: "6791c9"
-base0D: "79aaeb"
-base0E: "c488ec"
-base0F: "f16269"
+scheme: "Rxyhn Dark"
+author: "Converted from rxyhn base46 (by rxyhn)"
+base00: "061115" # background
+base01: "0C171B" # surface 1
+base02: "101B1F" # surface 2
+base03: "192428" # comments / muted
+base04: "212C30" # dark foreground
+base05: "D9D7D6" # main foreground
+base06: "E3E1E0" # light foreground
+base07: "EDEBEA" # lightest foreground
+base08: "F26E74" # red
+base09: "ECD28B" # orange / yellow
+base0A: "E9967E" # yellow
+base0B: "82C29C" # green
+base0C: "6791C9" # cyan
+base0D: "79AAEB" # blue
+base0E: "C488EC" # purple
+base0F: "F16269" # pink / extra

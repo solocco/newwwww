@@ -1,37 +1,37 @@
-# Base16 Kanagawa - alacritty color config
-# Yang Mulia
+# Base16 eye-cachy - alacritty color config
+# best of all worlds - ultimate comfort blend
 
 [colors]
 draw_bold_text_with_bright_colors = false
 
 # Default colors
 [colors.primary]
-background = '0x1f1f28'
-foreground = '0xdcd7ba'
+background = '0x1d2021'
+foreground = '0xc5cdd9'
 
 # Colors the cursor will use if `custom_cursor_colors` is true
 [colors.cursor]
-text = '0x1f1f28'
-cursor = '0xdcd7ba'
+text = '0x1d2021'
+cursor = '0xc5cdd9'
 
 # Normal colors
 [colors.normal]
-black = '0x1f1f28'
-red = '0xc34043'
-green = '0x76946a'
-yellow = '0xc0a36e'
-blue = '0x7e9cd8'
-magenta = '0x957fb8'
-cyan = '0x6a9589'
-white = '0xdcd7ba'
+black = '0x1d2021'
+red = '0xe67e80'
+green = '0xa7c080'
+yellow = '0xdbbc7f'
+blue = '0x7fbbb3'
+magenta = '0xd699b6'
+cyan = '0x89beb7'
+white = '0xc5cdd9'
 
 # Bright colors
 [colors.bright]
-black = '0x727169'
-red = '0xffa066'
-green = '0x090618'
-yellow = '0x2d4f67'
-blue = '0xc8c093'
-magenta = '0xe6c384'
-cyan = '0xff5d62'
-white = '0xdcd7ba'
+black = '0x545862'
+red = '0xe69875'
+green = '0x282a36'
+yellow = '0x3c3f4c'
+blue = '0x8b92a8'
+magenta = '0xdde3ed'
+cyan = '0xd65d0e'
+white = '0xf0f4f8'

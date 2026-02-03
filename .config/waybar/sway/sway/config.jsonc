@@ -1,0 +1,135 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "spacing": 0,
+    
+    "modules-left": [
+        "custom/logo",
+        "sway/workspaces",
+        "sway/window"
+    ],
+    
+    "modules-center": [
+    ],
+    
+    "modules-right": [
+        "custom/kernel",
+        "cpu",
+        "memory",
+        "disk",
+        "backlight",
+        "wireplumber",
+        "network",
+        "bluetooth",
+        "clock"
+    ],
+
+    // Custom logo
+    "custom/logo": {
+        "format": "",
+        "tooltip": false
+    },
+
+    // Workspaces
+    "sway/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": true,
+        "format": "{name}",
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": []
+        }
+    },
+
+    // Sway mode (layout)
+    "sway/mode": {
+        "format": "{}",
+        "tooltip": false
+    },
+
+    // Active window
+    "sway/window": {
+        "format": "{}",
+        "max-length": 80,
+        "tooltip": false
+    },
+
+    // Kernel version
+    "custom/kernel": {
+        "format": "{}",
+        "exec": "uname -r",
+        "interval": 3600,
+        "tooltip": false
+    },
+
+    // CPU
+    "cpu": {
+        "interval": 2,
+        "format": "CPU: {usage}%",
+        "tooltip": false
+    },
+
+    // Memory
+    "memory": {
+        "interval": 2,
+        "format": "Mem: {}%",
+        "tooltip": false
+    },
+
+    // Disk
+    "disk": {
+        "interval": 30,
+        "format": "Disk: {percentage_used}%",
+        "path": "/",
+        "tooltip": false
+    },
+
+    // Volume
+    "wireplumber": {
+        "format": "Vol: {volume}%",
+        "format-muted": "Vol: Muted",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "tooltip": false
+    },
+
+    // Backlight
+    "backlight": {
+        "format": "Bri: {percent}%",
+        "tooltip": false,
+        "on-click": "footx -f -e gum-nl"
+    },
+
+    // Network
+    "network": {
+        "interval": 5,
+        "format-wifi": "Net: {essid}",
+        "on-click": "footx -f -e impala",
+        "format-ethernet": "Net: Wired",
+        "format-disconnected": "Net: Disconnected",
+        "tooltip": false
+    },
+
+    // Bluetooth
+    "bluetooth": {
+        "format": "BT: {status}",
+        "format-connected": "BT: {device_alias}",
+        "format-disabled": "BT: Off",
+        "tooltip": false,
+        "on-click": "footx -f -e bluetui"
+    },
+
+    // Clock
+    "clock": {
+        "interval": 1,
+        "format": "{:%a, %b %d - %H:%M}",
+        "tooltip": false
+    }
+}

@@ -1,0 +1,260 @@
+{
+  "name": "main-bar",
+  "id": "main-bar",
+  "layer": "top",
+  "mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "top",
+  "height": 32,
+  "spacing": "",
+  "margin": "",
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  // ==== Layout: Sway ====
+  "modules-left": [
+    "custom/menu",
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "cpu", 
+    "cpu#2",
+    "memory", 
+    "custom/memory",
+    "disk", 
+    "disk#2",
+    "custom/temp-icon",
+    "custom/temp",
+    "backlight", 
+    "backlight#2",
+    "wireplumber", 
+    "wireplumber#2",
+    "network",
+    "bluetooth",
+    "clock",
+    "custom/qs",
+    "custom/power",
+    "tray"
+  ],
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 4,
+    "padding": "0 2px 0 2px",
+    "border-radius": 8
+  },
+
+  /* ---- Menu & util (dari stacking) ---- */
+  "custom/menu": {
+    "format": "<span > </span>",
+    "on-click": "rofi_launcher",
+    "tooltip": false
+  },
+  "custom/flavours": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Theme selector",
+    "on-click": "rofi_flavours"
+  },
+  "custom/qs": {
+    "format": " ",
+    "tooltip": true,
+    "tooltip-format": "Quick Settings",
+    "on-click": "rofi_quicksettings"
+  },
+  "custom/power": {
+    "format": " ",
+    "on-click": "powermenu.sh",
+    "tooltip": false
+  },
+
+  /* ---- Updates ---- */
+  "custom/updates": {
+    "format": "<span size='large'>{icon}</span>",
+    "format-icons": ["󰏗","󱧖","󰋙","󱧙","󰏖"],
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar.py",
+    "on-click": "~/.local/bin/chckpds.sh",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 30,
+    "tooltip": true
+  },
+  "custom/updates#2": {
+    "format": "{0}",
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar.py", 
+    "on-click": "~/.local/bin/chckpds.sh",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 30,
+    "tooltip": true
+  },
+
+  /* ---- Clock ---- */
+  "clock": {
+    "format": "{:L%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%a %d %b}"
+  },
+  "clock#2": { "format": "{:L%d}", "tooltip": false },
+
+  /* ---- Audio (PipeWire) ---- */
+  "wireplumber": {
+    "format": "{icon}",
+    "format-muted": "婢",
+    "format-bluetooth": "",
+    "format-bluetooth-muted": "",
+    "format-source": "",
+    "format-source-muted": "",
+    "format-icons": {
+        "headphone": "",
+        "hands-free": "ﳌ",
+        "headset": "",
+        "phone": "",
+        "portable": "",
+        "car": "",
+        "default": ["奄", "奔", "墳"]
+      },
+        "scroll-step": 5.0,
+        "smooth-scrolling-threshold": 1
+    },
+    "wireplumber#2": {
+      "format": "{volume}%",
+      "format-muted": "Mute",
+      "format-bluetooth": "{volume}%",
+      "format-bluetooth-muted": "Mute",
+      "format-source": "{volume}%",
+      "scroll-step": 5.0,
+      "smooth-scrolling-threshold": 1
+    },
+
+  /* ---- Network ---- */
+  "network": {
+    "format-wifi": " ",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "tooltip": true,
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "launch-wifi"
+  },
+  "network#2": { "format": "{signalStrength}%", "tooltip": false },
+
+  /* ---- Bluetooth ---- */
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "",
+    "format-connected": "",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "launch-bluetooth"
+  },
+  "bluetooth#2": { "format": "{status}", "tooltip": false },
+
+  /* ---- Temperature ---- */
+  "temperature": {
+    "format": ""
+  },
+
+  "custom/temp-icon": {
+    "exec": "~/.config/waybar/scripts/temp.sh icon",
+    "interval": 2,
+    "return-type": "json",
+    "format": "{}"
+  },
+
+  "custom/temp": {
+    "exec": "~/.config/waybar/scripts/temp.sh value",
+    "interval": 2,
+    "return-type": "json",
+    "format": "{}"
+  },
+
+  /* ---- Battery ---- */
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon}",
+    "format-charging": "{icon}",
+    "format-plugged": "{icon}",
+    "tooltip": true,
+    "tooltip-format": "{capacity}%",
+    "format-icons": ["","","","",""]
+  },
+  "battery#2": { "format": "{capacity}%", "tooltip": false },
+
+   /* ---- Backlight ---- */
+  "backlight": {
+		"interval": 2,
+    "format": "{icon}",
+    "format-icons": ["", "", "", "", "", "", ""],
+    "smooth-scrolling-threshold": 1
+  },
+  "backlight#2": {
+		"interval": 2,
+    "format": "{percent}%",
+    "smooth-scrolling-threshold": 1
+  },
+
+  /* ---- Stats ---- */
+  "cpu": { "format": " ", "tooltip": true, "tooltip-format": "{usage}%" },
+  "cpu#2": { "format": "{usage}%", "tooltip": false },
+
+  "memory": { 
+    "format": " ",
+    "tooltip": true, 
+    "tooltip-format": "{used}GiB" },
+  // "memory#2": { "format": "{used}GiB", "tooltip": false },
+  "custom/memory": {
+    "exec": "~/.config/waybar/scripts/memory_usage.sh",
+    "interval": 2,
+    "return-type": "json",
+    "format": "{}"
+  },
+  "disk": { "format": " ", "tooltip": true, "tooltip-format": "{free} free" },
+  "disk#2": { "format": "{free}", "tooltip": false },
+
+  /* ---- Workspaces ---- */
+  "hyprland/window": {
+    "format": "{title}",
+    "icon": true,
+    "icon-size": 14,
+    "max-length": 50,
+    "tooltip": false,
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "mpv Media Player": "mpv",
+      "": "Desktop"
+    }
+  },
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{name}",
+    "format-icons": {
+      "default": "",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "0",
+      "active": "󱓻"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  }
+}
+

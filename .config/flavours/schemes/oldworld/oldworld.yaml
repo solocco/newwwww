@@ -1,0 +1,22 @@
+scheme: "Oldworld"
+author: "Yang Mulia"
+
+# Core
+base00: "161617" # background
+base01: "27272a" # black
+base02: "353539" # bright black / active tab
+base03: "57575f" # comments / inactive fg
+base04: "a0a0a8" # dark foreground
+base05: "c9c7cd" # default foreground
+base06: "d3d1d7" # light foreground
+base07: "ffffff" # white
+
+# Accent colors
+base08: "ea83a5" # red
+base09: "e6b99d" # orange
+base0A: "e6b99d" # yellow
+base0B: "90b99f" # green
+base0C: "85b5ba" # cyan
+base0D: "9ca2cf" # blue
+base0E: "aca1cf" # purple
+base0F: "ed96b3" # bright red / extra

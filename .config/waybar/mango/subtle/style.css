@@ -1,0 +1,274 @@
+/* 
+ * Waybar Vertical Left Style
+ * Modern floating bar with rounded corners for left position
+ */
+@import "../colors.css";
+@import "../font.css";
+
+window#waybar {
+  background: @base01;
+}
+
+tooltip {
+  background: @base01;
+  border: 1px solid @base03;
+  border-radius: 8px;
+}
+
+tooltip label {
+  color: @base06;
+  padding: 6px;
+}
+
+/* Main floating container - adjusted for vertical */
+#right {
+  background-color: @base00;
+  padding: 0px 0 0px 0;
+  margin: 0 3px 3px 3px;
+  border-radius: 8px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Workspaces container - vertical layout */
+#workspaces {
+  background-color: @base00;
+  padding: 8px 5px;
+  margin: 10px 3px 3px 3px;
+  border-radius: 8px;
+  border: 1px solid @base01;
+}
+
+#workspaces button {
+  padding: 0;
+  margin: 6px 0;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 100%;
+  color: @base02;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button:hover {
+  background: transparent; 
+  color: @base05;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+  background-color: transparent;
+  color: @base0D;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active:hover {
+  background: transparent;
+  color: @base05;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.urgent {
+  background-color: transparent;
+  color: @base08;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Clock - Center highlight */
+#clock {
+  background-color: @base00;
+  color: @base0D;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px 8px 0px 0px;
+  /*            top right bottom left  */
+  padding: 10px 15px 5px 15px;
+  margin: 3px 3px 0 3px;
+  border: 1px solid @base01;
+  border-bottom: none;
+}
+
+#clock.2 {
+  background-color: @base00;
+  color: @base08;
+  border-radius: 0px 0px 8px 8px;
+  /*            top right bottom left  */
+  padding: 5px 15px 10px 15px;
+  margin: 0 3px 3px 3px;
+  border: 1px solid @base01;
+  border-top: none;
+  font-size: 16px;
+}
+
+#clock.3 {
+  background-color: @base00;
+  color: @base05;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 8px 8px 0px 0px;
+  /*            top right bottom left  */
+  padding: 10px 15px 5px 15px;
+  margin: 3px 3px 0 3px;
+  border: 1px solid @base01;
+  border-bottom: none;
+}
+
+#clock.4 {
+  background-color: @base00;
+  padding: 5px 0 5px 0;
+  margin: 0px 3px 0px 3px;
+  border-radius: 0px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+  color: @base05;
+  border-top: none;
+  border-bottom: none;
+  font-size: 14px;
+}
+
+#clock.5 {
+  background-color: @base00;
+  padding: 5px 0 5px 0;
+  margin: 0px 3px 0px 3px;
+  border-radius: 0px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+  color: @base05;
+  border-top: none;
+  border-bottom: none;
+  font-size: 14px;
+}
+
+#clock.6 {
+  background-color: @base00;
+  color: @base05;
+  border-radius: 0px 0px 8px 8px;
+  /*            top right bottom left  */
+  padding: 5px 15px 10px 15px;
+  margin: 0 3px 0px 3px;
+  border: 1px solid @base01;
+  border-top: none;
+  font-size: 14px;
+}
+
+#clock:hover {
+  background: @base00; 
+  color: @base05;
+}
+
+/* Battery states */
+#battery {
+  color: @base0B;
+  padding-bottom: 15px;
+}
+
+#battery.charging {
+  background: linear-gradient(135deg, @base0B 0%, @base0A 100%);
+  color: @base00;
+}
+
+#battery.critical:not(.charging) {
+  background: linear-gradient(135deg, @base08 0%, @base09 100%);
+  color: @base00;
+}
+
+/* Network states - adjusted margins for vertical */
+#network {
+  color: @base0C;
+  margin: 0 0 12px 0;
+  font-family: "Material Symbols Outlined";
+}
+
+#network:hover {
+  background: transparent; 
+  color: @base05;
+}
+
+#network.disconnected,
+#network.disabled {
+  color: @base03;
+  background-color: @base01;
+}
+
+/* Bluetooth states - adjusted margins for vertical */
+#bluetooth {
+  color: @base0E;
+  margin: 0 0 12px 0;
+}
+
+#bluetooth:hover {
+  background: transparent; 
+  color: @base05;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @base03;
+  background-color: @base01;
+}
+
+/* System tray - adjusted for vertical */
+#tray {
+  background-color: @base00;
+  padding: 15px 0 15px 2px;
+  margin: 0 3px 3px 3px;
+  border: 1px solid @base01;
+  border-radius: 8px;
+}
+
+/* Brightness - adjusted margins for vertical */
+#backlight {
+  color: @base0B;
+  margin: 0 0 12px 0;
+  padding-top: 15px;
+}
+
+#backlight:hover {
+  background: transparent;
+  color: @base05;
+  border-radius: 0px;
+}
+
+/* Wireplumber - adjusted margins for vertical */
+#wireplumber {
+  color: @base0F;
+  margin: 0 0 12px 0;
+}
+
+#wireplumber:hover {
+  background: transparent; 
+  color: @base05;
+}
+
+/* Expand icon - adjusted for vertical */
+#custom-expand-icon {
+  background-color: @base00;
+  padding: 12px 0 12px 0;
+  margin: 0px 3px 3px 3px;
+  border-radius: 8px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+  color: @base05;
+}
+
+#custom-expand-icon.2 {
+  background-color: @base00;
+  padding: 12px 0 12px 0;
+  margin: 0px 3px 3px 3px;
+  border-radius: 8px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+  color: @base05;
+}
+
+#custom-sep {
+  background-color: @base00;
+  padding: 5px 0 5px 0;
+  margin: 0px 3px 0px 3px;
+  border-radius: 0px;
+  border: 1px solid @base01;
+  transition: all 0.3s ease-in-out;
+  color: @base03;
+  border-top: none;
+  border-bottom: none;
+}

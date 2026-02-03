@@ -1,0 +1,316 @@
+{
+  "layer": "top",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "top",
+  "margin-top": 15,
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  // ==== Layout: Floating Style ====
+  "modules-left": [
+    "custom/menu",
+    "group/clock-expander"
+  ],
+  "modules-center": [
+    "ext/workspaces"
+  ],
+  "modules-right": [
+    "tray",
+    "group/cpu-expander",
+    "group/memory-expander",
+    "group/bright-expander",
+    "group/volume-expander",
+    "group/bluetooth-expander",
+    "group/network-expander",
+    "custom/power"
+  ],
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8,
+    "show-passive-items": false
+  },
+  
+  /* ---- Group ---- */
+  "group/clock-expander": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "clock-group-item"
+    },
+    "modules": ["clock", "clock#2"]
+  },
+
+  "group/network-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "network-group-item"
+    },
+    "modules": ["network", "network#2"]
+  },
+
+  "group/bluetooth-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "bluetooth-group-item"
+    },
+    "modules": ["bluetooth", "bluetooth#2"]
+  },
+
+  "group/bright-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "bright-group-item"
+    },
+    "modules": ["backlight", "backlight#2"]
+  },
+
+  "group/memory-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "memory-group-item"
+    },
+    "modules": ["custom/memory", "custom/memory#2"]
+  },
+
+  "group/volume-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "volume-group-item"
+    },
+    "modules": ["wireplumber", "wireplumber#2"]
+  },
+
+  "group/cpu-expander": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 600,
+        "transition-left-to-right": false,
+        "children-class": "cpu-group-item"
+    },
+    "modules": ["cpu", "cpu#2"]
+  },
+
+  /* ---- Menu ---- */
+  "custom/menu": {
+    "format": "",
+    "on-click": "fuzzel",
+    "tooltip": true,
+    "tooltip-format": "App Launcher"
+  },
+
+  /* ---- Power ---- */
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "launch-power",
+    "tooltip": true,
+    "tooltip-format": "Power Menu"
+  },
+
+  /* ---- Updates ---- */
+  "custom/updates": {
+    "format": "",
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar_icon.py",
+    "on-click": "launch-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 300,
+    "tooltip": false
+  },
+  "custom/updates#2": {
+    "format": "{text}",
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar_count.py",
+    "on-click": "launch-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 300,
+    "tooltip": false
+  },
+
+  /* ---- Clock (Center) ---- */
+  "clock": {
+    "format": "󰥔 {:%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "Clock"
+  },
+
+  "clock#2": {
+    "format": "{:%A, %d %b %y}",
+    "tooltip": false
+  },
+
+  /* ---- Audio (PipeWire) ---- */
+  "wireplumber": {
+    "format": "{icon}",
+    "format-muted": "󰖁",
+    "format-icons": {
+      "headphone": "󰋋",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "phone": "󰄜",
+      "portable": "󰄜",
+      "car": "󰄋",
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "scroll-step": 2,
+    "on-click": "pavucontrol",
+    "tooltip": true,
+    "tooltip-format": "Volume"
+  },
+
+  "wireplumber#2": {
+    "format": "{volume}%",
+    "tooltip": false
+  },
+
+  /* ---- Network ---- */
+  "network": {
+    "format-wifi": "󰖩",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰖪",
+    "tooltip": true,
+    "tooltip-format": "Network",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "launch-wifi"
+  },
+
+  "network#2": {
+    "interface": "wlp3s0",
+    "format": "{ifname}",
+    "format-wifi": "{essid}",
+    "format-ethernet": "{ipaddr}/{cidr}",
+    "format-disconnected": "Disconnected",
+    "tooltip": false
+  },
+
+  /* ---- Bluetooth ---- */
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "tooltip": true,
+    "tooltip-format": "Bluetooth",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "Bluetooth",
+    "on-click": "launch-bluetooth"
+  },
+
+  "bluetooth#2": {
+    "format": "{device_alias}",
+    "format-disabled": "󰂲",
+    "format-off": "OFF",
+    "format-connected": "{device_alias}"
+  },
+
+  /* ---- Temperature ---- */
+  "custom/temp-icon": {
+    "exec": "~/.config/waybar/scripts/temp.sh icon",
+    "interval": 3,
+    "return-type": "json",
+    "format": "{text}"
+  },
+
+  /* ---- Battery ---- */
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰁹 Full",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip": true,
+    "tooltip-format": "{timeTo}\n{power}W"
+  },
+
+  /* ---- Backlight ---- */
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "on-click": "launch-nl",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-",
+    "smooth-scrolling-threshold": 1,
+    "tooltip": true,
+    "tooltip-format": "Brightness"
+  },
+
+  "backlight#2": {
+    "interval": 2,
+    "format": "{percent}%",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "tooltip": false
+  },
+
+  /* ---- CPU ---- */
+  "cpu": {
+    "format": "{icon}",
+    "format-icons": "",
+    "tooltip": true,
+    "tooltip-format": "CPU Usage:"
+  },
+
+  "cpu#2": {
+    "format": "{usage}%",
+    "interval": 3,
+    "tooltip": false
+  },
+
+  /* ---- Memory ---- */
+  "memory": {
+    "format": "{icon} {percentage}%",
+    "format-icons": "",
+    "interval": 3,
+    "on-click": "kitty -e btop",
+    "tooltip": true,
+    "tooltip-format": "RAM: {used:0.1f}GiB / {total:0.1f}GiB"
+  },
+
+  "custom/memory": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Memory"
+  },
+
+  "custom/memory#2": {
+    "exec": "~/.config/waybar/scripts/memory_usage.sh",
+    "interval": 2,
+    "return-type": "json",
+    "format": "{}"
+  },
+
+  /* ---- Disk ---- */
+  "disk": {
+    "format": "󰋊 {percentage_used}%",
+    "interval": 30,
+    "path": "/",
+    "tooltip": true,
+    "tooltip-format": "Used: {used}\nFree: {free}\nTotal: {total}"
+  },
+
+  /* ---- Workspaces ---- */
+  "ext/workspaces": {
+    "format": "{name}",
+    "ignore-hidden": true,
+    "on-click": "activate",
+    "on-click-right": "deactivate",
+    "sort-by-id": true
+  }
+}

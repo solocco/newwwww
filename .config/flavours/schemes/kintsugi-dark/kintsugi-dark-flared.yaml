@@ -1,0 +1,18 @@
+scheme: "Kintsugi Dark Flared"
+author: "Yang Mulia"
+base00: "161618" # Editor background (black2)
+base01: "1a1a1d" # Lighter background - inactive tabs (one_bg)
+base02: "292928" # Selection Background - subtle (one_bg3)
+base03: "5f5f5f" # Comments, Invisibles (grey_fg)
+base04: "75715e" # Dark Foreground - breadcrumbs (grey_fg2)
+base05: "BCAC8F" # Default Foreground - main text/code
+base06: "c9c4b8" # Light Foreground - UI text, active elements
+base07: "dddddd" # Light Background - brightest text (white)
+base08: "b38f8f" # Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted (red)
+base09: "DB9833" # Integers, Boolean, Constants, XML Attributes, Markup Link Url (orange numbers)
+base0A: "DBAD49" # Classes, Markup Bold, Search Text Background - kintsugi gold (yellow)
+base0B: "cc7f66" # Strings, Inherited Class, Markup Code, Diff Inserted
+base0C: "798283" # Support, Regular Expressions, Escape Characters - teal (functions, classes)
+base0D: "6c7a8a" # Functions, Methods, Attribute IDs, Headings - blue
+base0E: "D66848" # Keywords, Storage, Selector, Markup Italic, Diff Changed - red-orange (bold)
+base0F: "b8943a" # Deprecated, Opening/Closing Embedded Language Tags - deep gold accent

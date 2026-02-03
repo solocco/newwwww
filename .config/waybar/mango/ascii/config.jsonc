@@ -1,0 +1,259 @@
+{
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 36,
+
+  "modules-left": ["clock", "ext/workspaces"],
+
+  "modules-center": [],
+
+  "modules-right": [
+    "group/tray-expander",
+    "network",
+    "wireplumber",
+    "cpu",
+    "memory"
+    // "temperature",
+  ],
+
+  "cpu": {
+    "format": "CPU {icon} {usage}% ",
+    "interval": 2,
+    "on-click": "omarchy-launch-or-focus-tui btop",
+    "format-icons": [
+      "░░░░░░░░░░",
+      "█░░░░░░░░░",
+      "██░░░░░░░░",
+      "███░░░░░░░",
+      "████░░░░░░",
+      "█████░░░░░",
+      "██████░░░░",
+      "███████░░░",
+      "████████░░",
+      "█████████░",
+      "██████████"
+    ]
+  },
+
+  "memory": {
+    "format": "MEM {icon} {percentage}%",
+    "interval": 2,
+    "on-click": "omarchy-launch-or-focus-tui btop",
+    "format-icons": [
+      "░░░░░░░░░░",
+      "█░░░░░░░░░",
+      "██░░░░░░░░",
+      "███░░░░░░░",
+      "████░░░░░░",
+      "█████░░░░░",
+      "██████░░░░",
+      "███████░░░",
+      "████████░░",
+      "█████████░",
+      "██████████"
+    ]
+  },
+
+  // "power-profiles-daemon": {
+  //   "format": "{icon}",
+  //   "tooltip-format": "{profile}",
+  //   "tooltip": true,
+  //   "format-icons": {
+  //     "performance": "󰓅",
+  //     "balanced": "󰾅",
+  //     "power-saver": "󰾆",
+  //   },
+  // },
+  // "temperature": {
+  //   "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+  //   "input-filename": "temp1_input",
+  //   "critical-threshold": 85,
+  //   "format": " TEMP {icon} {temperatureC}°C",
+  //   "interval": 4,
+  //   "tooltip": true,
+  //   "tooltip-format": "CPU Temp:  {temperatureC}°C",
+  //   "format-icons": [
+  //     "░░░░░░░░░░",
+  //     "█░░░░░░░░░",
+  //     "██░░░░░░░░",
+  //     "███░░░░░░░",
+  //     "████░░░░░░",
+  //     "█████░░░░░",
+  //     "██████░░░░",
+  //     "███████░░░",
+  //     "████████░░",
+  //     "█████████░",
+  //     "██████████",
+  //   ],
+  //   "on-click": "omarchy-launch-or-focus-tui btop",
+  // },
+
+  "bluetooth": {
+    "format": "",
+    "format-off": "󰂲",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱",
+    "format-no-controller": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "omarchy-launch-bluetooth"
+  },
+
+  "wireplumber": {
+     "format": "VOL {icon} {volume}%",
+     "on-click": "omarchy-launch-or-focus-tui wiremix",
+     "on-click-right": "pamixer -t",
+     "tooltip-format": "Playing at {volume}%",
+     "scroll-step": 5,
+     "format-muted": "  {icon} {volume}%",
+     "headphone": "  {icon} {volume}%",
+     "phone": "  {icon} {volume}%",
+     "phone-muted": "  {icon} {volume}%",
+     "portable": "  {icon} {volume}%",
+     "format-icons": {
+       "default": [
+         "░░░░░░░░░░",
+         "█░░░░░░░░░",
+         "██░░░░░░░░",
+         "███░░░░░░░",
+         "████░░░░░░",
+         "█████░░░░░",
+         "██████░░░░",
+         "███████░░░",
+         "████████░░",
+         "█████████░",
+         "██████████"
+       ]
+     }
+   },
+
+  "group/tray-expander": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "tray-group-item"
+    },
+    "modules": ["custom/expand-icon", "tray"]
+  },
+  "custom/expand-icon": {
+    "format": "",
+    "tooltip": false,
+    "on-scroll-up": "",
+    "on-scroll-down": "",
+    "on-scroll-left": "",
+    "on-scroll-right": ""
+  },
+
+  "tray": {
+    "icon-size": 12,
+    "spacing": 17
+  },
+
+  "custom/volume-ascii": {
+    "exec": "~/.config/waybar/scripts/volume-ascii.sh",
+    "return-type": "text",
+    "interval": 1,
+    "tooltip": "Audio volume control - Click to mute, Scroll to adjust",
+    "on-click": "omarchy-launch-audio",
+    "on-click-right": "pamixer -t",
+    "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+  },
+
+  "network": {
+    "format-icons": ["░", "▂", "▄", "▅", "▇"],
+    "format": "WIFI {icon}",
+    "format-wifi": "WIFI {icon}",
+    "format-ethernet": "ETH ▓▓",
+    "format-disconnected": "WIFI ░",
+    "interval": 5,
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "omarchy-launch-wifi"
+  },
+  "battery": {
+    "format": "BAT {icon}  󱈏 {capacity}%",
+    "format-discharging": "BAT {icon} {capacity}%",
+    "format-charging": "BAT {icon}   {capacity}%",
+    "format-plugged": "BAT {icon}  󱈏 {capacity}%",
+    "format-icons": {
+      "charging": [
+        "░░░░░░░░░░",
+        "█░░░░░░░░░",
+        "██░░░░░░░░",
+        "███░░░░░░░",
+        "████░░░░░░",
+        "█████░░░░░",
+        "██████░░░░",
+        "███████░░░",
+        "████████░░",
+        "█████████░",
+        "██████████"
+      ],
+      "default": [
+        "░░░░░░░░░░",
+        "█░░░░░░░░░",
+        "██░░░░░░░░",
+        "███░░░░░░░",
+        "████░░░░░░",
+        "█████░░░░░",
+        "██████░░░░",
+        "███████░░░",
+        "████████░░",
+        "█████████░",
+        "██████████"
+      ]
+    },
+    "format-full": "██████████ ",
+    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+    "interval": 2,
+    "on-click": "omarchy-menu-tofi power",
+    "on-click-right": "omarchy-menu-tofi profile",
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+
+  "custom/analog-clock": {
+    "format": {},
+    "exec": "~/.config/waybar/scripts/analog-clock.sh",
+    "interval": 1,
+    "return-type": "json"
+  },
+
+  /* ---- Workspaces ---- */
+  "ext/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "active": "██",
+      "default": "▓▓"
+    },
+    "ignore-hidden": true,
+    "on-click": "activate",
+    "on-click-right": "deactivate",
+    "sort-by-id": true
+  },
+
+  "clock": {
+    "format": "{:%I:%M %p}",
+    "format-alt": "󰸗 {:%a %e-%b %Y}",
+
+    "interval": 1,
+    "tooltip-format": "{:%Y-%m-%d %A}\n{calendar}",
+
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 6,
+      "format": {
+        "months": "<span color='#89b4fa'><b>{}</b></span>",
+        "weekdays": "<span color='#cdd6f4'>{}</span>",
+        "today": "<span color='#f38ba8'><b>{}</b></span>"
+      }
+    },
+    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+  }
+}

@@ -1,0 +1,103 @@
+/* 
+ * Waybar DWM/Unix Style - Ultra Minimal
+ */
+
+@import "../colors.css";
+@import "../font.css";
+
+window#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-bottom: 1px solid @base03;
+}
+
+#workspaces {
+  background-color: transparent;
+  padding: 0;
+  margin: 0 8px 0 0;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  margin: 0;
+  background-color: transparent;
+  color: @base05;
+  border: none;
+  border-radius: 0;
+}
+
+#workspaces button.active {
+  background-color: @base03;
+}
+
+#workspaces button.urgent {
+  color: @base08;
+}
+
+#custom-menu,
+#clock,
+#battery,
+#network,
+#bluetooth,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#pulseaudio,
+#tray,
+#custom-power,
+#custom-temp-icon,
+#custom-memory,
+#custom-nightlight,
+#custom-qs,
+#temperature,
+#custom-updates,
+#idle_inhibitor {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0 8px;
+  margin: 0;
+  color: @base05;
+}
+
+#custom-menu {
+  padding: 0 10px;
+}
+
+#clock { 
+  font-weight: bold;
+}
+
+#battery.critical:not(.charging) {
+  color: @base08;
+}
+
+#network.disconnected,
+#network.disabled,
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @base03;
+}
+
+#tray {
+  padding: 0 6px;
+}
+
+#custom-power {
+  color: @base08;
+  padding: 0 10px;
+}
+
+#taskbar button {
+  margin: 0;
+  padding: 0 8px;
+  border-radius: 0;
+  background-color: transparent;
+  color: @base05;
+  border: none;
+}
+
+#taskbar button.active {
+  background-color: @base03;
+}

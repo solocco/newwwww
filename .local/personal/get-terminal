@@ -1,19 +1,3 @@
 #!/usr/bin/env sh
 command -v footx >/dev/null && echo "footx" && exit 0
-command -v alacrittyx >/dev/null && echo "alacrittyx" && exit 0
-command -v alacritty >/dev/null && echo "alacritty" && exit 0
-command -v ghostty >/dev/null && echo "ghostty" && exit 0
-command -v kitty >/dev/null && echo "kitty" && exit 0
-command -v termite >/dev/null && echo "termite" && exit 0
-command -v foot >/dev/null && echo "foot" && exit 0
-command -v wezterm >/dev/null && echo "wezterm" && exit 0
-command -v urxvt >/dev/null && echo "urxvt" && exit 0
-command -v rxvt >/dev/null && echo "rxvt" && exit 0
-command -v konsole >/dev/null && echo "konsole" && exit 0
-command -v gnome-terminal >/dev/null && echo "gnome-terminal" && exit 0
-command -v xfce4-terminal >/dev/null && echo "xfce4-terminal" && exit 0
-command -v mate-terminal >/dev/null && echo "mate-terminal" && exit 0
-command -v lxterminal >/dev/null && echo "lxterminal" && exit 0
-command -v tilix >/dev/null && echo "tilix" && exit 0
-command -v iterm2 >/dev/null && echo "iterm2" && exit 0
 echo "xterm"

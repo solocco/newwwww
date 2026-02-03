@@ -1,0 +1,132 @@
+@import "/home/cid/.config/waybar/colors.css";
+@import "/home/cid/.config/waybar/font.css";
+
+window#waybar {
+    background-color: @base00;
+    color: @base05;
+}
+
+/* Modules spacing */
+#custom-logo,
+#workspaces,
+#mode,
+#window,
+#custom-kernel,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#network,
+#bluetooth,
+#clock {
+    padding: 0 8px;
+}
+
+/* Logo */
+#custom-logo {
+    color: @base0C;
+    font-size: 18px;
+    padding-right: 8px;
+    border-right: 1px solid @base03;
+}
+
+/* Workspaces */
+#workspaces {
+    padding: 0;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    margin-left: 5px;
+    color: @base0C;
+    background-color: transparent;
+    border-bottom: 3px solid transparent;
+}
+
+#workspaces button.visible,
+#workspaces button.persistent {
+    color: @base03;
+}
+
+#workspaces button.focused {
+    color: @base0C;
+    border-bottom: 3px solid @base0E;
+}
+
+#workspaces button:hover {
+    background-color: @base02;
+}
+
+/* Mode (layout indicator) */
+#mode {
+    color: @base05;
+}
+
+/* Window title */
+#window {
+    color: @base0E;
+    border-left: 1px solid @base03;
+}
+
+/* Separators */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+#custom-kernel,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#network,
+#bluetooth {
+    border-left: 1px solid @base03;
+    margin-left: 0;
+}
+
+/* Individual module colors */
+#custom-kernel {
+    color: @base08;
+}
+
+#cpu {
+    color: @base0A;
+}
+
+#memory {
+    color: @base0C;
+}
+
+#disk {
+    color: @base0D;
+}
+
+#backlight {
+    color: @base0A;
+}
+
+#wireplumber {
+    color: @base0E;
+}
+
+#network {
+    color: @base0C;
+}
+
+#bluetooth {
+    color: @base0D;
+}
+
+#clock {
+    color: @base0C;
+    border-left: 1px solid @base03;
+}
+
+/* Tooltips (disabled but just in case) */
+tooltip {
+    background-color: @base00;
+    border: 1px solid @base03;
+    color: @base05;
+}

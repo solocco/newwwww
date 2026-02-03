@@ -1,0 +1,21 @@
+scheme: "Miss Dracula"
+author: "Maria Solano"
+
+base00: "0E1419" # bg
+base01: "1E1F29" # transparent_black
+base02: "3C4148" # selection
+base03: "4B5263" # gutter_fg
+base04: "A9ABAC" # grey
+base05: "F6F6F5" # fg
+base06: "FFFFFF" # bright_white
+base07: "FFFFFF" # bright_white
+
+base08: "E95678" # red
+base09: "FFBFA9" # orange
+base0A: "E8EDA2" # yellow
+base0B: "87E58E" # green
+base0C: "A7DFEF" # cyan
+base0D: "BAA0E8" # purple
+base0E: "E48CC1" # pink
+base0F: "6D5978" # lilac
+

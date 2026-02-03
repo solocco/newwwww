@@ -1,0 +1,112 @@
+/* 🎨 ROFI FLAVOURS MENU - Simple List Layout */
+
+@import "~/.config/rofi/colors.rasi"
+@import "~/.config/rofi/fonts.rasi"
+
+/* ---- Configuration ---- */
+configuration {
+    modi: "drun";
+    show-icons: false;
+}
+
+/* ---- Window ---- */
+window {
+    width: 25%;
+    location: center;
+    anchor: center;
+    border: 1px;
+    border-color: @background-alt;
+    border-radius: 12px;
+    background-color: @background;
+    transparency: "real";
+}
+
+/* ---- Mainbox ---- */
+mainbox {
+    enabled: true;
+    children: ["inputbar", "listview"];
+    spacing: 10px;
+    padding: 20px;
+    background-color: transparent;
+}
+
+
+/* ---- Inputbar ---- */
+inputbar {
+    enabled: true;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: @background-alt;
+    children: ["prompt", "entry"];
+}
+
+prompt {
+    enabled: true;
+    padding: 0px 10px 0px 0px;
+    background-color: transparent;
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "Search...";
+    background-color: transparent;
+    text-color: @foreground-alt;
+}
+
+/* ---- Listview ---- */
+listview {
+    enabled: true;
+    columns: 1;
+    lines: 8;
+    fixed-height: false;
+    scrollbar: true;
+    cycle: true;
+    dynamic: true;
+    layout: vertical;
+    spacing: 0px;
+    padding: 8px 0px;
+    background-color: transparent;
+}
+
+scrollbar {
+    width: 4px;
+    border: 0;
+    handle-width: 4px;
+    handle-color: @accent;
+    background-color: transparent;
+    border-radius: 0px;
+    padding: 0px 2px;
+    margin: 0 0 0 5px;
+}
+
+/* ---- Elements ---- */
+element {
+    enabled: true;
+    padding: 12px 20px;
+    spacing: 0px;
+    border-radius: 12px;
+    background-color: transparent;
+    text-color: @foreground;
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @foreground;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color: @foreground;
+}
+
+element selected.normal {
+    background-color: @background-alt;
+    text-color: @accent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+}

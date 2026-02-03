@@ -1,6 +1,6 @@
 #!/bin/sh
 # flavours-menu.sh — pilih flavour via fuzzel (nama cantik Title Case),
-# apply flavours, restart fnott, set wallpaper pakai swaybg (fill),
+# apply flavours, restart fnott, set wallpaper pakai swww,
 # dan simpan state terakhir.
 
 set -eu
@@ -8,22 +8,24 @@ set -eu
 # --- Dependencies ---
 command -v flavours >/dev/null 2>&1 || { echo "flavours not found."; exit 1; }
 command -v fuzzel   >/dev/null 2>&1 || { echo "fuzzel not found.";   exit 1; }
-command -v swaybg   >/dev/null 2>&1 || { echo "swaybg not found.";   exit 1; }
+command -v swww     >/dev/null 2>&1 || { echo "swww not found.";     exit 1; }
 
 # --- Config ---
-DMENU_OPTS="--dmenu --prompt 'Flavour:' --lines 12 --width 40"
+DMENU_OPTS="--dmenu --prompt=Theme› --lines 8 --width 50"
 WALL_DIR="${WALL_DIR:-$HOME/pictures/walls}"
 MAP_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/flavours/walls.map"
 
-# >>> Default pakai fill (proporsional, bisa crop kalau rasio beda)
-WALL_MODE="${WALL_MODE:-fill}"
+# >>> swww modes: crop|fit|stretch|no
+WALL_MODE="${WALL_MODE:-crop}"
+SWWW_TRANSITION="${SWWW_TRANSITION:-grow}"
+SWWW_DURATION="${SWWW_DURATION:-2}"
 
-MENU_INI="${MENU_INI:-$HOME/.config/fuzzel/fuzzel-menu.right.ini}"
+MENU_INI="${MENU_INI:-$HOME/.config/fuzzel/fuzzel-flavours.ini}"
 
 # --- State & Log ---
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
 LAST_THEME="$STATE_DIR/last_theme"
-LAST_WALL="$STATE_DIR/last_wall"
+LAST_VARIANT="$STATE_DIR/last_variant"
 LOG="$STATE_DIR/flavours-wall.log"
 mkdir -p "$STATE_DIR"
 : > "$LOG" 2>/dev/null || true
@@ -88,17 +90,19 @@ resolve_wall_for_flavour() {
   printf '%s\n' ""
 }
 
-set_wall_with_swaybg() {
+set_wall_with_swww() {
   img="$1"
   mode="$2"
-  pkill -x swaybg 2>/dev/null || true
-  printf '[%s] swaybg run: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
-  nohup swaybg -m "$mode" -i "$img" >>"$LOG" 2>&1 &
+  printf '[%s] swww img: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
+  swww img "$img" \
+    --resize "$mode" \
+    --transition-type "$SWWW_TRANSITION" \
+    --transition-duration "$SWWW_DURATION" \
+    >>"$LOG" 2>&1
 }
 
 save_state() {
   scheme_raw="$1"
-  wall="$2"
 
   if command -v flavours >/dev/null 2>&1; then
     scheme="$(flavours current 2>/dev/null | awk 'NF{print; exit}')"
@@ -108,12 +112,13 @@ save_state() {
   tmp_t="$(mktemp "$STATE_DIR/.last_theme.XXXXXX")"
   printf '%s\n' "$scheme" > "$tmp_t" && mv -f "$tmp_t" "$LAST_THEME"
 
-  if [ -n "$wall" ] && [ -f "$wall" ]; then
-    tmp_w="$(mktemp "$STATE_DIR/.last_wall.XXXXXX")"
-    printf '%s\n' "$wall" > "$tmp_w" && mv -f "$tmp_w" "$LAST_WALL"
-  else
-    : > "$LAST_WALL"
-  fi
+  # Detect variant
+  case "$scheme" in
+    *light*|*Light*|*LIGHT*|*dawn*|*Dawn*) variant="light" ;;
+    *) variant="dark" ;;
+  esac
+  tmp_v="$(mktemp "$STATE_DIR/.last_variant.XXXXXX")"
+  printf '%s\n' "$variant" > "$tmp_v" && mv -f "$tmp_v" "$LAST_VARIANT"
 }
 
 notify() {
@@ -127,7 +132,7 @@ RAW_LIST="$(flavours list 2>/dev/null | tr ' ' '\n' | awk 'NF' | sort -u)"
 
 PRETTY_LIST="$(printf '%s\n' "$RAW_LIST" | while read -r s; do to_title_case "$s"; done)"
 
-pick_pretty="$(printf '%s\n' "$PRETTY_LIST" | fuzzel --config "$MENU_INI" $DMENU_OPTS)" || true
+pick_pretty="$(printf '%s\n' "$PRETTY_LIST" | fuzzel --config "$MENU_INI" --dmenu --prompt="Theme ›" --lines 8 --width 50)" || true
 [ -z "${pick_pretty:-}" ] && exit 0
 
 scheme_real="$(normalize_scheme "$pick_pretty")"
@@ -145,12 +150,12 @@ if flavours apply "$scheme_real" 2>>"$LOG"; then
 
   wall="$(resolve_wall_for_flavour "$scheme_real" || true)"
   if [ -n "${wall:-}" ] && [ -f "$wall" ]; then
-    set_wall_with_swaybg "$wall" "$WALL_MODE"
-    save_state "$scheme_real" "$wall"
-    notify "Flavours" "Applied: $pick_pretty\nWallpaper: $(basename -- "$wall")\nMode: $WALL_MODE"
+    set_wall_with_swww "$wall" "$WALL_MODE"
+    save_state "$scheme_real"
+    notify "Flavours" "Applied: $pick_pretty\nWallpaper: $(basename -- "$wall")"
   else
-    save_state "$scheme_real" ""
-    notify "Flavours" "Applied: $pick_pretty\nWallpaper: TIDAK DITEMUKAN di $WALL_DIR"
+    save_state "$scheme_real"
+    notify "Flavours" "Applied: $pick_pretty\nWallpaper: NOT FOUND"
   fi
 else
   printf "Apply failed.\nCek templates & config.toml.\n" | fuzzel --dmenu --prompt "Error" >/dev/null

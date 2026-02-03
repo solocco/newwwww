@@ -1,0 +1,30 @@
+scheme: "Pastel Abstract Sharp White"
+author: "Yang Mulia"
+
+# =========================
+# Backgrounds
+# =========================
+base00: "0b0f1a" # background
+base01: "141a2e"
+base02: "22284a"
+
+# =========================
+# Foregrounds (PUTIH PASTEL)
+# =========================
+base03: "6fb4ff" # subtle info / grid
+base04: "86afff" # secondary fg
+base05: "ffffff" # MAIN TEXT (putih)
+base06: "f2efff" # soft white / emphasis
+base07: "ffffff" # hard white (cursor / critical)
+
+# =========================
+# Accents (PINK DIPINDAH KE SINI)
+# =========================
+base08: "f2c6ff" # pink alert / highlight
+base09: "7fcbff" # sky blue
+base0A: "9f9bff" # accent purple
+base0B: "6fb4ff" # bars / graphs
+base0C: "86afff" # cyan-ish
+base0D: "7fcbff" # primary UI
+base0E: "f2c6ff" # pink pastel (swap dari fg)
+base0F: "9f9bff"

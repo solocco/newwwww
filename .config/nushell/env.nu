@@ -63,13 +63,13 @@ $env.GTK_USE_PORTAL = "1"
 $env.NIX_PATH = $"nixpkgs=($env.HOME)/.nix-defexpr/channels/nixpkgs"
 $env.NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt"
 
-##### FZF theming
+##### FZF theming (Kintsugi Dark Flared inspired)
 $env.FZF_DEFAULT_OPTS = "
-  --color=fg:#908caa,bg:#191724,hl:#ebbcba
-  --color=fg+:#e0def4,bg+:#26233a,hl+:#ebbcba
-  --color=border:#403d52,header:#31748f,gutter:#191724
-  --color=spinner:#f6c177,info:#9ccfd8,separator:#403d52
-  --color=pointer:#c4a7e7,marker:#eb6f92,prompt:#908caa"
+  --color=fg:#BCAC8F,bg:#161618,hl:#DBAD49
+  --color=fg+:#dddddd,bg+:#20201f,hl+:#b8943a
+  --color=border:#2a2a28,header:#798283,gutter:#161618
+  --color=spinner:#E08542,info:#6c7a8a,separator:#2a2a28
+  --color=pointer:#DBAD49,marker:#b38f8f,prompt:#c9c4b8"
 
 ##### NNN options (only if installed)
 if (which nnn | is-not-empty) {
@@ -94,12 +94,29 @@ if not ('/tmp/upd' | path exists) {
   "0" | save -f /tmp/upd/count
 }
 
-##### Nushell-specific environment config
-$env.PROMPT_INDICATOR = "〉"
-$env.PROMPT_INDICATOR_VI_INSERT = ": "
-$env.PROMPT_INDICATOR_VI_NORMAL = "〉"
-$env.PROMPT_MULTILINE_INDICATOR = "::: "
+##### Starship Prompt Configuration (if installed)
+if (which starship | is-not-empty) {
+    $env.STARSHIP_SHELL = "nu"
+    $env.STARSHIP_SESSION_KEY = (random chars -l 16)
 
-# Starship prompt (if using starship)
-$env.STARSHIP_SHELL = "nu"
-$env.STARSHIP_SESSION_KEY = (random chars -l 16)
+    # Define Starship prompt function
+    def create_left_prompt [] {
+        starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)'
+    }
+
+    # Set prompt command
+    $env.PROMPT_COMMAND = { || create_left_prompt }
+    $env.PROMPT_COMMAND_RIGHT = ""
+
+    # Prompt indicators
+    $env.PROMPT_INDICATOR = ""
+    $env.PROMPT_INDICATOR_VI_INSERT = ": "
+    $env.PROMPT_INDICATOR_VI_NORMAL = "〉"
+    $env.PROMPT_MULTILINE_INDICATOR = "::: "
+} else {
+    # Fallback to default Nushell prompt if Starship is not installed
+    $env.PROMPT_INDICATOR = "〉"
+    $env.PROMPT_INDICATOR_VI_INSERT = ": "
+    $env.PROMPT_INDICATOR_VI_NORMAL = "〉"
+    $env.PROMPT_MULTILINE_INDICATOR = "::: "
+}

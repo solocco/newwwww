@@ -1,0 +1,203 @@
+/* ████████ ASCII WAYBAR THEME ████████ */
+/* ════════════════════════════════════════════════ */
+
+@import "../colors.css";
+@import "../font.css";
+
+* {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+#waybar {
+    background: transparent;
+}
+
+/* ▓▓▓▓▓▓▓ LEFT MODULES ▓▓▓▓▓▓▓ */
+.modules-left {
+    background: @base00;
+    padding: 0 1px 2px 8px;
+}
+
+/* Workspaces container */
+#workspaces {
+  background-color: @base00;
+  padding: 5px 8px;
+  margin: 0 0 0 12px;
+  border: 0.4px solid @base05;
+}
+
+#workspaces button {
+  padding: 0;
+  margin: 0 4px;
+  min-width: 20px;
+  min-height: 20px;
+  color: @base01;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button:hover {
+  background: transparent; 
+  color: @base05;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+  background-color: transparent;
+  color: @base05;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active:hover {
+  background: transparent;
+  color: @base05;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.urgent {
+  background-color: transparent;
+  color: @base08;
+  transition: all 0.3s ease-in-out;
+}
+
+#window {
+    background: transparent;
+    border: 0.3px solid @base05;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 1;
+
+    margin-bottom: 1;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+/* ▓▓▓▓▓▓▓ RIGHT MODULES ▓▓▓▓▓▓▓ */
+.modules-right {
+    background: @base00;
+    padding: 0 1px 0 8px;
+}
+/*#bluetooth {
+    background: transparent;
+    color: #bfbfbf;
+    border: 0.4px solid #bfbfbf;
+    padding: 1px 6px;
+    margin: 2px 1px;
+    font-size: 10px;
+}*/
+/*#pulseaudio {
+    background: transparent;
+    color: #bfbfbf;
+    border: 0.4px solid #bfbfbf;
+    padding: 1px 6px;
+    margin: 2px 2px;
+    font-size: 10px;
+    font-family: "Doto";
+    font-weight: 900;
+}*/
+
+#memory {
+    background: transparent;
+    color: @base05;
+    border: 0.4px solid @base05;
+    padding: 1px 6px;
+    margin: 2px 3px;
+    font-size: 13px;
+    font-weight: 900;
+}
+/*#cpu {
+    background: transparent;
+    color: #bfbfbf;
+    border: 0.4px solid #bfbfbf;
+    border-left: none;
+    padding: 1px 6px;
+    margin: 2px 0px;
+ font-size: 10;    font-family: "Doto";
+    font-weight:900;
+}*/
+/*#temperature {
+    background: transparent;
+    color: #bfbfbf;
+    border: 0.4px solid #bfbfbf;
+    padding: 1px 6px;
+    margin: 2px 2px;
+ font-size: 10;    font-family: "Doto";
+    font-weight:900;
+}*/
+
+#battery {
+    background: transparent;
+    color: @base05;
+    border: 0.4px solid @base05;
+    padding: 1px 6px;
+    margin: 2px 1px;
+    font-size: 13px;
+    font-weight: 900;
+}
+/*#power-profiles-daemon {
+    background: transparent;
+    color: #bfbfbf;
+    border: 0.4px solid #bfbfbf;
+    border-right: none;
+
+    padding: 1px 6px;
+    margin: 2px 0px;
+    font-size: 13.5px;
+}*/
+#network {
+    /*background: #1e1e2e;*/
+    background: transparent;
+    color: @base05;
+    border: 0.4px solid @base05;
+    padding: 1px 6px;
+    font-weight: 900;
+    margin: 2px 1px;
+    font-size: 13px;
+}
+
+#clock {
+    /*background: #1e1e2e;*/
+    background: transparent;
+    border: 0.4px solid @base05;
+    font-size: 13px;
+    padding: 1px 6px;
+    margin: 2px 1px 2px 0;
+    color: @base05;
+}
+/* ▓▓▓▓▓▓▓ TOOLTIPS ▓▓▓▓▓▓▓ */
+tooltip {
+    background: @base00;
+    border: 0.4px solid @base05;
+    border-radius: 0;
+    color: @base05;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+/*▓▓▓▓▓▓▓ Extras ▓▓▓▓▓▓▓*/
+
+#tray {
+    margin-right: 16px;
+}
+#custom-expand-icon {
+    margin-right: 9px;
+    font-size: 12px;
+}
+
+@keyframes blink-recording {
+    to {
+        color: rgba(24, 24, 36, 0);
+    }
+}
+
+/* ▓▓▓▓▓▓▓ EMPTY WINDOW STATE ▓▓▓▓▓▓▓ */
+window#waybar.empty #window {
+    background: transparent;
+    border: none;
+    color: transparent;
+}

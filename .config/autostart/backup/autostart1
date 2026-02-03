@@ -1,0 +1,183 @@
+#!/bin/sh
+
+LOG="/tmp/autostart.log"
+
+# =========================
+# Config
+# =========================
+AUDIO=true
+MODE="swaybg-random"        # swaybg, swaybg-random, none
+THEME_MODE="fixed"          # auto, fixed, none
+THEME_NAME="gruvbox-dark-medium"
+CURSOR="Bibata-Modern-Ice"
+WAYBAR_STYLE="none"         # stacking, tiling, none
+UPDATE_SCAN=true
+
+# Wallpaper lokal (wajib ada minimal 1)
+DWALL="$HOME/pictures/walls/wall.jpg"   # fallback fixed
+WALL_DIR="$HOME/pictures/walls"         # tempat kumpulan jpg untuk random
+
+# =========================
+# Tunggu Wayland siap (maks 10s)
+# =========================
+timeout=20
+while { [ -z "$WAYLAND_DISPLAY" ] || [ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; } && [ "$timeout" -gt 0 ]; do
+  sleep 0.5
+  timeout=$((timeout - 1))
+done
+
+# =========================
+# Env & Agents
+# =========================
+dbus-update-activation-environment --all >>"$LOG" 2>&1 &
+/usr/libexec/polkit-gnome-authentication-agent-1 >>"$LOG" 2>&1 &
+
+# =========================
+# Monitor layout: auto-pilih 1 output yang connected
+# (tanpa set transform/scale/monitor ke-2)
+# =========================
+PRIMARY_OUTPUT="$(wlr-randr 2>/dev/null | awk '/^.* connected/ {print $1; exit}')"
+if [ -n "$PRIMARY_OUTPUT" ]; then
+  # Biarkan mode native; kalau mau paksa mode: tambahkan --mode 1920x1080@120
+  wlr-randr --output "$PRIMARY_OUTPUT" --on --pos 0,0 --transform normal --adaptive-sync enabled >>"$LOG" 2>&1 &
+  wait
+else
+  echo "No connected outputs detected by wlr-randr" >>"$LOG"
+fi
+
+# =========================
+# Process Management (kill yang lama)
+# =========================
+for p in flavours mpvpaper swaybg fnott wlsunset cliphist; do
+  pkill -x "$p" >>"$LOG" 2>&1 || :
+done
+
+# =========================
+# Audio (opsional)
+# =========================
+if [ "$AUDIO" = true ]; then
+  for p in pipewire wireplumber pipewire-pulse; do pkill -x "$p" >>"$LOG" 2>&1 || :; done
+  pipewire >>"$LOG" 2>&1 &
+  sleep 1
+  wireplumber >>"$LOG" 2>&1 &
+  pipewire-pulse >>"$LOG" 2>&1 &
+fi
+
+# =========================
+# OpenRGB (opsional)
+# =========================
+if command -v openrgb >/dev/null 2>&1; then
+  openrgb --server -p pureWhite >>"$LOG" 2>&1 &
+else
+  echo "OpenRGB not found" >>"$LOG"
+fi
+
+# =========================
+# Helpers
+# =========================
+ensure_image() {
+  # $1 = target file
+  if [ ! -s "$1" ]; then
+    if [ -f "$DWALL" ]; then
+      cp -f "$DWALL" "$1"
+    elif command -v convert >/dev/null 2>&1; then
+      # fallback warna polos
+      convert -size 1920x1080 xc:#1d2021 "$1"
+      echo "Fallback solid image created for $1" >>"$LOG"
+    else
+      echo "No valid wallpaper and no ImageMagick; background may be black." >>"$LOG"
+    fi
+  fi
+}
+
+apply_swaybg() {
+  img="$1"
+  pkill -x swaybg >>"$LOG" 2>&1 || :
+  swaybg -i "$img" -m fill >>"$LOG" 2>&1 &
+}
+
+pick_random_wall() {
+  # pilih satu .jpg dari folder; jika kosong, kembalikan DWALL
+  find "$WALL_DIR" -type f -name "*.jpg" 2>/dev/null | shuf -n1
+}
+
+# =========================
+# Main (tanpa download sama sekali)
+# =========================
+case "$MODE" in
+  swaybg-random)
+    SEL="$(pick_random_wall)"
+    [ -z "$SEL" ] && SEL="$DWALL"
+    ensure_image "$SEL"
+    apply_swaybg "$SEL"
+    ;;
+  swaybg)
+    ensure_image "$DWALL"
+    apply_swaybg "$DWALL"
+    ;;
+  none)
+    ;;
+  *)
+    echo "Unknown MODE: $MODE" >>"$LOG"
+    ;;
+esac
+
+# =========================
+# Theme
+# =========================
+configure_theme() {
+  case "$THEME_MODE" in
+    auto)
+      # kalau mau generate dari wallpaper aktif, ganti ke jalur gambar yang dipakai
+      if [ -f "$DWALL" ]; then
+        flavours generate dark "$DWALL" >>"$LOG" 2>&1
+        flavours apply generated >>"$LOG" 2>&1 &
+      fi
+      ;;
+    fixed)
+      flavours apply "$THEME_NAME" >>"$LOG" 2>&1 &
+      ;;
+    none) ;;
+  esac
+}
+configure_theme
+
+# =========================
+# Waybar
+# =========================
+configure_waybar() {
+  case "$WAYBAR_STYLE" in
+    stacking)
+      pkill -x waybar >>"$LOG" 2>&1 || :
+      waybar -c "$HOME/.config/waybar/config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
+      ;;
+    tiling)
+      pkill -x waybar >>"$LOG" 2>&1 || :
+      waybar -c "$HOME/.config/waybar/tiling-config" -s "$HOME/.config/waybar/style.css" >>"$LOG" 2>&1 &
+      ;;
+    none) ;;
+  esac
+}
+configure_waybar
+
+# =========================
+# Cursor
+# =========================
+gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR" >>"$LOG" 2>&1 &
+seat seat0 xcursor_theme "$CURSOR" >>"$LOG" 2>&1 &
+
+# =========================
+# Extras
+# =========================
+fnott >>"$LOG" 2>&1 &
+# Koordinat Jakarta: -6.2, 106.8
+wlsunset -T 6500 -t 5500 -l -6.2 -L 106.8 >>"$LOG" 2>&1 &
+wl-paste --watch cliphist store -max-items 100 >>"$LOG" 2>&1 &
+
+# =========================
+# Update Scan (opsional)
+# =========================
+if [ "$UPDATE_SCAN" = true ]; then
+  sleep 2
+  "$HOME/.local/bin/updtscan" >>"$LOG" 2>&1 &
+fi

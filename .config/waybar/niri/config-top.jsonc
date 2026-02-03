@@ -1,0 +1,151 @@
+{
+  "name": "main-bar-sway",
+  "id": "main-bar-sway",
+  "layer": "top",
+  //"mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "top",
+  //"height": 40,
+  //"spacing": 4,
+  "margin": 0,
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "margin-left": 0,
+  "margin-right": 0,
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  "modules-left": [
+    "custom/menu",
+    "clock",
+    "niri/workspaces"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "cpu",
+    "memory",
+    "backlight",
+    "wireplumber",
+    "network",
+    "bluetooth",
+    "tray",
+    "custom/power"
+  ],
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 8,
+    "padding": "0 8px",
+    "border-radius": 8
+  },
+
+  /* ---- Menu & util ---- */
+  "custom/menu": {
+    "format": "󰌽",
+    "on-click": "fuzzel",
+    "tooltip": false
+  },
+
+  "custom/power": {
+    "format": "",
+    "on-click": "footx -e -f gum-power",
+    "tooltip": false
+  },
+
+  // waybar-clock - single format untuk top bar
+  "clock": {
+    "interval": 60,
+    "tooltip": false,
+    "format": "{:%H:%M}"
+  },
+
+  /* ---- Audio: wireplumber dengan ikon dan persentase ---- */
+  "wireplumber": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁 Mute",
+    "format-icons": {
+      "headphone": "󰋋",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "phone": "󰄜",
+      "portable": "󰄜",
+      "car": "󰄋",
+      "default": ["󰋋", "󰋋", "󰋋"]
+    },
+    "scroll-step": 2,
+    "on-click": "pavucontrol",
+    "tooltip": true,
+    "tooltip-format": "Volume: {volume}%"
+  },
+
+  /* ---- Networking ---- */
+  "network": {
+    "format-wifi": "󰖩 ({essid} {signalStrength}%)",
+    "format-ethernet": " Connected",
+    "format-disconnected": " Disconnected",
+    "tooltip": true,
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "footx -e -f impala"
+  },
+
+  /* ---- Bluetooth ---- */
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "",
+    "format-connected": " {device_alias}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "footx -e -f bluetui"
+  },
+
+  /* ---- Battery ---- */
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "tooltip": true,
+    "tooltip-format": "{capacity}% - {time}",
+    "format-icons": ["","","","",""]
+  },
+
+  /* ---- Backlight ---- */
+  "backlight": {
+    "interval": 2,
+    "format": "{icon} {percent}%",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "on-click": "footx -e -f gum-nl",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-",
+    "smooth-scrolling-threshold": 1,
+    "tooltip": true,
+    "tooltip-format": "Brightness: {percent}%"
+  },
+
+  /* ---- Stats ---- */
+  "cpu": { 
+    "format": " {usage}%", 
+    "tooltip": true, 
+    "tooltip-format": "CPU Usage: {usage}%", 
+    "on-click": "footx -e -f btop" 
+  },
+
+  "memory": { 
+    "format": " {percentage}%", 
+    "tooltip": true, 
+    "tooltip-format": "Memory: {percentage}% ({used:0.1f}G / {total:0.1f}G)" 
+  },
+
+  "disk": { 
+    "format": " {free}", 
+    "tooltip": true, 
+    "tooltip-format": "{free} free / {total} total" 
+  },
+
+  "niri/workspaces": {
+    "format": "{value}"
+  }
+}

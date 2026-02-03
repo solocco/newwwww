@@ -1,23 +1,22 @@
 [font]
-size = 13
-
+size = 11.5
 builtin_box_drawing = true
 
 [font.normal]
-family = "IosevkaTerm Nerd Font Mono"
-style = "SemiBold"
+family = "Iosthetic Nerd Font"
+style = "Medium"
 
 [font.bold]
-family = "IosevkaTerm Nerd Font Mono"
-style = "ExtraBold"
+family = "Iosthetic Nerd Font"
+style = "Bold"
 
 [font.italic]
-family = "IosevkaTerm Nerd Font Mono"
-style = "SemiBoldItalic"
+family = "Iosthetic Nerd Font"
+style = "Italic"
 
 [font.bold_italic]
-family = "IosevkaTerm Nerd Font Mono"
-style = "ExtraBoldItalic"
+family = "Iosthetic Nerd Font"
+style = "BoldItalic"
 
 [font.offset]
 x = 0

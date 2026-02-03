@@ -1,0 +1,230 @@
+/*
+ * Waybar style (Base16 via Flavours) — TOP BAR (HORIZONTAL STYLE)
+ */
+
+@import "../colors.css";
+
+/** ========= FONTS ========= **/
+* {
+  font-family: "Maple Mono", "JetBrainsMono Nerd Font Propo";
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/** ========= WAYBAR WINDOW (TOP) ========= **/
+window#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-bottom: 0px solid @base01;
+  box-shadow: none;
+  transition-property: background-color;
+  transition-duration: .5s;
+}
+
+window#waybar.hidden {
+  opacity: 0.5;
+}
+
+/** ========= WORKSPACES (SWAY) ========= **/
+
+/* Container workspaces */
+#workspaces {
+  margin: 0 8px;
+}
+
+/* Semua tombol workspace */
+#workspaces button {
+  padding: 4px 12px;
+  margin: 0 2px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  min-width: 30px;
+}
+
+/* Workspace yang aktif di output ini */
+#workspaces button.active {
+  background: @base02;
+  color: @base0A;
+}
+
+/* Workspace yang fokus (tempat keyboard focus) */
+#workspaces button.focused {
+  background: @base0D;
+  color: @base00;
+}
+
+/* Workspace kosong */
+#workspaces button.empty {
+  opacity: 0.6;
+}
+
+/* Workspace urgent */
+#workspaces button.urgent {
+  background: @base08;
+  color: @base00;
+}
+
+/* Workspace yang ada di output yang sama dengan bar ini */
+#workspaces button.current_output {
+  border: 1px solid @base03;
+}
+
+/** ========= CUSTOM BUTTONS ========= **/
+#bluetooth,
+#custom-menu,
+#custom-power,
+#network {
+  border-radius: 8px;
+  margin: 0 4px;
+  padding: 4px 12px;
+  font-size: 14px;
+}
+
+#custom-menu {
+  background-color: @base0B;
+  border: 1px solid @base01;
+  color: @base00;
+  padding: 4px 10px;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+  border: 1px solid @base08;
+  padding: 4px 10px;
+}
+
+/** ========= TRAY ========= **/
+#tray {
+  background-color: @base02;
+  border-radius: 8px;
+  margin: 0 4px;
+  padding: 4px 8px;
+  border: 1px solid @base01;
+}
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/** ========= CPU / MEMORY / DISK ========= **/
+#cpu {
+  background-color: @base02;
+  color: @base08;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+#memory {
+  background-color: @base02;
+  color: @base0B;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+#disk {
+  background-color: @base02;
+  color: @base0A;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+/** ========= WIREPLUMBER / AUDIO ========= **/
+#wireplumber {
+  background-color: @base02;
+  color: @base0D;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+#wireplumber.bluetooth {
+  color: @base0C;
+}
+
+#wireplumber.muted {
+  color: @base08;
+}
+
+/** ========= BACKLIGHT ========= **/
+#backlight {
+  background-color: @base02;
+  color: @base0E;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+/** ========= BATTERY ========= **/
+#battery {
+  background-color: @base02;
+  color: @base0C;
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin: 0 4px;
+  border: 1px solid @base01;
+}
+
+#battery.critical:not(.charging) {
+  background-color: @base08;
+  color: @base00;
+  animation: blink 0.5s linear infinite alternate;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+/** ========= NETWORK ========= **/
+#network {
+  background-color: @base02;
+  color: @base0A;
+  border: 1px solid @base01;
+}
+
+#network.disconnected,
+#network.disabled {
+  color: @base08;
+}
+
+/** ========= BLUETOOTH ========= **/
+#bluetooth {
+  background-color: @base02;
+  color: @base0B;
+  border: 1px solid @base01;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @base08;
+}
+
+/** ========= CLOCK ========= **/
+#clock {
+  background-color: @base02;
+  color: @base0D;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 4px 16px;
+  margin: 0 8px;
+  border: 1px solid @base01;
+}
+
+/** ========= MODULES-LEFT & MODULES-RIGHT ========= **/
+.modules-left {
+  margin-left: 8px;
+}
+
+.modules-right {
+  margin-right: 8px;
+}

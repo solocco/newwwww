@@ -1,0 +1,244 @@
+/* 
+ * Waybar Material Design / Google Style
+ */
+
+@import "../colors.css";
+@import "../font.css";
+
+window#waybar {
+  background-color: @base00;
+  color: @base05;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#workspaces {
+  background-color: transparent;
+  padding: 0;
+  margin: 0 12px 0 8px;
+}
+
+#workspaces button {
+  padding: 0 10px;
+  padding-bottom: 1px;
+  margin: 0 2px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  min-width: 14px;
+  min-height: 14px;
+  background-color: transparent;
+  color: @base04;
+  border: none;
+  border-radius: 18px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#workspaces button:hover {
+  background-color: @base01;
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+  background-color: @base0D;
+  color: @base00;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#workspaces button.urgent {
+  background-color: @base08;
+  color: @base00;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#workspaces button.visible {
+  background-color: @base02;
+  color: @base0D;
+}
+
+#custom-menu,
+#clock,
+#battery,
+#network,
+#bluetooth,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#pulseaudio,
+#tray,
+#custom-power,
+#custom-temp-icon,
+#custom-memory,
+#custom-nightlight,
+#custom-qs,
+#temperature,
+#custom-updates,
+#idle_inhibitor {
+  border-radius: 18px;
+  padding: 6px 14px;
+  margin: 6px 3px;
+  color: @base05;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#custom-menu,
+#clock,
+#battery,
+#network,
+#bluetooth,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#pulseaudio,
+#tray,
+#custom-power,
+#custom-temp-icon,
+#custom-memory,
+#custom-nightlight,
+#custom-qs,
+#temperature,
+#idle_inhibitor:hover {
+  background-color: @base02;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+#custom-menu {
+  background-color: @base0D;
+  color: @base00;
+  padding: 6px 12px;
+  margin-left: 8px;
+}
+
+#custom-updates {
+  background-color: @base02;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-radius: 18px 0px 0px 18px;
+  margin: 5px -1px 5px 0px;
+}
+
+#network {
+   padding: 6px 14px 5px 12px;
+}
+
+#custom-updates.2 {
+  background-color: @base02;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-radius: 0px 18px 18px 0px;
+  margin-right: 3px;
+}
+
+#custom-menu:hover {
+  background-color: @base0C;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#clock { 
+  font-size: 14px;
+  font-weight: bold;
+  color: @base02;
+  background-color: @base05;
+}
+
+#battery {
+  color: @base0B;
+}
+
+#battery.charging {
+  background-color: @base02;
+  color: @base0B;
+}
+
+#battery.critical:not(.charging) {
+  background-color: @base08;
+  color: @base00;
+}
+
+#network.disconnected,
+#network.disabled {
+  color: @base03;
+  background-color: @base01;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @base03;
+  background-color: @base01;
+}
+
+#cpu {
+  color: @base05;
+}
+
+#memory {
+  color: @base05;
+}
+
+#wireplumber,
+#pulseaudio {
+  color: @base05;
+}
+
+#tray {
+  background-color: @base01;
+  padding: 4px 10px;
+  margin: 6px 4px;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+  padding: 6px 14px 5px 12px;
+  margin-right: 8px;
+}
+
+#custom-power:hover {
+  background-color: @base09;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#temperature.critical {
+  background-color: @base08;
+  color: @base00;
+}
+
+#idle_inhibitor {
+  background-color: @base0B;
+  color: @base00;
+}
+
+#idle_inhibitor.activated {
+  background-color: @base0A;
+  color: @base00;
+}
+
+#taskbar button {
+  margin: 6px 2px;
+  padding: 6px 12px;
+  border-radius: 18px;
+  background-color: @base01;
+  color: @base05;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#taskbar button:hover {
+  background-color: @base02;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+#taskbar button.active {
+  background-color: @base02;
+  color: @base0D;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#taskbar button.minimized {
+  background-color: transparent;
+  color: @base03;
+  box-shadow: none;
+}

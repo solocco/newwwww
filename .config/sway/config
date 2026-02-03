@@ -2,14 +2,15 @@
 # Global Variables
 # ====================
 set $mod Mod4
-set $term alacrittyx
-set $menu rofi_launcher
+set $term footx
+set $menu fuzzel
 set $cursor Bibata-Modern-Ice
 seat * xcursor_theme Bibata-Modern-Ice 24
 
 # ====================
 # Autostart
 # ====================
+exec_always swww-daemon
 exec $HOME/.config/autostart/autostart
 
 # ====================
@@ -46,17 +47,16 @@ focus_follows_mouse no
 
 # title bar
 title_align center
-font pango: Roboto Condensed Bold 10
+font pango: IoskeleyMono Bold 12
 titlebar_border_thickness 3
 titlebar_padding 3
 for_window [app_id="^.*"] title_format "%title"
 for_window [class="^.*"] title_format "%title"
 
 # adjusting borders
-default_border none
-default_border normal 0
-default_floating_border normal 0
-for_window [app_id="^.*"] border pixel 3
+default_border pixel 2
+default_floating_border pixel 2
+
 
 # ====================
 # Key Bindings
@@ -71,13 +71,18 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 ## Custom
-bindsym $mod+comma exec clip-manager
+bindsym $mod+c exec launch-clip
+bindsym $mod+t exec ~/.local/bin/rofi_flavours
+bindsym $mod+Shift+w exec ~/.local/personal/wallpaper-selector.sh
+bindsym $mod+Shift+p exec launch-xr
 
 ## Navigation
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
+bindsym Control+Left exec sway-workspace-extras prev
+bindsym Control+Right exec sway-workspace-extras next
 
 ## Window Movement
 bindsym $mod+Shift+Left move left
@@ -123,7 +128,7 @@ bindsym $mod+Shift+Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | se
 bindsym $mod+v splith
 bindsym $mod+h splitv
 bindsym $mod+m layout stacking
-bindsym $mod+t layout tabbed
+#bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+s sticky
@@ -172,8 +177,9 @@ client.urgent            $urgent   $urgent   $fg       $urgent   $urgent
 # ====================
 # Waybar
 # ====================
-
-exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css >/dev/null 2>&1 &"
+#exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css >/dev/null 2>&1 &"
+exec_always sh -c "pkill -x waybar; waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css &"
+#exec quickshell
 
 #exec waybar -c ~/.config/waybar/sway/config.jsonc -s ~/.config/waybar/sway/style-sway.css
 # ====================
@@ -198,8 +204,16 @@ include $HOME/.config/sway/config.d/*
 #include /etc/sway/config.d/*
 
 # ====================
+# Workspace Layout Defaults
+# ====================
+for_window [workspace="1" tiling] layout tabbed, border normal 0
+for_window [workspace="2" tiling] layout tabbed, border normal 0
+
+# Workspace lainnya akan menggunakan layout default (tiled/split)
+
+# ====================
 # Workspace Layout Defaults (FIX)
 # ====================
 # Jadikan workspace 1 & 2 tabbed saat start,
 # workspace lain tetap pakai layout default.
-exec --no-startup-id swaymsg 'workspace number 1; layout tabbed; workspace number 2; layout tabbed; workspace number 1'
+#exec --no-startup-id swaymsg 'workspace number 1; layout tabbed; workspace number 2; layout tabbed; workspace number 1'

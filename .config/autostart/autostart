@@ -1,5 +1,4 @@
 #!/bin/sh
-
 LOG="/tmp/autostart.log"
 
 # =========================
@@ -7,144 +6,110 @@ LOG="/tmp/autostart.log"
 # =========================
 AUDIO=true
 CURSOR="Bibata-Modern-Ice"
-
-# Fallback
+SCALE=1.0
 DWALL="$HOME/pictures/walls/wall.jpg"
 
-# State dir (sama seperti rofi_flavours)
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
 LAST_THEME="$STATE_DIR/last_theme"
+LAST_VARIANT="$STATE_DIR/last_variant"
 LAST_WALL="$STATE_DIR/last_wall"
 WALL_MODE="${WALL_MODE:-fill}"
+SWWW_TRANSITION="${SWWW_TRANSITION:-grow}"
+SWWW_DURATION="${SWWW_DURATION:-2}"
+
+mkdir -p "$STATE_DIR"
 
 # =========================
-# Tunggu Wayland siap (maks 10s)
+# Wayland-safe scaling ENV
 # =========================
-timeout=20
+export XWAYLAND_SCALE="$SCALE"
+export GDK_SCALE=1
+export GDK_DPI_SCALE=1
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_SCALE_FACTOR="$SCALE"
+export QT_FONT_DPI=96
+
+# =========================
+# Tunggu Wayland siap
+# =========================
+timeout=10
 while { [ -z "$WAYLAND_DISPLAY" ] || [ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; } && [ "$timeout" -gt 0 ]; do
-  sleep 0.5
+  sleep 0.1
   timeout=$((timeout - 1))
 done
 
-# =========================
-# Env & Agents
-# =========================
-dbus-update-activation-environment --all >>"$LOG" 2>&1 &
-/usr/libexec/polkit-gnome-authentication-agent-1 >>"$LOG" 2>&1 &
+sleep 0.3
 
 # =========================
-# Monitor layout
+# Kill old processes FIRST
 # =========================
-PRIMARY_OUTPUT="$(wlr-randr 2>/dev/null | awk '/^.* connected/ {print $1; exit}')"
-if [ -n "$PRIMARY_OUTPUT" ]; then
-  wlr-randr --output "$PRIMARY_OUTPUT" --on --pos 0,0 --transform normal --adaptive-sync enabled >>"$LOG" 2>&1 &
-  wait
-else
-  echo "No connected outputs detected by wlr-randr" >>"$LOG"
+for p in flavours mpvpaper swaybg fnott wlsunset cliphist wireplumber pipewire-pulse pipewire xwayland-satellite; do
+  pkill -9 "$p" 2>/dev/null &
+done
+wait
+
+# =========================
+# RESTORE THEME DULU (BLOCKING)
+# =========================
+if [ -s "$LAST_THEME" ]; then
+  SCHEME="$(head -n1 "$LAST_THEME")"
+  VARIANT="dark"
+  [ -s "$LAST_VARIANT" ] && VARIANT="$(head -n1 "$LAST_VARIANT")"
+  
+  if [ "$VARIANT" = "light" ]; then
+    for s in -light -dawn; do
+      flavours list | grep -qw "${SCHEME}${s}" && SCHEME="${SCHEME}${s}" && break
+    done
+  fi
+  
+  # Apply theme dan TUNGGU selesai
+  flavours apply "$SCHEME" >>"$LOG" 2>&1
+  
+  # Reload GTK settings immediately
+  gsettings set org.gnome.desktop.interface gtk-theme "$(grep gtk-theme-name ~/.config/gtk-3.0/settings.ini | cut -d= -f2)" 2>/dev/null &
 fi
 
 # =========================
-# Process Management
+# Env & Agents (PARALLEL)
 # =========================
-for p in flavours mpvpaper swaybg fnott wlsunset cliphist; do
-  pkill -x "$p" >>"$LOG" 2>&1 || :
-done
+dbus-update-activation-environment --all &
+/usr/libexec/polkit-gnome-authentication-agent-1 &
 
 # =========================
-# Audio (opsional)
+# Audio (PARALLEL)
 # =========================
 if [ "$AUDIO" = true ]; then
-  for p in pipewire wireplumber pipewire-pulse; do pkill -x "$p" >>"$LOG" 2>&1 || :; done
-  pipewire >>"$LOG" 2>&1 &
-  sleep 1
-  wireplumber >>"$LOG" 2>&1 &
-  pipewire-pulse >>"$LOG" 2>&1 &
+  {
+    pipewire &
+    sleep 0.3
+    wireplumber &
+    pipewire-pulse &
+  } >>"$LOG" 2>&1 &
 fi
 
 # =========================
-# Helpers
+# Monitor layout (PARALLEL)
 # =========================
-set_wall_with_swaybg() {
-  img="$1"
-  mode="${2:-$WALL_MODE}"
-  
-  if [ ! -f "$img" ]; then
-    echo "Wallpaper not found: $img, using fallback" >>"$LOG"
-    img="$DWALL"
+{
+  PRIMARY_OUTPUT="$(wlr-randr 2>/dev/null | awk '/ connected/ {print $1; exit}')"
+  if [ -n "$PRIMARY_OUTPUT" ]; then
+    wlr-randr \
+      --output "$PRIMARY_OUTPUT" \
+      --on \
+      --pos 0,0 \
+      --scale "$SCALE" \
+      --transform normal \
+      --adaptive-sync enabled
   fi
-  
-  if [ ! -f "$img" ]; then
-    echo "ERROR: Fallback wallpaper also missing: $DWALL" >>"$LOG"
-    return 1
-  fi
-  
-  pkill -x swaybg >>"$LOG" 2>&1 || :
-  sleep 0.2
-  printf '[%s] swaybg: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
-  swaybg -m "$mode" -i "$img" >>"$LOG" 2>&1 &
-  echo "Wallpaper applied: $img" >>"$LOG"
-}
+} >>"$LOG" 2>&1 &
 
 # =========================
-# Restore Last Flavour + Wallpaper
+# Services ringan (PARALLEL)
 # =========================
-restore_last_setup() {
-  if [ ! -s "$LAST_THEME" ]; then
-    echo "No last theme found at $LAST_THEME" >>"$LOG"
-    return 1
-  fi
-  
-  SCHEME="$(head -n1 "$LAST_THEME" | tr -d '\r\n')"
-  WALL=""
-  
-  if [ -s "$LAST_WALL" ]; then
-    WALL="$(head -n1 "$LAST_WALL" | tr -d '\r\n')"
-  fi
-  
-  echo "[$(date '+%F %T')] Restoring: theme=$SCHEME wallpaper=${WALL:-none}" >>"$LOG"
-  
-  # Apply theme
-  if ! flavours apply "$SCHEME" >>"$LOG" 2>&1; then
-    echo "ERROR: Failed to restore theme: $SCHEME" >>"$LOG"
-    return 1
-  fi
-  echo "Theme applied: $SCHEME" >>"$LOG"
-  
-  # Apply wallpaper jika ada
-  if [ -n "$WALL" ] && [ -f "$WALL" ]; then
-    set_wall_with_swaybg "$WALL"
-  else
-    if [ -n "$WALL" ]; then
-      echo "Last wallpaper not found or invalid: $WALL" >>"$LOG"
-    fi
-    return 1
-  fi
-  
-  return 0
-}
-
-# Attempt restore, fallback ke default jika gagal
-if ! restore_last_setup; then
-  echo "Using fallback wallpaper" >>"$LOG"
-  set_wall_with_swaybg "$DWALL"
-fi
-
-# =========================
-# Restart fnott if installed
-# =========================
-if command -v fnott >/dev/null 2>&1; then
-  fnott >>"$LOG" 2>&1 &
-fi
-
-# =========================
-# Cursor
-# =========================
-gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR" >>"$LOG" 2>&1 &
-seat seat0 xcursor_theme "$CURSOR" >>"$LOG" 2>&1 &
-
-# =========================
-# Extras
-# =========================
-wlsunset -T 6500 -t 5000 -l -6.2 -L 106.8 >>"$LOG" 2>&1 &
-wl-paste --watch cliphist store -max-items 100 >>"$LOG" 2>&1 &
+command -v fnott >/dev/null 2>&1 && fnott &
+seat seat0 xcursor_theme "$CURSOR" &
+wlsunset -T 6500 -t 5000 -l -6.2 -L 106.8 &
+wl-paste --watch cliphist store -max-items 100 &
 xwayland-satellite &
+
+exec >>"$LOG" 2>&1

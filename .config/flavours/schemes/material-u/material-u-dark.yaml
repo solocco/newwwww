@@ -1,0 +1,20 @@
+scheme: "Material You Dark"
+author: "Yang Mulia"
+
+base00: "121212" # background
+base01: "1e1e1e" # surface
+base02: "2a2a2a" # selection background
+base03: "6f6f6f" # comments / muted
+base04: "9e9e9e" # dim foreground
+base05: "e0e0e0" # foreground
+base06: "eeeeee" # light foreground
+base07: "ffffff" # white
+
+base08: "f28b82" # red (error)
+base09: "fbbc04" # orange
+base0A: "fdd663" # yellow
+base0B: "81c995" # green
+base0C: "78d9ec" # cyan
+base0D: "8ab4f8" # blue (primary)
+base0E: "d7aefb" # purple
+base0F: "ffb4a2" # accent

@@ -1,0 +1,169 @@
+@import "../colors.css";
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Iosthetic";
+    padding: 0;
+    margin: 0;
+    min-width: 10px;
+    background: transparent;
+}
+
+window.#waybar {
+    min-width: 40px;
+}
+
+tooltip,
+#tray menu {
+    background: alpha(@base02, 0.999);
+    border-radius: 8px;
+    padding: 1px 2px;
+}
+
+#custom-separator {
+    font-family: "Material Symbols Outlined";
+    margin: -10px 0;
+    font-size: 28px;
+    color: @base02;
+}
+
+#top,
+#workspaces,
+#bottom {
+    background: @base01;
+    padding: 8px 0;
+    border-radius: 0 16px 16px 0;
+}
+
+box.empty {
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#privacy {
+    margin: 4px 0;
+    padding: 4px 0;
+    background: @base02;
+    border-radius: 8px;
+}
+
+#taskbar > * {
+    margin: 4px 0;
+}
+
+#workspaces {
+    min-width: 0;
+    padding: 8px 14px;
+    margin: 20px 0;
+}
+
+#workspaces button {
+    font-size: 7px;
+    color: transparent;
+    background: @base05;
+    transition: all 0.2s ease-in-out;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 9999px;
+    margin: 3px 0;
+}
+
+#workspaces button.active {
+    background: @base0D;
+    color: transparent;
+    min-height: 30px;
+}
+
+#bottom,
+#top {
+    color: @base05;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+#network {
+    margin-bottom: 8px;
+}
+
+#bluetooth,
+#network {
+    font-size: 18px;
+}
+
+#bluetooth.battery,
+#battery {
+    font-family: "Iosthetic";
+    font-size: 14px;
+}
+
+#battery.icon,
+#bluetooth,
+#network {
+    font-family: "Material Symbols Outlined";
+}
+
+#battery {
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+#battery widget > * {
+    background: @base02;
+}
+
+#battery.warning {
+    background: @base09;
+}
+
+#battery.critical {
+    background: @base08;
+}
+
+#battery.charging {
+    background: @base0B;
+}
+
+#battery.icon {
+    margin: 0;
+}
+
+#battery widget:first-child > * {
+    border-radius: 8px 8px 0 0;
+}
+
+#battery widget:last-child > * {
+    border-radius: 0 0 8px 8px;
+}
+
+#battery > *:first-child * {
+    font-size: 20px;
+    margin: 0;
+}
+
+#battery > *:last-child * {
+    margin: 0;
+    margin-top: -4px;
+    font-size: 14px;
+}
+
+#bluetooth.battery.on {
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#network {
+    margin-top: 8px;
+}
+
+#tray {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+#clock {
+  font-weight: bold;
+  font-size: 18px;
+}

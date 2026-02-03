@@ -1,0 +1,20 @@
+scheme: "E-Ink"
+author: "Yang Mulia"
+
+base00: "cccccc" # background (paper)
+base01: "c2c2c2" # surface
+base02: "b8b8b8" # selection background
+base03: "9a9a9a" # comments / muted
+base04: "868686" # dim foreground
+base05: "5e5e5e" # main text
+base06: "474747" # strong text
+base07: "333333" # darkest text
+
+base08: "7c7c7c" # red (neutral gray)
+base09: "727272" # orange
+base0A: "686868" # yellow
+base0B: "545454" # green
+base0C: "4a4a4a" # cyan
+base0D: "5e5e5e" # blue (primary text)
+base0E: "909090" # magenta
+base0F: "aeaeae" # accent light

@@ -1,4 +1,6 @@
+spawn-at-startup "swww-daemon"
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "~/.config/autostart/autostart"
-spawn-at-startup "~/.config/niri/waybar"
+//spawn-at-startup "~/.config/niri/waybar"
+spawn-at-startup "waybar -c ~/.config/waybar/niri/config-ver.jsonc -s ~/.config/waybar/niri/style-ver.css >/dev/null 2>&1 &"
 

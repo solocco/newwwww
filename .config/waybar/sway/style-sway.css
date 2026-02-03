@@ -2,14 +2,12 @@
  * Waybar style (Base16 via Flavours)
  */
 
-
-
 @import "../colors.css";
 
 /** Fonts **/
 * {
-  font-family: "Iosevka Nerd Font", "Symbols Nerd Font", archcraft;
-  font-size: 14px;
+  font-family: "IoskeleyMono", "JetbrainsMono Nerd Font Propo";
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -35,12 +33,11 @@
   margin: 8px 5px 8px 0px;
   padding: 2px 8px;
   border: none;
-  font-size: 14px;
 }
 
 #workspaces button:hover {
   background-color: @base02;
-  color: @base07;
+  color: @base05;
 }
 
 #workspaces button.visible {
@@ -61,7 +58,7 @@
 
 #workspaces button.empty {
   background-color: transparent;
-  color: @base07;
+  color: @base05;
   opacity: 0.4;
 }
 
@@ -78,7 +75,7 @@
   border-radius: 6px;
 
   background-color: transparent;
-  color: @base07;
+  color: @base05;
 
   border: 2px solid transparent;
   box-shadow: none;
@@ -86,63 +83,63 @@
 
 #taskbar button:hover {
   border-color: @base0C;
-  color: @base07;
+  color: @base05;
 }
 
 #taskbar button.minimized {
   border-color: transparent;
-  color: @base07;
+  color: @base05;
 }
 
 #taskbar button.active {
   border-color: @base02;
-  color: @base07;
+  color: @base05;
 }
 
 /** Custom Buttons **/
 #custom-menu {
   background-color: @base09;
   color: @base00;
-  font-size: 14px;
   border-radius: 0px;
   margin: 8px 8px 8px 8px;
-  padding: 2px 8px;
-}
-
-#custom-themes {
-  background-color: @base0B;
-  color: @base00;
-  border-radius: 0px;
-  margin: 6px;
   padding: 2px 8px;
 }
 
 #custom-power {
   background-color: @base08;
   color: @base00;
-  font-size: 14px;
-  border-radius: 0px;
-  margin: 8px 8px 8px 8px;
+  margin: 8px 8px 8px 0px;
   padding: 2px 8px;
 }
 
 #bluetooth {
-  background-color: @base01;
-  font-size: 14px;
-  margin: 8px 0px 8px 5px;
+  background-color: @base02;
+  margin: 8px 0px 8px 0px;
   padding: 2px 8px;
 }
 
-#custom-flavours,
-#custom-nightlight,
-#custom-qs,
-#network {
+#bluetooth.2 {
+  color: @base05;
   background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#network {
+  background-color: @base02;
   color: @base0E;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
-  font-size: 14px;
+}
+
+#network.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
 }
 
 /** Idle Inhibitor **/
@@ -168,12 +165,12 @@
 #tray > .needs-attention { -gtk-icon-effect: highlight; }
 
 /** CPU / Memory / Disk **/
-#cpu    { color: @base00; }
-#memory { color: @base00; }
-#disk   { color: @base00; }
+#cpu    { color: @base08; }
+#memory { color: @base0C; }
+#disk   { color: @base0A; }
 
 /** Backlight **/
-#backlight { color: @base00; }
+#backlight { color: @base0E; }
 
 /** Battery **/
 #battery { color: @base0C; }
@@ -197,22 +194,12 @@
 #bluetooth.disabled,
 #bluetooth.off { color: @base08; }
 
-/** Themes **/
-#custom-flavours { color: @base0C; }
-
-/** Nightlight **/
-#custom-nightlight { color: @base0E; }
-
-/** QS **/
-#custom-qs { color: @base07; }
-
 /** Clock **/
 #clock { 
-  color: @base07;  
-  background-color: @base01;
-  font-size: 18px;
+  color: @base00;  
+  background-color: @base05;
   border-radius: 0px;
-  margin: 8px 5px 8px 5px;
+  margin: 8px 5px 8px 0px;
   padding: 2px 8px;
 }
 
@@ -233,7 +220,6 @@
   margin: 6px 0px;
   padding: 4px 6px;
   color: @base03;
-  font-size: 14px;
 }
 
 #custom-updates.up-to-date { color: @base03; }
@@ -260,17 +246,15 @@
 
 /** Backlight **/
 #backlight {
-  background-color: @base0E;
-  font-size: 14px;
+  background-color: @base02;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
 }
 
 #backlight.2 {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin-right: 5px;
@@ -278,79 +262,70 @@
 
 /** CPU **/
 #cpu {
-  background-color: @base08;
-  font-size: 14px;
+  background-color: @base02;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
 }
 
 #cpu.2 {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin-right: 5px;
 }
 
 #disk {
-  background-color: @base0A;
-  font-size: 14px;
+  background-color: @base02;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
- 
+
 }
 
 #disk.2 {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin-right: 5px;
 }
 
 #wireplumber {
-  color: @base00;
-  background-color: @base0D;
-  font-size: 14px;
+  color: @base0D;
+  background-color: @base02;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
 }
 
 #wireplumber.2 {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin-right: 5px;
 }
 
 #memory {
-  background-color: @base0C;
-  font-size: 14px;
+  background-color: @base02;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
 }
 
 #memory.2 {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin-right: 5px;
 }
 
 #custom-memory {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin: 8px 5px 8px 0px;
@@ -359,7 +334,6 @@
 #temperature {
   background-color: @base0F;
   color: @base00;
-  font-size: 14px;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
@@ -368,7 +342,6 @@
 /* === Temperature Icon === */
 #custom-temp-icon {
   background-color: transparent;
-  font-size: 14px;
   border-radius: 0px;
   margin: 8px 0px 8px 0px;
   padding: 2px 8px;
@@ -376,20 +349,20 @@
 
 /* dingin */
 #custom-temp-icon.cool {
-  background-color: @base0B;
-  color: @base00; /* hijau */
+  background-color: @base02;
+  color: @base0B; /* hijau */
 }
 
 /* hangat */
 #custom-temp-icon.warm {
-  background-color: @base0A;
-  color: @base00; /* kuning */
+  background-color: @base02;
+  color: @base0A; /* kuning */
 }
 
 /* panas */
 #custom-temp-icon.critical {
-  background-color: @base08;
-  color: @base00; /* merah */
+  background-color: @base02;
+  color: @base08; /* merah */
 }
 
 /* unknown */
@@ -399,9 +372,8 @@
 
 /* === Temperature Value === */
 #custom-temp {
-  color: @base07;
+  color: @base05;
   background-color: @base01;
-  font-size: 14px;
   border-radius: 0px;
   padding: 2px 8px;
   margin: 8px 5px 8px 0px;
@@ -416,12 +388,9 @@
 }
 
 #battery.2,
-#network.2,
-#bluetooth.2,
 #custom-updates.2 {
   background-color: transparent;
   color: @base05;
-  font-size: 14px;
   border-radius: 0px 10px 10px 0px;
   margin: 6px 6px 6px 0px;
   padding: 5px 6px 4px 6px;

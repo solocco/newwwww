@@ -1,0 +1,305 @@
+/* 
+ * Waybar Floating Style - FIXED VERSION
+ * Modern floating bar with rounded corners - No more glitching!
+ */
+@import "../colors.css";
+@import "../font.css";
+
+window#waybar {
+  background: transparent;
+  min-height: 34px; /* FIXED: Prevent height reflow */
+}
+
+tooltip {
+  background: @base00;
+  border: 1px solid @base03;
+  border-radius: 12px;
+}
+
+tooltip label {
+  color: @base06;
+  padding: 6px;
+}
+
+/* Main floating container */
+#custom-menu,
+#clock,
+#battery,
+#network,
+#bluetooth,
+#cpu,
+#backlight,
+#wireplumber,
+#tray,
+#custom-power,
+#custom-memory {
+  background-color: @base00;
+  padding: 0 15px 0 15px;
+  margin: 0 0 0 12px; /* FIXED: All consistent margin */
+  border-radius: 50px;
+  border: 1px solid @base01;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out; /* FIXED: Specific transitions only */
+}
+
+/* Workspaces container */
+#workspaces {
+  background-color: @base01;
+  padding: 5px 3px;
+  margin: 0 0 0 12px;
+  border-radius: 18px;
+  border: 1px solid @base01;
+  color: @base05;
+}
+
+#workspaces button {
+  padding: 0px 6px;
+  margin: 0 3px;
+  border-radius: 50px;
+  color: transparent;
+  background-color: @base02;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, min-width 0.3s ease-in-out; /* FIXED: Specific transitions */
+  min-width: 20px; /* FIXED: All buttons same width */
+  font-size: 13px; /* FIXED: Consistent font size */
+}
+
+#workspaces button:hover,
+#workspaces button.active:hover {
+  background: @base0E; 
+  color: @base00;
+  border-radius: 18px;
+  min-width: 40px;
+  /* REMOVED: background-size that wasn't being used */
+}
+
+#workspaces button.active {
+  background-color: @base0D;
+  color: @base00;
+  min-width: 40px;
+  /* REMOVED: duplicate transition and font-size for consistency */
+}
+
+#workspaces button.urgent {
+  background-color: @base08;
+  color: @base00;
+  border-radius: 18px;
+  min-width: 40px;
+  /* REMOVED: background-size and duplicate transition */
+}
+
+#workspaces button.visible {
+  background-color: @base0D;
+  color: @base00;
+  min-width: 40px;
+  /* REMOVED: duplicate transition and font-size for consistency */
+}
+
+/* Clock - Center highlight */
+#clock {
+  color: @base0D;
+}
+
+#clock.2 {
+  color: @base05;
+  border: 1px solid @base0D;
+}
+
+#clock:hover {
+  background: @base0D; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#clock.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+  border: 1px solid @base0D;
+}
+
+/* Battery states */
+#battery {
+  color: @base0B;
+}
+
+#battery.charging {
+  background: linear-gradient(135deg, @base0B 0%, @base0A 100%);
+  color: @base00;
+}
+
+#battery.critical:not(.charging) {
+  background: linear-gradient(135deg, @base08 0%, @base09 100%);
+  color: @base00;
+}
+
+/* Network states */
+#network {
+  color: @base0C;
+}
+
+#network.2 {
+  color: @base05;
+  border: 1px solid @base0C;
+}
+
+#network:hover {
+  background: @base0C; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#network.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+#network.disconnected,
+#network.disabled {
+  color: @base03;
+  background-color: @base01;
+}
+
+/* Bluetooth states */
+#bluetooth {
+  color: @base0E;
+}
+
+#bluetooth.2 {
+  color: @base05;
+  border: 1px solid @base0E;
+}
+
+#bluetooth:hover {
+  background: @base0E; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#bluetooth.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @base03;
+  background-color: @base01;
+}
+
+/* System tray */
+#tray {
+  background-color: @base03;
+}
+
+/* Power button */
+#custom-power {
+  background: @base08;
+  color: @base00;
+}
+
+#custom-power:hover {
+  background: @base00; 
+  color: @base08;
+  border-radius: 18px;
+  border: 1px solid @base08;
+}
+
+/* Brightness */
+#backlight {
+  color: @base0B;
+}
+
+#backlight.2 {
+  color: @base05;
+  border: 1px solid @base0B;
+}
+
+#backlight:hover {
+  background: @base0B; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#backlight.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+/* CPU */
+#cpu {
+  color: @base09;
+}
+
+#cpu.2 {
+  color: @base05;
+  border: 1px solid @base09;
+}
+
+#cpu:hover {
+  background: @base09; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#cpu.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+/* Memory */
+#custom-memory {
+  color: @base0A;
+}
+
+#custom-memory.2 {
+  color: @base05;
+  border: 1px solid @base0A;
+}
+
+#custom-memory:hover {
+  background: @base0A; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#custom-memory.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+/* Wireplumber */
+#wireplumber {
+  color: @base0F;
+}
+
+#wireplumber.2 {
+  color: @base05;
+  border: 1px solid @base0F;
+}
+
+#wireplumber:hover {
+  background: @base0F; 
+  color: @base00;
+  border-radius: 18px;
+}
+
+#wireplumber.2:hover {
+  background: @base00; 
+  color: @base05;
+  border-radius: 18px;
+}
+
+/* Menu */
+#custom-menu {
+  color: @base0B;
+}
+
+#custom-menu:hover {
+  background: @base0B; 
+  color: @base00;
+  border-radius: 18px;
+}

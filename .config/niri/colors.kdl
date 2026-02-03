@@ -5,23 +5,23 @@
 layout {
     focus-ring {
         active-color "#7fbbb3"
-        inactive-color "#3d484d"
+        inactive-color "#3c3f4c"
     }
     
     border {
         active-color "#7fbbb3"
-        inactive-color "#3d484d"
+        inactive-color "#3c3f4c"
     }
     
     tab-indicator {
         active-color "#7fbbb3"
-        inactive-color "#3d484d"
+        inactive-color "#3c3f4c"
         urgent-color "#e67e80"
     }
 }
 
 overview {
-    backdrop-color "#2d353b"
+    backdrop-color "#1d2021"
 }
 
 recent-windows {

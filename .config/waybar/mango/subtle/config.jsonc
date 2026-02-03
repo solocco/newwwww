@@ -1,0 +1,273 @@
+{
+  "layer": "top",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "left",
+  // "margin-top": 12,
+  "fixed-center": true,
+  "ipc": true,
+  "reload_style_on_change": true,
+
+  // ==== Layout: Floating Style ====
+  "modules-left": [
+    "ext/workspaces"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "group/tray-expander",
+    "group/right",
+    "group/calendar",
+    "clock",
+    "clock#2"
+  ],
+
+  "group/tray-expander": {
+    "orientation": "vertical",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "tray-group-item"
+    },
+    "modules": ["custom/expand-icon", "tray"]
+  },
+
+  "group/calendar":{
+    "orientation": "vertical",
+    "drawer": {
+      "transition-duration": 600,
+      "transition-up-to-down": true,
+      "children-class": "calendar-group"
+    },
+    "modules": ["custom/expand-icon", "clock#3", "custom/sep", "clock#4", "clock#5", "clock#6"]
+  },
+
+  "custom/expand-icon": {
+    "format": "\ue5c7",
+    "tooltip": false,
+    "on-scroll-up": "",
+    "on-scroll-down": "",
+    "on-scroll-left": "",
+    "on-scroll-right": ""
+  },
+
+  "custom/expand-icon#2": {
+    "format": "\ue5c5",
+    "tooltip": false,
+    "on-click": ""
+  },
+
+  "custom/sep": {
+    "format": "",
+    "tooltip": false
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8,
+    "show-passive-items": false
+  },
+
+  "group/right": {
+		"orientation": "vertical",
+		"modules": [
+			"backlight",
+			"wireplumber",
+      "bluetooth",
+      "network"
+		]
+	},
+  
+  /* ---- Menu ---- */
+  "custom/menu": {
+    "format": "",
+    "on-click": "fuzzel",
+    "tooltip": true,
+    "tooltip-format": "App Launcher"
+  },
+
+  /* ---- Power ---- */
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "launch-power",
+    "tooltip": true,
+    "tooltip-format": "Power Menu"
+  },
+
+  /* ---- Updates ---- */
+  "custom/updates": {
+    "format": "",
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar_icon.py",
+    "on-click": "launch-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 300,
+    "tooltip": false
+  },
+  "custom/updates#2": {
+    "format": "{text}",
+    "return-type": "json",
+    "exec": "python3 ~/.local/bin/updbar_count.py",
+    "on-click": "launch-xr",
+    "on-click-right": "~/.local/bin/updbar_rst.sh",
+    "signal": 9,
+    "interval": 300,
+    "tooltip": false
+  },
+
+// waybar-clock
+  "clock": {
+    "interval": 60,
+    "format": "{:%H}",
+    "tooltip": false
+  },
+  "clock#2": {
+    "interval": 60,
+    "format": "{:%M}",
+    "tooltip": false
+  },
+  "clock#3": {
+    "format": "{:%a}",
+    "tooltip": false
+  },
+  "clock#4": {
+    "format": "{:%d}",
+    "tooltip": false
+  },
+  "clock#5": {
+    "format": "{:%m}",
+    "tooltip": false
+  },
+  "clock#6": {
+    "format": "{:%y}",
+    "tooltip": false
+  },
+
+
+  /* ---- Audio (PipeWire) ---- */
+  "wireplumber": {
+    "format": "{icon}",
+    "format-muted": "󰖁",
+    "format-icons": {
+      "headphone": "󰋋",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "phone": "󰄜",
+      "portable": "󰄜",
+      "car": "󰄋",
+      "default": ["󰋋", "󰋋", "󰋋"]
+    },
+    "scroll-step": 2,
+    "on-click": "pavucontrol",
+    "tooltip": true,
+    "tooltip-format": "Volume: {volume}%"
+  },
+
+  "wireplumber#2": {
+    "format": "{volume}%",
+    "tooltip": false
+  },
+
+  /* ---- Network ---- */
+  "network": {
+    "interface": "wlp3s0",
+    "format": "{ifname}",
+    "format-wifi": "\ue63e",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "\ue648",
+    "tooltip": true,
+    "tooltip-format": "{essid}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "footx -f -e impala"
+  },
+
+  /* ---- Bluetooth ---- */
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "tooltip": true,
+    "tooltip-format": "{device_alias}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "footx -f -e bluetui"
+  },
+
+  /* ---- Temperature ---- */
+  "custom/temp-icon": {
+    "exec": "~/.config/waybar/scripts/temp.sh icon",
+    "interval": 3,
+    "return-type": "json",
+    "format": "{text}"
+  },
+
+  /* ---- Battery ---- */
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon}",
+    "format-charging": "󰂄",
+    "format-plugged": "󰚥",
+    "format-full": "󰁹 Full",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip": true,
+    "tooltip-format": "{timeTo}\n{power}W"
+  },
+
+  /* ---- Backlight ---- */
+  "backlight": {
+    "interval": 2,
+    "format": "{icon}",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "on-click": "launch-nl",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-",
+    "smooth-scrolling-threshold": 1,
+    "tooltip": true,
+    "tooltip-format": "Brightness: {percent}%"
+  },
+
+    /* ---- CPU ---- */
+  "cpu": {
+    "interval": 3,
+    "format": "{usage}%  {icon}",
+    "format-icons": "",
+    "tooltip": true,
+    "tooltip-format": "CPU Usage:"
+  },
+
+  /* ---- Memory ---- */
+  "custom/memory": {
+    "exec": "~/.config/waybar/scripts/memory_usage.sh",
+    "interval": 2,
+    "return-type": "json",
+    "on-click": "footx -f -e btop",
+    "format":  "{}  " 
+  },
+
+  /* ---- Disk ---- */
+  "disk": {
+    "format": "{free}  󰋊",
+    "interval": 30,
+    "path": "/",
+    "tooltip": true,
+    "tooltip-format": "Used: {used}\nFree: {free}\nTotal: {total}"
+  },
+
+  /* ---- Workspaces ---- */
+  "ext/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "urgent": "",
+      "active": "",
+      "default": ""
+    },
+    "ignore-hidden": true,
+    "on-click": "activate",
+    "on-click-right": "deactivate",
+    "sort-by-id": true
+  }
+}
+

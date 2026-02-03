@@ -1,0 +1,22 @@
+scheme: "Pine Dark"
+author: "DOTHASH"
+
+# Monotone (dark → bright)
+base00: "211d1d" # main background – deep and calm
+base01: "2b2929" # darker UI sections / panels
+base02: "3a3838" # selection / subtle highlight
+base03: "5b5a5a" # comments / muted separators
+base04: "baabb4" # secondary foreground
+base05: "c0c1aa" # default text
+base06: "e5eaea" # bright highlight text
+base07: "e8e8de" # near-white for max UI contrast
+
+# Syntax – forest natural tones
+base08: "cc855c" # red / errors, warmth
+base09: "c3c383" # amber / numbers, constants
+base0A: "e2e2c0" # gold / function-ish
+base0B: "91a691" # moss-green / strings
+base0C: "99acae" # soft cyan / special
+base0D: "849a9f" # quiet blue / types
+base0E: "e5b99e" # pink-ish / keywords
+base0F: "d4dbdd" # pale clay / deprecated accents

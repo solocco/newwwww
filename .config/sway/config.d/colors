@@ -1,19 +1,19 @@
-## Base16 Everforest Dark Medium
-# Author: sainnhe
+## Base16 eye-cachy
+# Author: best of all worlds - ultimate comfort blend
 
-set $base00 #2d353b
-set $base01 #343f44
-set $base02 #3d484d
-set $base03 #475258
-set $base04 #9da9a0
-set $base05 #d3c6aa
-set $base06 #e4e1cd
-set $base07 #fdf6e3
+set $base00 #1d2021
+set $base01 #282a36
+set $base02 #3c3f4c
+set $base03 #545862
+set $base04 #8b92a8
+set $base05 #c5cdd9
+set $base06 #dde3ed
+set $base07 #f0f4f8
 set $base08 #e67e80
 set $base09 #e69875
 set $base0A #dbbc7f
 set $base0B #a7c080
-set $base0C #83c092
+set $base0C #89beb7
 set $base0D #7fbbb3
 set $base0E #d699b6
-set $base0F #d3c6aa
+set $base0F #d65d0e

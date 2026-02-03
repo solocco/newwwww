@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# launch-flavours - Launch quick-settings theme picker
+
+set -euo pipefail
+
+# Path to your quick-settings project
+QUICK_SETTINGS_DIR="$HOME/.config/quick-settings/"
+RUN_SCRIPT="$QUICK_SETTINGS_DIR/run.py"
+
+# Check if project exists
+if [ ! -f "$RUN_SCRIPT" ]; then
+    notify-send -u critical "Quick Settings" "run.py not found at: $RUN_SCRIPT"
+    exit 1
+fi
+
+# Check if already running
+if pgrep -f "python.*run.py" >/dev/null; then
+    # Focus existing window if possible
+    pkill -f "python.*run.py"
+    sleep 0.2
+fi
+
+# Launch the app
+cd "$QUICK_SETTINGS_DIR"
+python3 run.py &
+
+# Optional: Wait a bit and focus the window
+sleep 0.3

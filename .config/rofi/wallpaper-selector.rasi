@@ -1,0 +1,111 @@
+/* 🖼️ ROFI WALLPAPER SELECTOR THEME */
+/* Compact Grid Layout for Theme Wallpapers */
+
+@import "~/.config/rofi/colors.rasi"
+@import "~/.config/rofi/fonts.rasi"
+
+/* ---- Configuration ---- */
+configuration {
+    modi: "drun";
+    show-icons: true;
+    drun-display-format: "{name}";
+}
+
+/* ---- Window ---- */
+window {
+    width: 60%;
+    height: 35%;
+    border: 1px;
+    border-color: @background-alt;
+    border-radius: 12px;
+    background-color: @background;
+}
+
+/* ---- Mainbox ---- */
+mainbox {
+    children: ["inputbar", "listview"];
+    spacing: 10px;
+    padding: 20px;
+    background-color: transparent;
+}
+
+/* ---- Inputbar ---- */
+inputbar {
+    enabled: true;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: @background-alt;
+    children: ["prompt", "entry"];
+}
+
+prompt {
+    enabled: true;
+    padding: 0px 10px 0px 0px;
+    background-color: transparent;
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "Search...";
+    background-color: transparent;
+    text-color: @foreground-alt;
+}
+
+/* ---- Listview ---- */
+listview {
+    /* Horizontal single row layout */
+    columns: 4;
+    lines: 1;
+    fixed-height: true;
+    fixed-columns: false;
+    scrollbar: false;
+    spacing: 20px;
+    padding: 10px;
+    cycle: true;
+    dynamic: false;
+    layout: vertical;
+    reverse: false;
+    background-color: transparent;
+}
+
+/* ---- Elements ---- */
+element {
+    orientation: vertical;
+    padding: 15px;
+    spacing: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: @background-alt;
+}
+
+element normal.normal {
+    background-color: @background-alt;
+    text-color: @foreground;
+}
+
+element selected.normal {
+    background-color: @background-alt;
+    text-color: @accent;
+    border: 1px;
+    border-color: @accent;
+}
+
+element alternate.normal {
+    background-color: @background-alt;
+    text-color: @foreground;
+}
+
+element-icon {
+    /* Larger thumbnail for horizontal layout */
+    size: 8em;
+    horizontal-align: 0.5;
+    background-color: transparent;
+    border-radius: 8px;
+}
+
+element-text {
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+    background-color: transparent;
+    text-color: inherit;
+}

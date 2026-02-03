@@ -1,0 +1,164 @@
+/* 
+ * Waybar i3/Sway Default Style
+ */
+
+@import "../colors.css";
+@import "../font.css";
+
+window#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-bottom: 2px solid @base03;
+}
+
+#workspaces {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+#workspaces button {
+  padding: 0 12px;
+  margin: 0;
+  min-width: 30px;
+  background-color: @base01;
+  color: @base05;
+  border: none;
+  border-radius: 0;
+  border-right: 1px solid @base00;
+}
+
+#workspaces button:first-child {
+  border-left: 1px solid @base00;
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+  background-color: @base0D;
+  color: @base00;
+}
+
+#workspaces button.urgent {
+  background-color: @base08;
+  color: @base00;
+}
+
+#workspaces button.visible {
+  background-color: @base02;
+  color: @base05;
+}
+
+#custom-menu,
+#clock,
+#battery,
+#network,
+#bluetooth,
+#cpu,
+#memory,
+#disk,
+#backlight,
+#wireplumber,
+#pulseaudio,
+#tray,
+#custom-power,
+#custom-temp-icon,
+#custom-memory,
+#custom-nightlight,
+#custom-qs,
+#temperature,
+#custom-updates,
+#idle_inhibitor {
+  background-color: @base01;
+  border-radius: 0;
+  padding: 0 10px;
+  margin: 0;
+  color: @base05;
+  border-right: 1px solid @base00;
+}
+
+#custom-menu {
+  background-color: @base0D;
+  color: @base00;
+}
+
+#clock { 
+  font-weight: bold;
+  background-color: @base02;
+}
+
+#battery.charging {
+  background-color: @base0B;
+  color: @base00;
+}
+
+#battery.critical:not(.charging) {
+  background-color: @base08;
+  color: @base00;
+}
+
+#network.disconnected,
+#network.disabled {
+  background-color: @base01;
+  color: @base03;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  background-color: @base01;
+  color: @base03;
+}
+
+#tray {
+  background-color: @base01;
+  padding: 0 8px;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+}
+
+#cpu {
+  background-color: @base0B;
+  color: @base00;
+}
+
+#memory {
+  background-color: @base0A;
+  color: @base00;
+}
+
+#temperature.critical {
+  background-color: @base08;
+  color: @base00;
+}
+
+#idle_inhibitor {
+  background-color: @base0E;
+  color: @base00;
+}
+
+#idle_inhibitor.activated {
+  background-color: @base0A;
+  color: @base00;
+}
+
+#taskbar button {
+  margin: 0;
+  padding: 0 10px;
+  border-radius: 0;
+  background-color: @base01;
+  color: @base05;
+  border: none;
+  border-right: 1px solid @base00;
+}
+
+#taskbar button.active {
+  background-color: @base0D;
+  color: @base00;
+}
+
+#taskbar button.minimized {
+  background-color: @base01;
+  color: @base03;
+}

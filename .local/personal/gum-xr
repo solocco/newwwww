@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export XDG_CURRENT_DESKTOP=mango
+export WAYLAND_DISPLAY=wayland-0
+export GUM_INPUT_SHOW_HELP=false
 # ---------------------------------------------------------
 # Deps
 # ---------------------------------------------------------
@@ -12,67 +17,24 @@ need() {
 need gum
 need xr
 need sudo
-
 # ---------------------------------------------------------
 # Get terminal emulator
 # ---------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TERMINAL=$("$SCRIPT_DIR/get-terminal")
-
 run_in_terminal() {
   local cmd="$1"
-  # Minimize main window
   mmsg -d minimized || true
-  sleep 0.3
-  
-  # Buka terminal dengan cara yang bener berdasarkan terminal emulator
-  case "$TERMINAL" in
-    footx)
-      # footx dengan -f flag untuk floating mode (app-id: foot-float)
-      $TERMINAL -f bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    alacrittyx)
-      # alacrittyx dengan -f flag untuk floating mode (app-id: alacritty-float)
-      $TERMINAL -f bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    alacritty)
-      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    foot)
-      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    ghostty)
-      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    kitty)
-      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    termite)
-      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    wezterm)
-      $TERMINAL bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    konsole|gnome-terminal|xfce4-terminal|mate-terminal|xterm|urxvt)
-      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-    *)
-      # Default: coba -e dulu
-      $TERMINAL -e bash -c "$cmd; read -p 'Press enter to close...'" &
-      ;;
-  esac
-  
-  local terminal_pid=$!
-  sleep 0.5
-  
-  # Wait terminal selesai
-  wait $terminal_pid 2>/dev/null || true
   sleep 0.2
-  
-  # Restore main window
+  foot --app-id="foot-float" -e bash -c "$cmd; read -p 'Press enter to close...'"
   mmsg -d restore_minimized || true
 }
-
+# ---------------------------------------------------------
+# Update system
+# ---------------------------------------------------------
+update_system() {
+  run_in_terminal "sudo xr -u"
+}
 # ---------------------------------------------------------
 # xbps-src submenu (xr -l)
 # ---------------------------------------------------------
@@ -82,55 +44,50 @@ xr_xbps_menu() {
     return 1
   }
   cd "$HOME/void-packages"
-  
   while true; do
     ACTION=$(gum choose \
-      "󰆍  build package" \
-      "󰃢  clean package" \
-      "󰈔  new template" \
-      "󰏫  edit template" \
-      "󰘦  checksum package" \
-      "󰏗  install package" \
+      "󰆍 build package" \
+      "󰃢 clean package" \
+      "󰈔 new template" \
+      "󰏫 edit template" \
+      "󰘦 checksum package" \
+      "󰏗 install package" \
       "󰏗󰖟 install nonfree package" \
-      "󰅁  back"
+      "󰅁 back" \
     ) || return 0
-    
     case "$ACTION" in
-      "󰆍"*)
-        PKG=$(gum input --prompt "󰆍 build > ")
+      "󰆍"*) 
+        PKG=$(gum input --prompt "󰆍 build > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "xr -l build $PKG"
         ;;
-      "󰃢"*)
-        PKG=$(gum input --prompt "󰃢 clean > ")
+      "󰃢"*) 
+        PKG=$(gum input --prompt "󰃢 clean > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "xr -l clean $PKG"
         ;;
-      "󰈔"*)
-        PKG=$(gum input --prompt "󰈔 new > ")
+      "󰈔"*) 
+        PKG=$(gum input --prompt "󰈔 new > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "xr -l new $PKG nvim"
         ;;
-      "󰏫"*)
-        PKG=$(gum input --prompt "󰏫 edit > ")
+      "󰏫"*) 
+        PKG=$(gum input --prompt "󰏫 edit > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "xr -l edit $PKG nvim"
         ;;
-      "󰘦"*)
-        PKG=$(gum input --prompt "󰘦 checksum > ")
+      "󰘦"*) 
+        PKG=$(gum input --prompt "󰘦 checksum > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "xr -l checksum $PKG"
         ;;
-      "󰏗󰖟"*)
-        PKG=$(gum input --prompt "󰏗 nonfree > ")
+      "󰏗󰖟"*) 
+        PKG=$(gum input --prompt "󰏗 nonfree > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "sudo xr -l install-nonfree $PKG"
         ;;
-      "󰏗"*)
-        PKG=$(gum input --prompt "󰏗 install > ")
+      "󰏗"*) 
+        PKG=$(gum input --prompt "󰏗 install > " --placeholder="package name" || true)
         [ -n "$PKG" ] && run_in_terminal "sudo xr -l install $PKG"
         ;;
-      "󰅁"*)
-        return 0
-        ;;
+      "󰅁"*) return 0 ;;
     esac
   done
 }
-
 # ---------------------------------------------------------
 # Change mirror menu
 # ---------------------------------------------------------
@@ -138,7 +95,6 @@ mirror_menu() {
   gum style --foreground 33 "Opening xmirror..."
   sudo xmirror
 }
-
 # ---------------------------------------------------------
 # fzf interactive mode
 # ---------------------------------------------------------
@@ -150,22 +106,6 @@ fzf_mode() {
     gum style --foreground 196 "󰜺 fzf not installed"
   fi
 }
-
-# ---------------------------------------------------------
-# Update system with feedback
-# ---------------------------------------------------------
-update_system() {
-  gum style --foreground 33 "󰚰 Running update..."
-  sudo xr -u
-  if [ $? -eq 0 ]; then
-    notify-send -u normal "󰚰 System Updated" "Your system is up to date!"
-    gum style --foreground 82 "󰚰 System updated successfully!"
-  else
-    notify-send -u critical "󰚰 Update Failed" "Error during system update"
-    gum style --foreground 196 "󰚰 Update failed!"
-  fi
-}
-
 # ---------------------------------------------------------
 # Clean unused packages
 # ---------------------------------------------------------
@@ -180,76 +120,65 @@ clean_packages() {
     gum style --foreground 196 "󰃢 Cleanup failed!"
   fi
 }
-
 # ---------------------------------------------------------
 # Manage old kernels
 # ---------------------------------------------------------
 manage_kernels() {
-  gum spin --spinner dot --title "󰌽 Managing old kernels..." -- sudo xr -k
-  if [ $? -eq 0 ]; then
-    notify-send -u normal "󰌽 Kernel Management" "Old kernels cleaned!"
-    gum style --foreground 82 "󰌽 Old kernels removed!"
-  else
-    notify-send -u normal "󰌽 Kernel Management" "No old kernels to remove"
-    gum style --foreground 33 "󰌽 No old kernels to remove"
-  fi
+  while true; do
+    ACTION=$(gum choose \
+      "󰋚 List old kernels" \
+      "󰆴 Remove old kernel" \
+      "󰅁 Back" \
+    ) || return 0
+    
+    case "$ACTION" in
+      "󰋚"*)
+        run_in_terminal "sudo xr -k list"
+        ;;
+      "󰆴"*)
+        VERSION=$(gum input --prompt "󰆴 kernel version > " --placeholder="e.g., 6.1.0_1" || true)
+        [ -n "$VERSION" ] && run_in_terminal "sudo xr -k remove $VERSION"
+        ;;
+      "󰅁"*) return 0 ;;
+    esac
+  done
 }
-
 # ---------------------------------------------------------
 # Main menu
 # ---------------------------------------------------------
 main_menu() {
   gum choose \
     --header "Void Package Manager" \
-    "󰏗  Install package" \
-    "󰆴  Remove package" \
-    "󰚰  Update system" \
-    "󰃢  Clean unused packages" \
-    "󰌽  Manage old kernels" \
-    "󰆍  Build package (xbps-src)" \
-    "󰖟  Change mirror" \
-    "󰜺  xr fzf mode" \
-    "󰈆  Exit"
+    "󰏗 Install package" \
+    "󰆴 Remove package" \
+    "󰚰 Update system" \
+    "󰃢 Clean unused packages" \
+    "󰌽 Manage old kernels" \
+    "󰆍 Build package (xbps-src)" \
+    "󰖟 Change mirror" \
+    "󰜺 xr fzf mode" \
+    "󰈆 Exit"
 }
-
 # ---------------------------------------------------------
 # Loop
 # ---------------------------------------------------------
 while true; do
   CHOICE=$(main_menu) || exit 0
   case "$CHOICE" in
-    "󰏗"*)
-      PKG=$(gum input --prompt "󰏗 install > ")
-      if [ -n "$PKG" ]; then
-        run_in_terminal "sudo xr -i $PKG"
-      fi
+    "󰏗"*) 
+      PKG=$(gum input --prompt "󰏗 install > " --placeholder="package name" || true)
+      [ -n "$PKG" ] && run_in_terminal "sudo xr -i $PKG"
       ;;
-    "󰆴"*)
-      PKG=$(gum input --prompt "󰆴 remove > ")
-      if [ -n "$PKG" ]; then
-        run_in_terminal "sudo xr -r $PKG"
-      fi
+    "󰆴"*) 
+      PKG=$(gum input --prompt "󰆴 remove > " --placeholder="package name" || true)
+      [ -n "$PKG" ] && run_in_terminal "sudo xr -r $PKG"
       ;;
-    "󰚰"*)
-      run_in_terminal "sudo xr -u"
-      ;;
-    "󰃢"*)
-      run_in_terminal "sudo xr -c"
-      ;;
-    "󰌽"*)
-      run_in_terminal "sudo xr -k"
-      ;;
-    "󰆍"*)
-      xr_xbps_menu
-      ;;
-    "󰖟"*)
-      run_in_terminal "sudo xmirror"
-      ;;
-    "󰜺"*)
-      run_in_terminal "sudo xr -t"
-      ;;
-    "󰈆"*)
-      exit 0
-      ;;
+    "󰚰"*) update_system ;;
+    "󰃢"*) run_in_terminal "sudo xr -c" ;;
+    "󰌽"*) manage_kernels ;;
+    "󰆍"*) xr_xbps_menu ;;
+    "󰖟"*) run_in_terminal "sudo xmirror" ;;
+    "󰜺"*) run_in_terminal "sudo xr -t" ;;
+    "󰈆"*) exit 0 ;;
   esac
 done

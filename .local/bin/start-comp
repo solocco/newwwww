@@ -31,6 +31,9 @@ echo "$COMPOSITOR session started: $(date)" >> "$LOGFILE"
 exec >> "$LOGFILE" 2>&1
 
 # --- Environment Variables ---
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 export QT_QPA_PLATFORM=wayland
 export QT_QPA_PLATFORMTHEME=qt6ct
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1

@@ -1,29 +1,34 @@
-#!/usr/bin/env bash
-# rofi_flavours — picker flavours via rofi (paritas fuzzel)
-# - Tampilkan nama Title Case di menu
-# - Apply flavours, restart fnott, set gsettings prefer-{dark,light}
-# - Pilih wallpaper via map/heuristik, set swaybg (mode fill/default), simpan state & log
+#!/bin/sh
+# flavours-menu.sh — pilih flavour via rofi (nama cantik Title Case),
+# apply flavours, restart fnott, set wallpaper pakai swww,
+# dan simpan state terakhir.
 
-set -euo pipefail
+set -eu
 
 # --- Dependencies ---
-need() { command -v "$1" >/dev/null 2>&1 || { echo "[!] '$1' not found."; exit 1; }; }
-need flavours
-need rofi
-need swaybg
+command -v flavours >/dev/null 2>&1 || { echo "flavours not found."; exit 1; }
+command -v rofi     >/dev/null 2>&1 || { echo "rofi not found.";     exit 1; }
+command -v swww     >/dev/null 2>&1 || { echo "swww not found.";     exit 1; }
 
 # --- Config ---
-THEME="${ROFI_FLAVOURS_THEME:-$HOME/.config/rofi/rofi_flavours.rasi}"
-ROFI_ARGS=(-dmenu -p "Flavour:" -l 12 -theme "$THEME")
-
 WALL_DIR="${WALL_DIR:-$HOME/pictures/walls}"
 MAP_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/flavours/walls.map"
-WALL_MODE="${WALL_MODE:-fill}"  # fill|fit|stretch|center|tile (sesuai swaybg)
+
+# >>> swww modes: crop|fit|stretch|no
+WALL_MODE="${WALL_MODE:-crop}"
+SWWW_TRANSITION="${SWWW_TRANSITION:-grow}"
+SWWW_DURATION="${SWWW_DURATION:-2}"
+
+ROFI_THEME="${HOME}/.config/rofi/rofi_flavours.rasi"
+
+# --- Notification Config ---
+APP_NAME="Flavours"
+NOTIFY_ID=7773
 
 # --- State & Log ---
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
 LAST_THEME="$STATE_DIR/last_theme"
-LAST_WALL="$STATE_DIR/last_wall"
+LAST_VARIANT="$STATE_DIR/last_variant"
 LOG="$STATE_DIR/flavours-wall.log"
 mkdir -p "$STATE_DIR"
 : > "$LOG" 2>/dev/null || true
@@ -32,7 +37,10 @@ mkdir -p "$STATE_DIR"
 to_title_case() {
   printf '%s' "$1" \
   | tr '_-' ' ' \
-  | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2)); print}'
+  | awk '{
+      for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2));
+      print
+    }'
 }
 
 normalize_scheme() {
@@ -43,8 +51,7 @@ normalize_scheme() {
 
 # --- File picking ---
 first_image_from_pattern() {
-  for pat in "$@"; do
-    # glob expand manual
+  for pat in $*; do
     for f in $pat; do
       [ -e "$f" ] || continue
       if [ -d "$f" ]; then
@@ -59,8 +66,6 @@ first_image_from_pattern() {
 
 resolve_wall_for_flavour() {
   scheme="$1"
-
-  # 1) explicit map
   if [ -f "$MAP_FILE" ]; then
     map_path="$(awk -v s="$scheme" '($1==s){$1=""; sub(/^[ \t]+/,""); print; exit}' "$MAP_FILE" 2>/dev/null || true)"
     if [ -n "${map_path:-}" ]; then
@@ -69,52 +74,69 @@ resolve_wall_for_flavour() {
     fi
   fi
 
-  # 2) heuristik family + tone
   family="$(printf '%s' "$scheme" | cut -d- -f1 | tr '[:upper:]' '[:lower:]')"
   case "$scheme" in
-    *dark*|*Dark*|*DARK*)  tone=dark ;;
+    *dark*|*Dark*|*DARK*) tone=dark ;;
     *light*|*Light*|*LIGHT*) tone=light ;;
     *) tone=any ;;
   esac
 
-  candidates=()
-  candidates+=("$WALL_DIR/$scheme" "$WALL_DIR/$scheme/*")
-  [ "$tone" != "any" ] && candidates+=("$WALL_DIR/$family/$tone" "$WALL_DIR/$family/$tone/*")
-  candidates+=("$WALL_DIR/$family" "$WALL_DIR/$family/*")
-  [ "$tone" != "any" ] && candidates+=("$WALL_DIR/default-$tone" "$WALL_DIR/default/$tone" "$WALL_DIR/default/$tone/*")
-  candidates+=("$WALL_DIR/default" "$WALL_DIR/default/*")
+  candidates=""
+  candidates="$candidates \"$WALL_DIR/$scheme\" \"$WALL_DIR/$scheme/*\""
+  [ "$tone" != "any" ] && candidates="$candidates \"$WALL_DIR/$family/$tone\" \"$WALL_DIR/$family/$tone/*\""
+  candidates="$candidates \"$WALL_DIR/$family\" \"$WALL_DIR/$family/*\""
+  [ "$tone" != "any" ] && candidates="$candidates \"$WALL_DIR/default-$tone\" \"$WALL_DIR/default/$tone\" \"$WALL_DIR/default/$tone/*\""
+  candidates="$candidates \"$WALL_DIR/default\" \"$WALL_DIR/default/*\""
 
-  img="$(first_image_from_pattern "${candidates[@]}" || true)"
+  img="$(eval "first_image_from_pattern $(printf '%s' "$candidates")" || true)"
   [ -n "${img:-}" ] && { printf '%s\n' "$img"; return; }
   printf '%s\n' ""
 }
 
-set_wall_with_swaybg() {
-  img="$1"; mode="$2"
-  pkill -x swaybg 2>/dev/null || true
-  printf '[%s] swaybg run: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
-  nohup swaybg -m "$mode" -i "$img" >>"$LOG" 2>&1 &
+set_wall_with_swww() {
+  img="$1"
+  mode="$2"
+  printf '[%s] swww img: mode=%s img=%s\n' "$(date '+%F %T')" "$mode" "$img" >>"$LOG"
+  swww img "$img" \
+    --resize "$mode" \
+    --transition-type "$SWWW_TRANSITION" \
+    --transition-duration "$SWWW_DURATION" \
+    >>"$LOG" 2>&1
 }
 
 save_state() {
-  scheme_raw="$1"; wall="$2"
-  scheme="$(flavours current 2>/dev/null | awk 'NF{print; exit}' || true)"
+  scheme_raw="$1"
+
+  if command -v flavours >/dev/null 2>&1; then
+    scheme="$(flavours current 2>/dev/null | awk 'NF{print; exit}')"
+  fi
   [ -n "${scheme:-}" ] || scheme="$scheme_raw"
 
   tmp_t="$(mktemp "$STATE_DIR/.last_theme.XXXXXX")"
   printf '%s\n' "$scheme" > "$tmp_t" && mv -f "$tmp_t" "$LAST_THEME"
 
-  if [ -n "${wall:-}" ] && [ -f "$wall" ]; then
-    tmp_w="$(mktemp "$STATE_DIR/.last_wall.XXXXXX")"
-    printf '%s\n' "$wall" > "$tmp_w" && mv -f "$tmp_w" "$LAST_WALL"
-  else
-    : > "$LAST_WALL"
-  fi
+  # Detect variant
+  case "$scheme" in
+    *light*|*Light*|*LIGHT*|*dawn*|*Dawn*) variant="light" ;;
+    *) variant="dark" ;;
+  esac
+  tmp_v="$(mktemp "$STATE_DIR/.last_variant.XXXXXX")"
+  printf '%s\n' "$variant" > "$tmp_v" && mv -f "$tmp_v" "$LAST_VARIANT"
 }
 
-notify() {
-  title="$1"; body="$2"
-  command -v notify-send >/dev/null 2>&1 && notify-send "$title" "$body" || true
+have() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+notify_user() {
+  local msg="$1"
+  if have dunstify; then
+    dunstify -a "$APP_NAME" -r "$NOTIFY_ID" -u low "$msg"
+  else
+    notify-send -a "$APP_NAME" -u low \
+      -h string:x-canonical-private-synchronous:"flavours-theme" \
+      "$msg"
+  fi
 }
 
 # --- Ambil daftar scheme ---
@@ -123,19 +145,15 @@ RAW_LIST="$(flavours list 2>/dev/null | tr ' ' '\n' | awk 'NF' | sort -u)"
 
 PRETTY_LIST="$(printf '%s\n' "$RAW_LIST" | while read -r s; do to_title_case "$s"; done)"
 
-choice="$(printf '%s\n' "$PRETTY_LIST" | rofi "${ROFI_ARGS[@]}")" || exit 0
-[ -z "${choice:-}" ] && exit 0
+pick_pretty="$(printf '%s\n' "$PRETTY_LIST" | rofi -dmenu -i -p "Select Theme" -theme "$ROFI_THEME")" || true
+[ -z "${pick_pretty:-}" ] && exit 0
 
-scheme_real="$(normalize_scheme "$choice")"
+scheme_real="$(normalize_scheme "$pick_pretty")"
 
 if flavours apply "$scheme_real" 2>>"$LOG"; then
-  # restart fnott jika ada
-  if command -v fnott >/dev/null 2>&1; then
-    pkill -x fnott 2>/dev/null || true
-    nohup fnott >>"$LOG" 2>&1 &
-  fi
+  pkill -x fnott 2>/dev/null || true
+  nohup fnott >>"$LOG" 2>&1 &
 
-  # set prefer-dark/light (opsional)
   if command -v gsettings >/dev/null 2>&1; then
     case "$scheme_real" in
       *dark*|*Dark*|*DARK*)    gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>>"$LOG" || true ;;
@@ -145,15 +163,14 @@ if flavours apply "$scheme_real" 2>>"$LOG"; then
 
   wall="$(resolve_wall_for_flavour "$scheme_real" || true)"
   if [ -n "${wall:-}" ] && [ -f "$wall" ]; then
-    set_wall_with_swaybg "$wall" "$WALL_MODE"
-    save_state "$scheme_real" "$wall"
-    notify "Flavours" "Applied: $choice\nWallpaper: $(basename -- "$wall")\nMode: $WALL_MODE"
+    set_wall_with_swww "$wall" "$WALL_MODE"
+    save_state "$scheme_real"
+    notify_user "Theme Applied: ${pick_pretty}"
   else
-    save_state "$scheme_real" ""
-    notify "Flavours" "Applied: $choice\nWallpaper: NOT FOUND in $WALL_DIR"
+    save_state "$scheme_real"
+    notify_user "Theme Applied: ${pick_pretty}  (No wallpaper)"
   fi
 else
   rofi -e "Apply failed. Check templates & config.toml."
   exit 1
 fi
-
