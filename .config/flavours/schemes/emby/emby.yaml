@@ -1,0 +1,20 @@
+scheme: "emby"
+author: "imn1"
+
+base00: "282828" # background
+base01: "535353" # lighter background
+base02: "79534c" # selection background
+base03: "918a83" # comments, invisibles
+base04: "aa735b" # dark foreground
+base05: "d7cfc6" # default foreground
+base06: "fcb76b" # light foreground
+base07: "fcc281" # light background
+
+base08: "e45354" # red
+base09: "bc937b" # orange
+base0A: "fcb76b" # yellow
+base0B: "bc937b" # green
+base0C: "8f5f4a" # cyan
+base0D: "bc6963" # blue
+base0E: "96675e" # magenta
+base0F: "79534c" # brown

@@ -119,3 +119,15 @@ file = "~/.config/walker/themes/colors.css"
 template = "walker"
 subtemplate = "default"
 rewrite = true
+
+[[items]]
+file = "~/.config/qt5ct/colors/color.conf"
+template = "qt"
+subtemplate = "default"
+rewrite = true
+
+[[items]]
+file = "~/.config/qt6ct/colors/color.conf"
+template = "qt"
+subtemplate = "default"
+rewrite = true
