@@ -3,11 +3,12 @@ binds {
   Mod+Return { spawn "footx"; }
   Mod+Shift+Return { spawn "footx" "-f"; }
   Mod+D { spawn "fuzzel"; }
+  Mod+C { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
   Super+comma { spawn "rofi_clipmenu"; }
   Super+T { spawn "rofi_flavours"; }
   Super+Shift+w { spawn "wallpaper-selector.sh"; }
   Super+p { spawn "launch-xr"; }
-  Super+x { spawn "launch-power"; }
+  Super+x { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
   Super+Alt+r { spawn "~/.config/niri/waybar.sh"; }
 
   // Niri Actions
@@ -109,7 +110,7 @@ binds {
   Mod+R { switch-preset-column-width; }
   Mod+Shift+R { switch-preset-window-height; }
   Mod+Ctrl+R { reset-window-height; }
-  Mod+C { center-column; }
+  Mod+Shift+C { center-column; }
 
   Mod+Minus { set-column-width "-10%"; }
   Mod+Equal { set-column-width "+10%"; }
@@ -122,16 +123,20 @@ binds {
   // Mouse
   Ctrl+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
   Ctrl+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
-  Mod+Alt+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
-  Mod+Alt+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+  Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+  //Mod+Alt+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-; }
+  Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+  //Mod+Alt+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+  Alt+WheelScrollUp       cooldown-ms=150 { consume-or-expel-window-left; }
+  Alt+WheelScrollDown       cooldown-ms=150 { consume-or-expel-window-right; }
 
-  Mod+WheelScrollRight      { focus-column-right; }
-  Mod+WheelScrollLeft       { focus-column-left; }
-  Mod+Shift+WheelScrollRight { move-column-right; }
-  Mod+Shift+WheelScrollLeft  { move-column-left; }
+  //Mod+WheelScrollRight      { focus-column-left; }
+  //Mod+WheelScrollLeft       { focus-column-right; }
+  //Mod+Shift+WheelScrollRight { move-column-right; }
+  //Mod+Shift+WheelScrollLeft  { move-column-left; }
 
-  Mod+WheelScrollDown      { focus-column-right; }
-  Mod+WheelScrollUp        { focus-column-left; }
+  Mod+WheelScrollDown      cooldown-ms=150 { focus-column-right; }
+  Mod+WheelScrollUp        cooldown-ms=150 { focus-column-left; }
   Mod+Shift+WheelScrollDown { move-column-right; }
   Mod+Shift+WheelScrollUp   { move-column-left; }
 
@@ -141,12 +146,9 @@ binds {
   Mod+Print { screenshot-screen; }
   Alt+Print { screenshot-window; }
 
-  XF86AudioRaiseVolume allow-when-locked=true { spawn "~/.local/bin/vols.sh" "--inc"; }
-  XF86AudioLowerVolume allow-when-locked=true { spawn "~/.local/bin/vols.sh" "--dec"; }
-  XF86AudioMute        allow-when-locked=true { spawn "~/.local/bin/vols.sh" "--toggle"; }
-  XF86AudioMicMute     allow-when-locked=true { spawn "~/.local/bin/vols.sh" "--toggle-mic"; }
+  XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "vols.sh --inc" ; }
+  XF86AudioLowerVolume allow-when-locked=true { spawn-sh "vols.sh --dec"; }
 
-  XF86MonBrightnessUp { spawn "~/.local/bin/bright.sh" "--inc"; }
-  XF86MonBrightnessDown { spawn "~/.local/bin/bright.sh" "--dec"; }
-
+  XF86MonBrightnessUp allow-when-locked=true { spawn-sh "bright.sh --inc"; }
+  XF86MonBrightnessDown allow-when-locked=true { spawn-sh "bright.sh --dec"; }
 }

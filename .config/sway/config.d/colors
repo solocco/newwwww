@@ -1,19 +1,19 @@
-## Base16 eye-cachy
-# Author: best of all worlds - ultimate comfort blend
+## Base16 Kanagawa
+# Author: xxx
 
-set $base00 #1d2021
-set $base01 #282a36
-set $base02 #3c3f4c
-set $base03 #545862
-set $base04 #8b92a8
-set $base05 #c5cdd9
-set $base06 #dde3ed
-set $base07 #f0f4f8
-set $base08 #e67e80
-set $base09 #e69875
-set $base0A #dbbc7f
-set $base0B #a7c080
-set $base0C #89beb7
-set $base0D #7fbbb3
-set $base0E #d699b6
-set $base0F #d65d0e
+set $base00 #1f1f28
+set $base01 #2a2a37
+set $base02 #363646
+set $base03 #54546d
+set $base04 #727169
+set $base05 #dcd7ba
+set $base06 #c8c093
+set $base07 #f2ecbc
+set $base08 #c34043
+set $base09 #ffa066
+set $base0A #c0a36e
+set $base0B #76946a
+set $base0C #6a9589
+set $base0D #7e9cd8
+set $base0E #957fb8
+set $base0F #d27e99

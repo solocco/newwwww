@@ -27,28 +27,20 @@ file = "/home/cid/.config/fuzzel/colors.ini"
 template = "fuzzel"
 rewrite = true
 
-# Labwc (pakai openbox-3 theme)
 [[items]]
-file = "/home/cid/.local/share/themes/Base16/openbox-3/themerc"
-template = "labwc"
-hook = "command -v labwc >/dev/null && labwc -r || true"
-start = "!! Start flavours"
-end   = "!! End flavours"
+file = "~/.config/nvim/lua/theme/colors.lua"
+template = "nvim-lua"
+subtemplate = "default"
+rewrite = true
+hook = "[ -S /tmp/nvim-server ] && nvim --server /tmp/nvim-server --remote-send ':lua package.loaded[\"theme.colors\"]=nil; require(\"theme.init\").setup()<CR>' || true"
 
-# Neovim colours
+# Labwc (pakai openbox-3 theme)
 #[[items]]
-#file = "/home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua"
-#template = "nvim"
-#hook = "[ -S /tmp/nvim-server ] && nvim --server /tmp/nvim-server --remote-send ':source /home/cid/.config/nvim/lua/speyll/plugins/colorscheme.lua<CR>:lua require(\"base16-colorscheme\").setup()<CR>' || true"
-#start = "-- Start flavours"
-#end   = "-- End flavours"
-
-# Neovim hardline
-#[[items]]
-#file = "/home/cid/.config/nvim/lua/speyll/plugins/nvim-hardline.lua"
-#template = "nvim-hardline"
-#start = "-- Start flavours"
-#end   = "-- End flavours"
+#file = "/home/cid/.local/share/themes/Base16/openbox-3/themerc"
+#template = "labwc"
+#hook = "command -v labwc >/dev/null && labwc -r || true"
+#start = "!! Start flavours"
+#end   = "!! End flavours"
 
 [[items]]
 file = "/home/cid/.config/fnott/fnott.ini"
@@ -115,12 +107,6 @@ subtemplate = "default"
 rewrite = true
 
 [[items]]
-file = "~/.config/walker/themes/colors.css"
-template = "walker"
-subtemplate = "default"
-rewrite = true
-
-[[items]]
 file = "~/.config/qt5ct/colors/color.conf"
 template = "qt"
 subtemplate = "default"
@@ -131,3 +117,30 @@ file = "~/.config/qt6ct/colors/color.conf"
 template = "qt"
 subtemplate = "default"
 rewrite = true
+
+[[items]]
+file = "~/.config/gtk-3.0/color.css"
+template = "gtk"
+subtemplate = "default"
+rewrite = true
+
+[[items]]
+file = "~/.config/gtk-4.0/color.css"
+template = "gtk"
+subtemplate = "default"
+rewrite = true
+
+[[items]]
+file = "~/.config/ghostty/themes/colors"
+template = "ghostty"
+subtemplate = "default"
+rewrite = true
+
+[[items]]
+file = "~/.config/yazi/theme.toml"
+template = "yazi"
+subtemplate = "default"
+rewrite = true
+light = true
+
+

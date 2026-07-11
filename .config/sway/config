@@ -47,11 +47,11 @@ focus_follows_mouse no
 
 # title bar
 title_align center
-font pango: IoskeleyMono Bold 12
+font pango: Mayucode Nerd Font Bold 12
 titlebar_border_thickness 3
 titlebar_padding 3
-for_window [app_id="^.*"] title_format "%title"
-for_window [class="^.*"] title_format "%title"
+for_window [app_id="^.*"] title_format "[%title]"
+for_window [class="^.*"] title_format "[%title]"
 
 # adjusting borders
 default_border pixel 2
@@ -119,10 +119,10 @@ bindsym XF86AudioMute exec ~/.local/bin/vols.sh --toggle
 bindsym XF86MonBrightnessDown exec ~/.local/bin/bright.sh --dec
 bindsym XF86MonBrightnessUp exec ~/.local/bin/bright.sh --inc
 
-bindsym Print exec grim-print copy
-bindsym $mod+Print exec grim
+#bindsym Print exec grim-print copy
+#bindsym $mod+Print exec grim
 bindsym $mod+Shift+s exec ~/.local/bin/shot-menu.sh
-bindsym $mod+Shift+Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | wl-copy
+#bindsym $mod+Shift+Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | wl-copy
 
 ## Layouts
 bindsym $mod+v splith

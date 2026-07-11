@@ -1,6 +1,5 @@
 #!/bin/sh
 LOG="/tmp/autostart.log"
-
 # =========================
 # Config
 # =========================
@@ -8,7 +7,6 @@ AUDIO=true
 CURSOR="Bibata-Modern-Ice"
 SCALE=1.0
 DWALL="$HOME/pictures/walls/wall.jpg"
-
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/autostart"
 LAST_THEME="$STATE_DIR/last_theme"
 LAST_VARIANT="$STATE_DIR/last_variant"
@@ -16,9 +14,7 @@ LAST_WALL="$STATE_DIR/last_wall"
 WALL_MODE="${WALL_MODE:-fill}"
 SWWW_TRANSITION="${SWWW_TRANSITION:-grow}"
 SWWW_DURATION="${SWWW_DURATION:-2}"
-
 mkdir -p "$STATE_DIR"
-
 # =========================
 # Wayland-safe scaling ENV
 # =========================
@@ -28,7 +24,6 @@ export GDK_DPI_SCALE=1
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
 export QT_SCALE_FACTOR="$SCALE"
 export QT_FONT_DPI=96
-
 # =========================
 # Tunggu Wayland siap
 # =========================
@@ -37,9 +32,7 @@ while { [ -z "$WAYLAND_DISPLAY" ] || [ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" 
   sleep 0.1
   timeout=$((timeout - 1))
 done
-
 sleep 0.3
-
 # =========================
 # Kill old processes FIRST
 # =========================
@@ -47,7 +40,6 @@ for p in flavours mpvpaper swaybg fnott wlsunset cliphist wireplumber pipewire-p
   pkill -9 "$p" 2>/dev/null &
 done
 wait
-
 # =========================
 # RESTORE THEME DULU (BLOCKING)
 # =========================
@@ -68,25 +60,21 @@ if [ -s "$LAST_THEME" ]; then
   # Reload GTK settings immediately
   gsettings set org.gnome.desktop.interface gtk-theme "$(grep gtk-theme-name ~/.config/gtk-3.0/settings.ini | cut -d= -f2)" 2>/dev/null &
 fi
-
 # =========================
 # Env & Agents (PARALLEL)
 # =========================
 dbus-update-activation-environment --all &
 /usr/libexec/polkit-gnome-authentication-agent-1 &
-
 # =========================
-# Audio (PARALLEL)
+# Audio (PARALLEL) - skip kalau sudah jalan via start-comp -p
 # =========================
 if [ "$AUDIO" = true ]; then
   {
-    pipewire &
-    sleep 0.3
-    wireplumber &
-    pipewire-pulse &
+    pgrep -x pipewire >/dev/null || { pipewire & sleep 0.3; }
+    pgrep -x wireplumber >/dev/null || wireplumber &
+    pgrep -x pipewire-pulse >/dev/null || pipewire-pulse &
   } >>"$LOG" 2>&1 &
 fi
-
 # =========================
 # Monitor layout (PARALLEL)
 # =========================
@@ -102,7 +90,6 @@ fi
       --adaptive-sync enabled
   fi
 } >>"$LOG" 2>&1 &
-
 # =========================
 # Services ringan (PARALLEL)
 # =========================
@@ -111,5 +98,4 @@ seat seat0 xcursor_theme "$CURSOR" &
 wlsunset -T 6500 -t 5000 -l -6.2 -L 106.8 &
 wl-paste --watch cliphist store -max-items 100 &
 xwayland-satellite &
-
 exec >>"$LOG" 2>&1

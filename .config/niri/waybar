@@ -1,2 +1,0 @@
-#!/bin/sh
-waybar -c "$HOME/.config/waybar/niri/config.jsonc" -s "$HOME/.config/waybar/niri/style-left.css" >/dev/null 2>&1 &

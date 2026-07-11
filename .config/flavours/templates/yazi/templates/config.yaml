@@ -1,0 +1,3 @@
+default:
+  filename: theme.toml
+  extension: .toml

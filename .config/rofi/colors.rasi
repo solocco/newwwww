@@ -2,14 +2,14 @@
     /* =========================
      * Core colors
      * ========================= */
-    background: #1d2021E6;
-    background-alt: #282a36E6;
+    background: #1f1f28E6;
+    background-alt: #2a2a37E6;
 
-    foreground: #c5cdd9;
-    foreground-alt: #8b92a8;
+    foreground: #dcd7ba;
+    foreground-alt: #727169;
 
-    accent: #7fbbb3;
-    accent-transparent: #7fbbb3E6;
+    accent: #7e9cd8;
+    accent-transparent: #7e9cd8E6;
 
     /* =========================
      * Rofi required globals

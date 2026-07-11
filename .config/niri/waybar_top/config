@@ -1,0 +1,88 @@
+{
+  "name": "main-bar", 			// Waybar name
+  "id": "main-bar", 				// Waybar id
+  "name": "top",
+  "layer": "top",
+  "position": "top",
+  "mode": "",
+  "margin-top": 5,
+  "margin-left": 5,
+  "margin-right": 5,
+  "height": 30,
+  "spacing": 10,
+  "modules-left": ["niri/workspaces", "clock", "niri/window"],
+  "modules-right": [
+    "temperature",
+    "backlight",
+    "pulseaudio",
+    "memory",
+    "cpu",
+    "battery",
+    "tray",
+  ],
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 5,
+  },
+  
+  "dwl/tags": {
+      "num-tags": 9,
+      "hide-vacant": true,
+      // "tag-labels": ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
+    },
+
+  "clock": {
+    "format": "{:%H:%M %Z}",
+    "format-alt": "{:%A, %d %B %Y}",
+    "tooltip": false
+  },
+
+  "cpu": {
+    "format": "{usage}% 󰍛",
+  },
+
+  "memory": {
+    "format": "{}% 󰔚",
+  },
+
+  "battery": {
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 20,
+    },
+    "format": "{capacity}% {icon}",
+    "format-charging": "{capacity}% ",
+    "format-plugged": "{capacity}% ",
+    "format-alt": "{time} {icon}",
+    "format-icons": ["", "", "", "", ""],
+  },
+
+  "pulseaudio": {
+    "format": "{volume}% {icon}",
+    "format-icons": ["", ""],
+    "format-muted": "Muted 󰖁",
+    "max-volume": 100,
+    "scroll-step": 0.1,
+    "on-click": "pamixer --toggle-mute",
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{percent}% ",
+  },
+
+  "niri/window": {
+    "format": "{}",
+    "max-length": 75,
+  },
+
+  "temperature": {
+  "hwmon-path": "/sys/class/hwmon/hwmon10/temp1_input",
+  "critical-threshold": 80,
+  "format-critical": "{temperatureC}°C ",
+  "format": "{temperatureC}°C "
+},
+
+}

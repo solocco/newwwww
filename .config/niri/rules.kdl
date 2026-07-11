@@ -1,5 +1,5 @@
 window-rule {
-  geometry-corner-radius 8
+  geometry-corner-radius 1
   clip-to-geometry true
   draw-border-with-background false
 }
@@ -10,11 +10,27 @@ window-rule {
 }
 
 window-rule {
+  match app-id="^Alacritty"
+  match app-id=r#"^com\.mitchellh\.ghostty$"#
+  match app-id=r#"^com\.mitchellh\.ghostty-debug$"#
+
+  draw-border-with-background false
+
+  background-effect {
+    blur true
+    // xray true
+    // saturation 0
+  }
+}
+
+window-rule {
   match app-id="LibreWolf"
   match app-id="pcmanfm-qt"
   match app-id="com.chatterino.chatterino"
   match app-id="google-chrome"
   match app-id="brave-browser"
+  match app-id="helium"
+  default-column-width { proportion 1.0; }
 }
 
 window-rule {
@@ -25,9 +41,15 @@ window-rule {
 
 window-rule {
   match app-id="foot-float"
+  match app-id="kitty-float"
   match title="gum-xr"
   match app-id="blueman-manager"
   match app-id="pulseaudio-equalizer-gtk"
+  open-floating true
+}
+
+window-rule {
+  match title="ghostty-float"
   open-floating true
 }
 
@@ -37,8 +59,38 @@ window-rule {
   default-floating-position x=4 y=4 relative-to="bottom-right"
 }
 
+window-rule {
+  match app-id="dev.noctalia.Noctalia.Settings"
+  open-floating true
+  default-column-width { fixed 1080; }
+  default-window-height { fixed 920; }
+}
+
 layer-rule {
-    match namespace="swww-daemon"
-    place-within-backdrop true
+ match namespace="awww-daemon"
+ place-within-backdrop true
+}
+
+//layer-rule {
+//  match namespace="^noctalia-wallpaper*"
+//  place-within-backdrop true
+//}
+
+layer-rule {
+  // fuzzel
+  match namespace="^launcher$"
+
+  // opacity 0.05
+
+  shadow {
+    on
+  }
+
+  // geometry-corner-radius 14
+  // geometry-corner-radius 8
+
+  background-effect {
+    blur true
+  }
 }
 

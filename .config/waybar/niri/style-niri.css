@@ -1,0 +1,420 @@
+/* 
+ * Waybar style (Base16 via Flavours)
+ */
+
+@import "../colors.css";
+
+/** Fonts **/
+* {
+  font-family: "Mayucode", "JetbrainsMono Nerd Font Propo";
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/** Waybar Window **/
+#waybar {
+  background-color: @base00;
+  color: @base05;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+/** Sway Workspaces — Slim & Clean **/
+#workspaces {
+  padding: 0;
+  background: transparent;
+  margin-left: 8px; 
+}
+
+#workspaces button {
+  background-color: @base05;
+  color: @base00;
+  border-radius: 0px;
+  margin: 8px 5px 8px 0px;
+  padding: 2px 8px;
+  border: none;
+}
+
+#workspaces button:hover {
+  background-color: @base02;
+  color: @base05;
+}
+
+#workspaces button.active {
+  background-color: @base0B;
+  color: @base00;
+}
+
+#workspaces button.active:hover {
+  background-color: @base02;
+  color: @base05;
+}
+
+#workspaces button.urgent {
+  background-color: @base08;
+  color: @base00;
+  border-bottom: 2px solid @base0A;
+}
+
+#workspaces button.empty {
+  background-color: @base01;
+  color: @base05;
+}
+
+#workspaces button.empty:hover {
+  background-color: @base03;
+  color: @base05;
+}
+
+
+/** Taskbar **/
+#taskbar {
+  font-style: normal;
+  font-weight: 500;
+  background-color: @base00;
+  margin-right: 5px;
+}
+
+#taskbar button {
+  margin: 8px 2px 8px 2px;
+  padding: 2px 8px;
+  border-radius: 0px;
+
+  background-color: @base01;
+  color: @base05;
+
+  box-shadow: none;
+}
+
+#taskbar button:hover {
+  border-color: @base0C;
+  color: @base05;
+}
+
+#taskbar button.active:hover {
+  border-color: @base0C;
+  color: @base05;
+}
+
+#taskbar button.minimized {
+  border-color: transparent;
+  color: @base05;
+}
+
+#taskbar button.active {
+  background-color: @base01;
+  border-bottom: 2px solid @base05;
+  color: @base05;
+}
+
+/** Custom Buttons **/
+#custom-menu {
+  background-color: @base09;
+  color: @base00;
+  border-radius: 0px;
+  margin: 8px 8px 8px 8px;
+  padding: 2px 8px;
+}
+
+#custom-power {
+  background-color: @base08;
+  color: @base00;
+  margin: 8px 8px 8px 0px;
+  padding: 2px 8px;
+}
+
+#bluetooth {
+  background-color: @base02;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#bluetooth.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#network {
+  background-color: @base02;
+  color: @base0E;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#network.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+/** Idle Inhibitor **/
+#idle_inhibitor {
+  background-color: @base0B;
+  color: @base00;
+  border-radius: 10px;
+  margin: 6px;
+  padding: 4px 6px;
+}
+#idle_inhibitor.deactivated {
+  background-color: @base08;
+}
+
+/** Tray **/
+#tray {
+  background-color: @base01;
+  border-radius: 0px;
+  margin: 8px 8px 8px 0px;
+  padding: 4px 6px;
+}
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/** CPU / Memory / Disk **/
+#cpu    { color: @base08; }
+#memory { color: @base0C; }
+#disk   { color: @base0A; }
+
+/** Backlight **/
+#backlight { color: @base0E; }
+
+/** Battery **/
+#battery { color: @base0C; }
+#battery.critical:not(.charging) {
+  background-color: @base02;
+  color: @base08;
+  animation: blink 0.5s linear infinite alternate;
+}
+@keyframes blink { 
+  0% { color: @base08; }
+  100% { color: @base05; } 
+}
+
+/** Network **/
+#network { color: @base0A; }
+#network.disconnected,
+#network.disabled { color: @base08; }
+
+/** Bluetooth **/
+#bluetooth { color: @base0B; }
+#bluetooth.disabled,
+#bluetooth.off { color: @base08; }
+
+/** Clock **/
+#clock { 
+  color: @base00;  
+  background-color: @base05;
+  border-radius: 0px;
+  margin: 8px 5px 8px 0px;
+  padding: 2px 8px;
+  font-family: "JetbrainsMono Nerd Font";
+  font-size: 15px;
+  font-weight: 900;
+}
+
+/** Updates **/
+@keyframes new-updates {
+  0% { color: transparent; }
+  100% { color: @base0B; }
+}
+
+@keyframes refreshing {
+  0% { color: @base03; }
+  100% { color: @base0C; }
+}
+
+#custom-updates {
+  background-color: @base02;
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+  color: @base03;
+}
+
+#custom-updates.up-to-date { color: @base03; }
+#custom-updates.updates    { color: @base0B; }
+#custom-updates.offline    { color: @base08; }
+
+#custom-updates.new-updates {
+  animation-name: new-updates;
+  animation-duration: 0.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+#custom-updates.refreshing {
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+  color: @base03;
+  animation-name: refreshing;
+  animation-duration: 1.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+/** Backlight **/
+#backlight {
+  background-color: @base02;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#backlight.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+/** CPU **/
+#cpu {
+  background-color: @base02;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#cpu.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#disk {
+  background-color: @base02;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+
+}
+
+#disk.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#wireplumber {
+  color: @base0D;
+  background-color: @base02;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#wireplumber.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#memory {
+  background-color: @base02;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+#memory.2 {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin-right: 5px;
+}
+
+#custom-memory {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin: 8px 5px 8px 0px;
+}
+
+#temperature {
+  background-color: @base0F;
+  color: @base00;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+/* === Temperature Icon === */
+#custom-temp-icon {
+  background-color: transparent;
+  border-radius: 0px;
+  margin: 8px 0px 8px 0px;
+  padding: 2px 8px;
+}
+
+/* dingin */
+#custom-temp-icon.cool {
+  background-color: @base02;
+  color: @base0B; /* hijau */
+}
+
+/* hangat */
+#custom-temp-icon.warm {
+  background-color: @base02;
+  color: @base0A; /* kuning */
+}
+
+/* panas */
+#custom-temp-icon.critical {
+  background-color: @base02;
+  color: @base08; /* merah */
+}
+
+/* unknown */
+#custom-temp-icon.unknown {
+  color: @base03;
+}
+
+/* === Temperature Value === */
+#custom-temp {
+  color: @base05;
+  background-color: @base01;
+  border-radius: 0px;
+  padding: 2px 8px;
+  margin: 8px 5px 8px 0px;
+}
+
+#battery,
+#custom-updates {
+  background-color: transparent;
+  border-radius: 10px 0px 0px 10px;
+  margin: 6px 0px;
+  padding: 4px 6px;
+}
+
+#battery.2,
+#custom-updates.2 {
+  background-color: transparent;
+  color: @base05;
+  border-radius: 0px 10px 10px 0px;
+  margin: 6px 6px 6px 0px;
+  padding: 5px 6px 4px 6px;
+}
+
+#custom-sep {
+  background-color: @base00;
+  color: @base03;
+  margin: 2px 2px 2px 0px;
+  padding: 2px 8px;
+  font-size: 18px;
+}
+

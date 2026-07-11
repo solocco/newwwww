@@ -1,0 +1,131 @@
+mod_key = "super"
+focus_follows_mouse = false
+window_placement = "center"
+autostart = ["waybar -c ~/.config/waybar/driftwm/config.jsonc -s ~/.config/waybar/driftwm/style-drift.css",
+             "sh -c ~/.config/autostart/autostart",
+             "awww-daemon"]
+
+[env]
+QT_WAYLAND_DISABLE_WINDOWDECORATION = "1"
+MOZ_ENABLE_WAYLAND = "1"
+
+[input.keyboard]
+layout = "us"
+remember_layout_per_window = false
+
+[input.mouse]
+accel_speed = 0.0
+accel_profile = "flat"
+natural_scroll = false
+
+[cursor]
+inactive_opacity = 1.0
+
+[navigation]
+animation_speed = 0.1
+drift = 0.0
+auto_navigate_on_close = true
+
+[navigation.edge_pan]
+cursor_pan = false
+
+[zoom]
+step = 1.1
+fit_padding = 80.0
+reset_on_new_window = true
+reset_on_activation = true
+
+[snap]
+enabled = true
+gap = 12.0
+distance = 24.0
+break_force = 32.0
+
+[decorations]
+bg_color = "#303030"
+fg_color = "#FFFFFF"
+corner_radius = 10
+shadow = false
+title_bar_height = 25
+font = "Mayucode"
+font_size = 13
+font_weight = "medium"
+title_align = "center"
+default_mode = "client"
+border_width = 2
+border_color = "#303030"
+border_color_focused = "#303030"
+
+[effects]
+blur_radius = 0
+
+[background]
+type = "none"
+
+[keybindings]
+"mod+return" = "exec footx"
+"mod+shift+s" = "exec shot-menu.sh"
+"mod+shift+e" = "exec wallpaper-selector.sh"
+"mod+d"   = "exec fuzzel"
+"mod+q" = "close-window"
+"mod+f" = "toggle-fullscreen"
+"mod+a" = "fit-window"
+"mod+shift+m" = "fit-window-snapped"
+"mod+c" = "center-window"
+"mod+x" = "focus-center"
+"mod+m" = "home-toggle"
+"mod+up" = "center-nearest up"
+"mod+down" = "center-nearest down"
+"mod+left" = "center-nearest left"
+"mod+right" = "center-nearest right"
+"mod+shift+up" = "nudge-window up"
+"mod+shift+down" = "nudge-window down"
+"mod+shift+left" = "nudge-window left"
+"mod+shift+right" = "nudge-window right"
+"mod+ctrl+up" = "pan-viewport up"
+"mod+ctrl+down" = "pan-viewport down"
+"mod+ctrl+left" = "pan-viewport left"
+"mod+ctrl+right" = "pan-viewport right"
+"alt+tab" = "cycle-windows forward"
+"alt+shift+tab" = "cycle-windows backward"
+"mod+equal" = "zoom-in"
+"mod+minus" = "zoom-out"
+"mod+0" = "zoom-reset"
+"mod+z" = "zoom-reset"
+"mod+w" = "zoom-to-fit"
+"mod+shift+w" = "zoom-to-fit-snapped"
+"mod+1" = "go-to -1750 1750"
+"mod+2" = "go-to 1750 1750"
+"mod+3" = "go-to 1750 -1750"
+"mod+4" = "go-to -1750 -1750"
+"mod+alt+up" = "send-to-output up"
+"mod+alt+down" = "send-to-output down"
+"mod+alt+left" = "send-to-output left"
+"mod+alt+right" = "send-to-output right"
+"mod+l" = "spawn swaylock -f -c 000000 -kl"
+"mod+ctrl+shift+q" = "quit"
+"XF86AudioRaiseVolume" = "exec vols.sh --inc"
+"XF86AudioLowerVolume" = "exec vols.sh --dec"
+"XF86AudioMute" = "spawn wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+"XF86MonBrightnessUp" = "exec bright.sh --inc"
+"XF86MonBrightnessDown" = "exec bright.sh --dec"
+"XF86AudioPlay" = "spawn playerctl play-pause"
+"XF86AudioPause" = "spawn playerctl play-pause"
+"XF86AudioNext" = "spawn playerctl next"
+"XF86AudioPrev" = "spawn playerctl previous"
+"XF86AudioStop" = "spawn playerctl stop"
+
+[mouse.on-window]
+[mouse.on-canvas]
+[mouse.anywhere]
+
+[gestures]
+[gestures.on-window]
+[gestures.on-canvas]
+[gestures.anywhere]
+
+[xwayland]
+enabled = true
+path = "xwayland-satellite"
+
+[backend]

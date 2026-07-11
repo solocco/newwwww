@@ -1,0 +1,6 @@
+spawn-at-startup "swww-daemon"
+spawn-at-startup "xwayland-satellite"
+spawn-at-startup "~/.config/autostart/autostart"
+//spawn-at-startup "noctalia"
+spawn-at-startup "~/.config/niri/waybar.sh"
+//spawn-at-startup "waybar -c ~/.config/niri/waybar_top/config -s ~/.config/niri/waybar_top/style.css >/dev/null 2>&1 &"

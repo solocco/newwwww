@@ -6,7 +6,7 @@
 @import "../font.css";
 
 window#waybar {
-  background: @base01;
+  background: transparent;
 }
 
 tooltip {
@@ -32,11 +32,10 @@ tooltip label {
 
 /* Workspaces container - vertical layout */
 #workspaces {
-  background-color: @base00;
+  background-color: @base01;
   padding: 8px 5px;
-  margin: 10px 3px 3px 3px;
-  border-radius: 8px;
-  border: 1px solid @base01;
+  margin: 10px 3px 3px 0px;
+  border-radius: 0 16px 16px 0;
 }
 
 #workspaces button {
@@ -45,7 +44,7 @@ tooltip label {
   min-width: 10px;
   min-height: 10px;
   border-radius: 100%;
-  color: @base02;
+  color: @base04;
   background-color: transparent;
   transition: all 0.3s ease-in-out;
 }

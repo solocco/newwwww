@@ -1,5 +1,5 @@
 /* Text Font */
 
 * {
-    font: "Iosthetic Medium 13";
+    font: "Cid Mono Medium 13";
 }
