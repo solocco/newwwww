@@ -20,7 +20,7 @@ border_style     = { fg = "#{{base05-hex}}" }
 
 [indicator]
 parent  = { fg = "#{{base0D-hex}}" }
-current = { fg = "#{{base0B-hex}}" }
+current = { fg = "#{{base0D-hex}}", bg = "#{{base01-hex}}" }
 preview = { fg = "#{{base0D-hex}}" }
 padding = { open = "▐", close = "▌" }
 
@@ -121,4 +121,22 @@ rules = [
 	{ mime = "inode/empty", fg = "#{{base0C-hex}}" },
 	{ url = "*", is = "orphan", fg = "#{{base08-hex}}" },
 	{ url = "*/", fg = "#{{base05-hex}}" },
+]
+
+[icon]
+conds = [
+	# Special files
+	{ if = "orphan", text = "", fg = "#{{base08-hex}}" },
+	{ if = "link", text = "", fg = "#{{base03-hex}}" },
+	{ if = "block", text = "", fg = "#{{base0A-hex}}" },
+	{ if = "char", text = "", fg = "#{{base0A-hex}}" },
+	{ if = "fifo", text = "", fg = "#{{base0A-hex}}" },
+	{ if = "sock", text = "", fg = "#{{base0A-hex}}" },
+	{ if = "sticky", text = "", fg = "#{{base0A-hex}}" },
+	{ if = "dummy", text = "", fg = "#{{base08-hex}}" },
+	# Fallback
+	{ if = "dir & hovered", text = "", fg = "#{{base0D-hex}}" },
+	{ if = "dir", text = "", fg = "#{{base0D-hex}}" },
+	{ if = "exec", text = "", fg = "#{{base0B-hex}}" },
+	{ if = "!dir", text = "", fg = "#{{base05-hex}}" },
 ]
